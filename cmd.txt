@@ -1,0 +1,13 @@
+[Permission]
+adb -d shell appops set com.github.uiautomator SYSTEM_ALERT_WINDOW allow
+adb -d shell pm grant com.github.uiautomator android.permission.READ_LOGS
+adb shell am force-stop com.github.uiautomator
+
+[Build APK]
+gradlew assembleDebug assembleAndroidTest
+gradlew assembleAndroidTest
+
+[Get Device Info]
+adb shell getprop ro.product.cpu.abi
+
+adb shell am instrument -w -r -e debug false -e class com.thucnobita.autoapp.MainTest \com.thucnobita.autoapp.test/androidx.test.runner.AndroidJUnitRunner
