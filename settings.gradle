@@ -12,6 +12,6 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
-rootProject.name = "autoapp"
+rootProject.name = "Auto App"
 include ':app'
 include ':uiautomator'

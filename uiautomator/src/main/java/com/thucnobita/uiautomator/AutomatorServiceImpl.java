@@ -75,7 +75,7 @@ public class AutomatorServiceImpl implements AutomatorService {
     private UiAutomation uiAutomation;
     private Instrumentation mInstrumentation;
     private TouchController touchController;
-    ClipboardManager clipboard;
+    private ClipboardManager clipboard;
 
     public AutomatorServiceImpl(Instrumentation instrumentation) {
         mInstrumentation = instrumentation;
@@ -83,8 +83,7 @@ public class AutomatorServiceImpl implements AutomatorService {
         device = UiDevice.getInstance(mInstrumentation);
         touchController = new TouchController(mInstrumentation);
 
-        handler.post(() -> AutomatorServiceImpl.this.clipboard = (ClipboardManager) mInstrumentation.getTargetContext().getSystemService(Context.CLIPBOARD_SERVICE));
-        // play music when loaded
+        handler.post(() -> clipboard = (ClipboardManager) mInstrumentation.getTargetContext().getSystemService(Context.CLIPBOARD_SERVICE));
 
         // Reset Configurator Wait Timeout
         Configurator configurator = Configurator.getInstance();
@@ -101,7 +100,9 @@ public class AutomatorServiceImpl implements AutomatorService {
         return uiAutomation;
     }
 
-    private Instrumentation getInstrumentation() { return mInstrumentation; }
+    public Instrumentation getInstrumentation() { return mInstrumentation; }
+
+    public UiDevice getUiDevice() { return device; }
 
     public void setToastListener(boolean enabled) {
         if (enabled) {
