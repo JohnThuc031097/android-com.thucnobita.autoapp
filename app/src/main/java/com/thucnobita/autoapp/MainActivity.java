@@ -2,33 +2,31 @@ package com.thucnobita.autoapp;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.test.platform.app.InstrumentationRegistry;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObjectNotFoundException;
-import androidx.test.uiautomator.UiSelector;
 import androidx.test.uiautomator.Until;
 
 import android.annotation.SuppressLint;
 import android.app.Instrumentation;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.thucnobita.autoapp.bot.Instagram;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
-import com.thucnobita.uiautomator.Selector;
 
 import java.lang.reflect.Method;
 
 public class MainActivity extends AppCompatActivity {
     private TextView txtOutput;
-    private Button btnTest;
+    private Button btnRunBot;
+    private Spinner spnTypeBot;
 
     private AutomatorServiceImpl automatorService;
     private Instagram botInstagram;
@@ -40,10 +38,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         txtOutput = findViewById(R.id.txtOutput);
-        btnTest = findViewById(R.id.btnTest);
+        btnRunBot = findViewById(R.id.btnRunBot);
+        spnTypeBot = findViewById(R.id.spnTypeBot);
 
+        // Add Item into Spinner
+        ArrayAdapter<CharSequence> adapterSpnTypeBot = ArrayAdapter.createFromResource(this,
+                R.array.typeboy_array,
+                androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item);
+        spnTypeBot.setAdapter(adapterSpnTypeBot);
+
+        // Show Dialog Permission
         askPermissions();
 
+        // Init load class UiAutomator
         init();
 
     }
@@ -77,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         requestPermissions(permissions, requestCode);
     }
 
-    public void handleOnClickBtnTest(View v){
+    public void handleOnClickBtnRunBot(View v){
         try {
             launchPackage("com.instagram.android");
             startBotInstagram();
@@ -98,7 +105,7 @@ public class MainActivity extends AppCompatActivity {
         setText("[Launch] Start open app Instagram ", false);
         UiDevice device = UiDevice.getInstance(automatorService.getInstrumentation());
         final Intent intent = getPackageManager().getLaunchIntentForPackage(packageName);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_NEW_TASK |Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
         startActivity(intent);
         device.wait(Until.hasObject(By.pkg(packageName).depth(0)), 5000L);
         setText("=> OK", true);
@@ -106,7 +113,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void startBotInstagram() throws UiObjectNotFoundException {
         setText("[Bot] [Instagram] [Action] => Click Profile", false);
-        boolean clicked = (boolean) botInstagram.action(Instagram.ACTION.LICK_PROFILE);
+        boolean clicked = (boolean) botInstagram.action(Instagram.ACTION.CLICK_PROFILE);
         setText("=> " + clicked, true);
+        finish();
     }
 }

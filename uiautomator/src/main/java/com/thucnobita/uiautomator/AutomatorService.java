@@ -789,10 +789,9 @@ public interface AutomatorService {
      *
      * @param selector Selector of the UiObject
      * @return A string ID represent the returned UiObject.
-     * @throws UiObjectNotFoundException
      */
-    @JsonRpcErrors({@JsonRpcError(exception = UiObjectNotFoundException.class, code = ERROR_CODE_BASE - 2)})
-    String getUiObject(Selector selector) throws UiObjectNotFoundException;
+    String getUiObject(Selector selector);
+
 
     /**
      * Remove the UiObject from memory.

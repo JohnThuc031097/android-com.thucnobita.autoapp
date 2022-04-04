@@ -1,3 +1,9 @@
 <resources>
     <string name="app_name">Auto App</string>
+    <string-array name="typeboy_array">
+        <item>Instagram</item>
+        <item>Facebook</item>
+        <item>Zalo</item>
+        <item>TikTok</item>
+    </string-array>
 </resources>

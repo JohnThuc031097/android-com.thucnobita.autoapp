@@ -1,13 +1,16 @@
 package com.thucnobita.autoapp.bot;
 
+import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 import com.thucnobita.uiautomator.Selector;
 
+import java.util.concurrent.ConcurrentHashMap;
+
 public class Instagram {
     public enum ACTION{
-        LICK_PROFILE
+        CLICK_PROFILE
     }
     private final AutomatorServiceImpl mAutomatorService;
 
@@ -17,7 +20,7 @@ public class Instagram {
 
     public Object action(ACTION action) throws UiObjectNotFoundException {
         switch (action){
-            case LICK_PROFILE:
+            case CLICK_PROFILE:
                 return clickProfile();
             default:
                 return null;
@@ -28,7 +31,7 @@ public class Instagram {
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Configs.INSTAGRAM_PACKAGE_NAME);
         selector.setDescription("Profile");
-        selector.setResourceId("com.instagram.android:id/profile_tab");
+        selector.setResourceId(Configs.INSTAGRAM_PACKAGE_NAME + ":id/profile_tab");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
         return mAutomatorService.click(selector);
     }

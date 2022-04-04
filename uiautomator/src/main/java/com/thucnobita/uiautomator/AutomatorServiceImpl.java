@@ -1038,7 +1038,7 @@ public class AutomatorServiceImpl implements AutomatorService {
     @Override
     public boolean waitUntilGone(Selector obj, long timeout) {
         try {
-            if (obj.getChildOrSibling().length == 0 && obj.checkBySelectorNull(obj) == false)
+            if (obj.getChildOrSibling().length == 0 && !obj.checkBySelectorNull(obj))
                 return device.wait(Until.gone(obj.toBySelector()), timeout);
         } catch (ClassCastException e) {
             Log.d("waitUntilGone got ClassCastException " + e);
@@ -1211,7 +1211,7 @@ public class AutomatorServiceImpl implements AutomatorService {
         uiObjects.put(key, obj);
         // schedule the clear timer.
         Timer clearTimer = new Timer();
-        clearTimer.schedule(new ClearUiObjectTimerTask(key), 60000);
+        clearTimer.schedule(new ClearUiObjectTimerTask(key), 60 * 1000);
         return key;
     }
 
@@ -1334,11 +1334,15 @@ public class AutomatorServiceImpl implements AutomatorService {
      *
      * @param selector Selector of the UiObject
      * @return A string ID represent the returned UiObject.
-     * @throws UiObjectNotFoundException
      */
     @Override
-    public String getUiObject(Selector selector) throws UiObjectNotFoundException {
-        return addUiObject(device.findObject(selector.toUiSelector()));
+    public String getUiObject(Selector selector) {
+        UiObject uiObject = device.findObject(selector.toUiSelector());
+        if (uiObject.exists()){
+            return addUiObject(uiObject);
+        }else{
+            return null;
+        }
     }
 
     /**
