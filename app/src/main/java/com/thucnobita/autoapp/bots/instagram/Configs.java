@@ -1,4 +1,4 @@
-package com.thucnobita.autoapp.bot;
+package com.thucnobita.autoapp.bots.instagram;
 
 public interface Configs {
     // Instagram

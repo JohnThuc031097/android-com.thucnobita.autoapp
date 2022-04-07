@@ -1,21 +1,24 @@
-package com.thucnobita.autoapp.bot;
+package com.thucnobita.autoapp.bots.instagram;
 
-import androidx.test.uiautomator.UiObject;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
+import com.thucnobita.autoapp.interfaces.RequestHandleCallback;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 import com.thucnobita.uiautomator.Selector;
 
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.ArrayList;
 
 public class Instagram {
     public enum ACTION{
-        CLICK_PROFILE
+        CLICK_PROFILE,
+        GET_LINK
     }
     private final AutomatorServiceImpl mAutomatorService;
+    private Utils utils;
 
     public Instagram(AutomatorServiceImpl automatorService){
         this.mAutomatorService = automatorService;
+        this.utils = new Utils();
     }
 
     public Object action(ACTION action) throws UiObjectNotFoundException {
@@ -36,4 +39,19 @@ public class Instagram {
         return mAutomatorService.click(selector);
     }
 
+    private String getLink(String link){
+        String results = null;
+        utils.getLinks(link, new RequestHandleCallback() {
+            @Override
+            public void onSuccess(ArrayList<String> arrayList, String error) {
+                RequestHandleCallback.super.onSuccess(arrayList, error);
+                return arrayList;
+            }
+
+            @Override
+            public void onFailure(ArrayList<String> arrayList, String error) {
+                RequestHandleCallback.super.onFailure(arrayList, error);
+            }
+        });
+    }
 }

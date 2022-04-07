@@ -2,7 +2,6 @@ package com.thucnobita.autoapp;
 
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.FileProvider;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObjectNotFoundException;
@@ -11,26 +10,23 @@ import androidx.test.uiautomator.Until;
 import android.annotation.SuppressLint;
 import android.app.Instrumentation;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.StrictMode;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.thucnobita.autoapp.bot.Instagram;
+import com.thucnobita.autoapp.bots.instagram.Instagram;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 
-import java.io.File;
 import java.lang.reflect.Method;
 
 public class MainActivity extends AppCompatActivity {
     private TextView txtOutput;
     private Button btnRunBot;
+    private Button btnGetLink;
     private Spinner spnTypeBot;
 
     private AutomatorServiceImpl automatorService;
@@ -44,6 +40,7 @@ public class MainActivity extends AppCompatActivity {
 
         txtOutput = findViewById(R.id.txtOutput);
         btnRunBot = findViewById(R.id.btnRunBot);
+        btnGetLink = findViewById(R.id.btnGetLink);
         spnTypeBot = findViewById(R.id.spnTypeBot);
 
         // Add Item into Spinner
@@ -89,10 +86,14 @@ public class MainActivity extends AppCompatActivity {
         requestPermissions(permissions, requestCode);
     }
 
+    public void handleOnClickBtnGetLink(View v){
+        setText(automatorService.getClipboard(), true);
+    }
+
     public void handleOnClickBtnRunBot(View v){
         try {
             launchPackage("com.instagram.android");
-//            startBotInstagram();
+            startBotInstagram();
         }catch (Exception e){
             e.printStackTrace();
             setText("[Bot] [Instagram] [Error]:" + e, true);
