@@ -49,9 +49,8 @@ public class Utils {
         ArrayList<String> arrayList = new ArrayList<>();
         if (stringData.matches("https://www.instagram.com/(.*)")) {
             String[] data = stringData.split(Pattern.quote("?"));
-            String string = data[0];
             AsyncHttpClient client = new AsyncHttpClient();
-            RequestHandle result = client.get(string + "?__a=1", null, new AsyncHttpResponseHandler() {
+            RequestHandle result = client.get(data[0] + "?__a=1", null, new AsyncHttpResponseHandler() {
                 @Override
                 public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                     String res = new String(responseBody);

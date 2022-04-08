@@ -19,9 +19,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.thucnobita.autoapp.bots.instagram.Instagram;
+import com.thucnobita.autoapp.interfaces.RequestHandleCallback;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     private TextView txtOutput;
@@ -87,7 +89,35 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void handleOnClickBtnGetLink(View v){
-        setText(automatorService.getClipboard(), true);
+        String linkCopied = automatorService.getClipboard();
+        setText("[GetLink][Copy]:" + linkCopied, true);
+        if(linkCopied != null){
+            botInstagram.getLinks(linkCopied, new RequestHandleCallback() {
+                @Override
+                public void onSuccess(ArrayList<String> arrayList, String error) {
+                    if(error != null){
+                        setText("[GetLink][onSuccess][Error]:" + error, true);
+                    }
+                    if(arrayList.size() > 0){
+                        for (String link:arrayList) {
+                            setText("[GetLink][onSuccess][Result]:" + link, true);
+                        }
+                    }
+                }
+
+                @Override
+                public void onFailure(ArrayList<String> arrayList, String error) {
+                    if(error != null){
+                        setText("[GetLink][onFailure][Error]:" + error, true);
+                    }
+                    if(arrayList.size() > 0){
+                        for (String link:arrayList) {
+                            setText("[GetLink][onFailure][Result]:" + link, true);
+                        }
+                    }
+                }
+            });
+        }
     }
 
     public void handleOnClickBtnRunBot(View v){
@@ -121,7 +151,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void startBotInstagram() throws UiObjectNotFoundException {
         setText("[Bot] [Instagram] [Action] => Click Profile", false);
-        boolean clicked = (boolean) botInstagram.action(Instagram.ACTION.CLICK_PROFILE);
+        boolean clicked = (boolean) botInstagram.action(Instagram.ACTION.CLICK_PROFILE, null);
         setText("=> " + clicked, true);
     }
 }
