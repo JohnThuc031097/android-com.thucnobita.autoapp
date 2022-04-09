@@ -1,6 +1,7 @@
 package com.thucnobita.autoapp.bots.instagram;
 
 import android.content.Intent;
+import android.net.Credentials;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.StrictMode;
@@ -19,10 +20,21 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 import cz.msebera.android.httpclient.Header;
+import me.postaddict.instagram.scraper.Instagram;
+import me.postaddict.instagram.scraper.InstagramFactory;
+import me.postaddict.instagram.scraper.cookie.CookieHashSet;
+import me.postaddict.instagram.scraper.cookie.DefaultCookieJar;
+import me.postaddict.instagram.scraper.interceptor.ErrorInterceptor;
+import me.postaddict.instagram.scraper.interceptor.UserAgentInterceptor;
+import me.postaddict.instagram.scraper.interceptor.UserAgents;
+import me.postaddict.instagram.scraper.model.Media;
+import okhttp3.OkHttpClient;
+import okhttp3.logging.HttpLoggingInterceptor;
 
 public class Utils {
     private RequestHandleCallback requestHandleCallback;
@@ -45,60 +57,20 @@ public class Utils {
         return intentVideo;
     }
 
-    public void getLinks(String stringData, @NonNull final RequestHandleCallback requestHandleCallback) {
-        ArrayList<String> arrayList = new ArrayList<>();
-        if (stringData.matches("https://www.instagram.com/(.*)")) {
-            String[] data = stringData.split(Pattern.quote("?"));
-            AsyncHttpClient client = new AsyncHttpClient();
-            RequestHandle result = client.get(data[0] + "?__a=1", null, new AsyncHttpResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-                    String res = new String(responseBody);
-                    try {
-                        String link = null;
-                        JSONObject jsonObject = new JSONObject(res);
-                        JSONObject objectGraphql = jsonObject.getJSONObject("graphql");
-                        JSONObject objectMedia = objectGraphql.getJSONObject("shortcode_media");
-                        boolean isVideo = objectMedia.getBoolean("is_video");
-                        if (isVideo) {
-                            link = objectMedia.getString("video_url");
-                        } else {
-                            link = objectMedia.getString("display_url");
-                        }
-                        arrayList.add(link);
-                        try {
-                            arrayList.clear();
-                            JSONObject objectSidecar = objectMedia.getJSONObject("edge_sidecar_to_children");
-                            JSONArray jsonArray = objectSidecar.getJSONArray("edges");
-                            String edgeSidecar = null;
-                            for (int i = 0; i < jsonArray.length(); i++) {
-                                JSONObject object = jsonArray.getJSONObject(i);
-                                JSONObject node = object.getJSONObject("node");
-                                boolean is_video_group = node.getBoolean("is_video");
-                                if (is_video_group) {
-                                    edgeSidecar = node.getString("video_url");
-                                } else {
-                                    edgeSidecar = node.getString("display_url");
-                                }
-                                arrayList.add(edgeSidecar);
-                            }
-                            requestHandleCallback.onSuccess(arrayList, null);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                            requestHandleCallback.onSuccess(arrayList, e.toString());
-                        }
-                    } catch (JSONException e) {
-                        e.printStackTrace();
-                        requestHandleCallback.onSuccess(arrayList, e.toString());
-                    }
-                }
-                @Override
-                public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-                    requestHandleCallback.onFailure(arrayList, error.getMessage());
-                }
-            });
-        } else {
-        }
+    public static String getLinkVideo(String code, String[] account) throws IOException {
+//        String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36";
+        OkHttpClient httpClient = new OkHttpClient.Builder()
+                .addInterceptor(new UserAgentInterceptor(UserAgents.OSX_CHROME))
+//                .addInterceptor(new UserAgentInterceptor(userAgent))
+                .addInterceptor(new ErrorInterceptor())
+                .cookieJar(new DefaultCookieJar(new CookieHashSet()))
+                .build();
+        Instagram client = new Instagram(httpClient);
+        client.basePage();
+        client.login(account[0], account[1]);
+        client.basePage();
+        Media media = client.getMediaByCode(code);
+        return media.getVideoUrl();
     }
 
     public String object2String(Object obj) throws JsonProcessingException {

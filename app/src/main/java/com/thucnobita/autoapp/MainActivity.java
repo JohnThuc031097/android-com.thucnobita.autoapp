@@ -12,6 +12,7 @@ import android.app.Instrumentation;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -19,6 +20,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.thucnobita.autoapp.bots.instagram.Instagram;
+import com.thucnobita.autoapp.bots.instagram.Utils;
 import com.thucnobita.autoapp.interfaces.RequestHandleCallback;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 
@@ -51,6 +53,9 @@ public class MainActivity extends AppCompatActivity {
                 androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item);
         spnTypeBot.setAdapter(adapterSpnTypeBot);
 
+//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+//        StrictMode.setThreadPolicy(policy);
+
         // Show Dialog Permission
         askPermissions();
 
@@ -81,43 +86,25 @@ public class MainActivity extends AppCompatActivity {
         String[] permissions = {
                 "android.permission.READ_EXTERNAL_STORAGE",
                 "android.permission.WRITE_EXTERNAL_STORAGE",
-                "android.permission.SYSTEM_ALERT_WINDOW",
-                "android.permission.FOREGROUND_SERVICE"
         };
         int requestCode = 200;
         requestPermissions(permissions, requestCode);
     }
 
     public void handleOnClickBtnGetLink(View v){
-        String linkCopied = automatorService.getClipboard();
-        setText("[GetLink][Copy]:" + linkCopied, true);
-        if(linkCopied != null){
-            botInstagram.getLinks(linkCopied, new RequestHandleCallback() {
-                @Override
-                public void onSuccess(ArrayList<String> arrayList, String error) {
-                    if(error != null){
-                        setText("[GetLink][onSuccess][Error]:" + error, true);
-                    }
-                    if(arrayList.size() > 0){
-                        for (String link:arrayList) {
-                            setText("[GetLink][onSuccess][Result]:" + link, true);
-                        }
-                    }
-                }
-
-                @Override
-                public void onFailure(ArrayList<String> arrayList, String error) {
-                    if(error != null){
-                        setText("[GetLink][onFailure][Error]:" + error, true);
-                    }
-                    if(arrayList.size() > 0){
-                        for (String link:arrayList) {
-                            setText("[GetLink][onFailure][Result]:" + link, true);
-                        }
-                    }
-                }
-            });
-        }
+//        String linkCopied = automatorService.getClipboard();
+        String codeVideo = "Cb_97vll8cy";
+        setText("[GetLink][Code]:" + codeVideo, true);
+        String[] account = {"johnthuc03101997", "John@Thuc@0310"};
+        new Thread(() -> {
+            try {
+                String linkVideo = Utils.getLinkVideo(codeVideo, account);
+                setText("[GetLink][Result]:" + codeVideo, true);
+            } catch (Exception e) {
+                e.printStackTrace();
+                setText("[GetLink][Error]:" + e, true);
+            }
+        }).start();
     }
 
     public void handleOnClickBtnRunBot(View v){

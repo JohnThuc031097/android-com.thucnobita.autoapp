@@ -7,7 +7,9 @@ import com.thucnobita.autoapp.interfaces.RequestHandleCallback;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 import com.thucnobita.uiautomator.Selector;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class Instagram {
     public enum ACTION{
@@ -39,7 +41,14 @@ public class Instagram {
         return mAutomatorService.click(selector);
     }
 
-    public void getLinks(String link, @NonNull final RequestHandleCallback callback){
-        utils.getLinks(link, callback);
+    public String getLinkVideo(String link, String[] account) throws IOException {
+        if(link.matches("https://" + Configs.INSTAGRAM_DOMAIN + "/(.*)")){
+            String strStep1 = link.split(Pattern.quote("?"))[0];
+            String[] strStep2 = strStep1.split(Pattern.quote("/"));
+            String code = strStep2[strStep2.length-1];
+            return Utils.getLinkVideo(code, account);
+        }
+        return null;
     }
+
 }
