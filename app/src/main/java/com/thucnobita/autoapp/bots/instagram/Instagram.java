@@ -1,15 +1,11 @@
 package com.thucnobita.autoapp.bots.instagram;
 
-import androidx.annotation.NonNull;
+import android.content.Context;
+
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
-import com.thucnobita.autoapp.interfaces.RequestHandleCallback;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 import com.thucnobita.uiautomator.Selector;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.regex.Pattern;
 
 public class Instagram {
     public enum ACTION{
@@ -18,9 +14,9 @@ public class Instagram {
     private final AutomatorServiceImpl mAutomatorService;
     private Utils utils;
 
-    public Instagram(AutomatorServiceImpl automatorService){
+    public Instagram(Context context, AutomatorServiceImpl automatorService){
         this.mAutomatorService = automatorService;
-        this.utils = new Utils();
+        this.utils = new Utils(context);
     }
 
     public Object action(ACTION action, Object[] params) throws UiObjectNotFoundException {
@@ -41,14 +37,12 @@ public class Instagram {
         return mAutomatorService.click(selector);
     }
 
-    public String getLinkVideo(String link, String[] account) throws IOException {
-        if(link.matches("https://" + Configs.INSTAGRAM_DOMAIN + "/(.*)")){
-            String strStep1 = link.split(Pattern.quote("?"))[0];
-            String[] strStep2 = strStep1.split(Pattern.quote("/"));
-            String code = strStep2[strStep2.length-1];
-            return Utils.getLinkVideo(code, account);
-        }
-        return null;
+    public void loginForDonwload(String username, String password, Callback.Login callback) {
+        utils.loginForDonwload(username, password, callback);
+    }
+
+    public void getMediaByCode(String code, Callback.Media callback){
+        utils.getMediaByCode(code, callback);
     }
 
 }

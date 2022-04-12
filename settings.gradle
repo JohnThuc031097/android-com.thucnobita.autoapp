@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 rootProject.name = "Auto App"
 include ':app'
 include ':uiautomator'
+include ':instagram'

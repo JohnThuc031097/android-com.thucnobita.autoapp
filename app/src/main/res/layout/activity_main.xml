@@ -55,8 +55,16 @@
             android:orientation="horizontal">
 
             <Button
+                android:id="@+id/btnLoginForDownload"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="handleOnClickBtnLoginForDownload"
+                android:text="Login for download" />
+
+            <Button
                 android:id="@+id/btnGetLink"
-                android:layout_width="0dp"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:onClick="handleOnClickBtnGetLink"
@@ -84,6 +92,7 @@
                 android:singleLine="false"
                 android:textSize="17sp" />
         </ScrollView>
+
     </LinearLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -3,7 +3,7 @@
     <string-array name="typeboy_array">
         <item>Instagram</item>
         <item>Facebook</item>
-        <item>Zalo</item>
         <item>TikTok</item>
+        <item>Youtube</item>
     </string-array>
 </resources>

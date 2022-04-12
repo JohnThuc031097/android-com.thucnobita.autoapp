@@ -1,45 +1,37 @@
 package com.thucnobita.autoapp.bots.instagram;
 
+import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.content.Context;
 import android.content.Intent;
-import android.net.Credentials;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.StrictMode;
-
-import androidx.annotation.NonNull;
+import android.widget.EditText;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.loopj.android.http.AsyncHttpClient;
-import com.loopj.android.http.AsyncHttpResponseHandler;
-import com.loopj.android.http.RequestHandle;
-import com.thucnobita.autoapp.interfaces.RequestHandleCallback;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+import com.sanardev.instagramapijava.IGConstants;
+import com.sanardev.instagramapijava.IGRequest;
+import com.sanardev.instagramapijava.InstaClient;
+import com.sanardev.instagramapijava.model.media.VideoVersion;
+import com.sanardev.instagramapijava.model.timeline.MediaOrAd;
+import com.sanardev.instagramapijava.processor.AccountProcessor;
+import com.sanardev.instagramapijava.response.*;
 
 import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.regex.Pattern;
+import java.util.List;
 
-import cz.msebera.android.httpclient.Header;
-import me.postaddict.instagram.scraper.Instagram;
-import me.postaddict.instagram.scraper.InstagramFactory;
-import me.postaddict.instagram.scraper.cookie.CookieHashSet;
-import me.postaddict.instagram.scraper.cookie.DefaultCookieJar;
-import me.postaddict.instagram.scraper.interceptor.ErrorInterceptor;
-import me.postaddict.instagram.scraper.interceptor.UserAgentInterceptor;
-import me.postaddict.instagram.scraper.interceptor.UserAgents;
-import me.postaddict.instagram.scraper.model.Media;
-import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
+import io.reactivex.Observer;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.disposables.Disposable;
+import io.reactivex.functions.Consumer;
 
 public class Utils {
-    private RequestHandleCallback requestHandleCallback;
+    private Context context;
 
-    public Utils(){
+    public Utils(Context context){
+        this.context = context;
     }
 
     public Intent shareVideo(String type, String videoPath){
@@ -57,23 +49,82 @@ public class Utils {
         return intentVideo;
     }
 
-    public static String getLinkVideo(String code, String[] account) throws IOException {
-//        String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/84.0.4147.89 Safari/537.36";
-        OkHttpClient httpClient = new OkHttpClient.Builder()
-                .addInterceptor(new UserAgentInterceptor(UserAgents.OSX_CHROME))
-//                .addInterceptor(new UserAgentInterceptor(userAgent))
-                .addInterceptor(new ErrorInterceptor())
-                .cookieJar(new DefaultCookieJar(new CookieHashSet()))
-                .build();
-        Instagram client = new Instagram(httpClient);
-        client.basePage();
-        client.login(account[0], account[1]);
-        client.basePage();
-        Media media = client.getMediaByCode(code);
-        return media.getVideoUrl();
-    }
-
     public String object2String(Object obj) throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(obj);
+    }
+
+    @SuppressLint("CheckResult")
+    public void loginForDonwload(String username, String password, Callback.Login callback) {
+        InstaClient instaClient = new InstaClient(context, username, password);
+        AccountProcessor accountProcessor = instaClient.accountProcessor;
+        accountProcessor.login()
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(igLoginResponse -> {
+                    if (igLoginResponse.getStatus().equals(IGConstants.STATUS_SUCCESS)) {
+                        callback.successful("OK");
+                    }
+                    if (igLoginResponse.getStatus().equals(IGConstants.STATUS_FAIL)){
+                        if (igLoginResponse.isLock()){
+                            callback.failed("Account is blocked");
+                        }
+                        if (igLoginResponse.isSpam()){
+                            callback.failed("Account is spam");
+                        }
+                        if (igLoginResponse.isTwoFactorRequired()){
+                            final EditText txtCodeTwoAuth = new EditText(context);
+                            new AlertDialog.Builder(context)
+                                    .setTitle("Login with Two Auth in Instagram")
+                                    .setMessage("Enter your code?")
+                                    .setView(txtCodeTwoAuth)
+                                    .setPositiveButton("Confirm", (dialog, which) -> {
+                                        if (txtCodeTwoAuth.getText().length() == 6) {
+                                            accountProcessor.twoStepAuth(txtCodeTwoAuth.toString())
+                                                    .subscribe(igLoginResponseTwoStepAuth -> {
+                                                        if (igLoginResponseTwoStepAuth.getStatus().equals(IGConstants.STATUS_SUCCESS)) {
+                                                            callback.successful("Ok");
+                                                        }
+                                                        if (igLoginResponse.getStatus().equals(IGConstants.STATUS_FAIL)) {
+                                                            callback.failed(igLoginResponse.getStatus());
+                                                        }
+                                                    });
+                                        }
+                                        dialog.dismiss();
+                                    })
+                                    .setOnCancelListener(dialog -> {
+                                        callback.failed("Cancel Login when Two Factor Required");
+                                        dialog.dismiss();
+                                    })
+                                    .create()
+                                    .show();
+                        }
+                    }
+                }, error -> {
+                    callback.failed(error.getMessage());
+                });
+    }
+
+    @SuppressLint("CheckResult")
+    public void getMediaByCode(String code, Callback.Media callback){
+        String id = getIdFromCode(code);
+        InstaClient.getInstanceCurrentUser(context).mediaProcessor.getMediaById(id)
+                .subscribe(igMediaResponse -> {
+                    List<MediaOrAd> mediaOrAdList = igMediaResponse.getItems();
+                    if(mediaOrAdList.get(0).getMediaType() == 2){
+                        List<VideoVersion> videoVersionList = mediaOrAdList.get(0).getVideoVersions();
+                        callback.successful(videoVersionList.get(0).getUrl() + "");
+                    }
+                }, error -> {
+                    callback.failed(error.getMessage());
+                });
+    }
+
+    private static String getIdFromCode(String code) {
+        String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
+        long id = 0;
+        for (int i = 0; i < code.length(); i++) {
+            char c = code.charAt(i);
+            id = id * 64 + alphabet.indexOf(c);
+        }
+        return id + "";
     }
 }
