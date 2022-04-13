@@ -11,13 +11,13 @@ import android.widget.EditText;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.sanardev.instagramapijava.IGConstants;
-import com.sanardev.instagramapijava.IGRequest;
-import com.sanardev.instagramapijava.InstaClient;
-import com.sanardev.instagramapijava.model.media.VideoVersion;
-import com.sanardev.instagramapijava.model.timeline.MediaOrAd;
-import com.sanardev.instagramapijava.processor.AccountProcessor;
-import com.sanardev.instagramapijava.response.*;
+import com.thucnobita.instaapi.IGConstants;
+import com.thucnobita.instaapi.IGRequest;
+import com.thucnobita.instaapi.InstaClient;
+import com.thucnobita.instaapi.model.media.VideoVersion;
+import com.thucnobita.instaapi.model.timeline.MediaOrAd;
+import com.thucnobita.instaapi.processor.AccountProcessor;
+import com.thucnobita.instaapi.response.*;
 
 import java.io.File;
 import java.util.List;
