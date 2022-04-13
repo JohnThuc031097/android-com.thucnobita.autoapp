@@ -110,8 +110,9 @@ public class IGRequest {
     }
 
     public HashMap<String, String> generateHeaders() {
-        HashMap<String, String> headers = new HashMap();
+        HashMap<String, String> headers = new HashMap<>();
         headers.put(IGConstants.X_DEVICE_ID, cookie.getDeviceID());
+        headers.put(IGConstants.X_IG_APP_LOCALE, IGConstants.LOCALE);
         headers.put(IGConstants.X_IG_DEVICE_LOCALE, IGConstants.LOCALE);
         headers.put(IGConstants.X_IG_MAPPED_LOCALE, IGConstants.LOCALE);
         headers.put(IGConstants.X_PIGEON_SESSION_ID, UUID.randomUUID().toString());
@@ -132,7 +133,7 @@ public class IGRequest {
         headers.put(IGConstants.X_IG_CAPABILITIES, IGConstants.DEVICE_CAPABILITIES);
 
         headers.put(IGConstants.X_IG_APP_ID, IGConstants.APP_ID);
-        headers.put(IGConstants.X_USER_AGENT, "Instagram 130.0.0.31.121 Android (29/10; 408dpi; 1080x2038; Xiaomi/xiaomi; Mi A2; jasmine_sprout; qcom; en_US; 200396019)");
+        headers.put(IGConstants.X_USER_AGENT, "Instagram " + IGConstants.APP_VERSION + " Android (29/10; 408dpi; 1080x2038; Xiaomi/xiaomi; Mi A2; jasmine_sprout; qcom; en_US; 200396019)");
         headers.put(IGConstants.ACCEPT_LANGUAGE, IGConstants.LOCALE);
         headers.put(IGConstants.COOKIE,
                 String.format("mid=%s; csrftoken=%s;sessionid=%s;dc_user=%s;dc_user_id=%s;",

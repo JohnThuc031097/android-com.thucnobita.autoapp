@@ -3,13 +3,12 @@ package com.thucnobita.instaapi;
 public class IGConstants {
 
     public static final String APP_VERSION = "130.0.0.31.121";
-    public static final String APP_ID = "535047861370655"; //"567310203415052";
+    public static final String APP_ID = "567310203415052";
     public static final String API_SIGN_KEY_VERSION = "4";
     public static final String DEVICE_CAPABILITIES = "3brTvwM=";
     public static final String LOCALE = "en_US";
     public static final String BLOKS_VERSION_ID = "0e9b6d9c0fb2a2df4862cd7f46e3f719c55e9f90c20db0e5d95791b66f43b367";
-    public static final String API_KEY = "9981c46310750ebe93e84ae7e0480e04"; //"f0bdfd5332d66a64d5e04965e6a7ade67c4e2cfc57ea38f0083c0400640a5e20";
-
+    public static final String API_KEY = "f0bdfd5332d66a64d5e04965e6a7ade67c4e2cfc57ea38f0083c0400640a5e20";
 
      // Headers
     public static final String X_DEVICE_ID = "X-DEVICE-ID";

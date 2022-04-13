@@ -134,8 +134,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void handleOnClickBtnLoginForDownload(View v) {
         setLockScreen(false);
-        String username = "johnthuc03101997";
-        String password = "John@Thuc@0310";
+        String username = "rowing_fan";
+        String password = "UuyJYd5!";
         botInstagram.loginForDonwload(username, password, new Callback.Login(){
             @Override
             public void successful(String message) {
@@ -155,20 +155,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void handleOnClickBtnRunBot(View v){
-        setLockScreen(false);
-        try {
-            launchPackage("com.instagram.android");
-            if(spnTypeBot.getSelectedItemPosition() == 0){ // 0= Instagram
-                startBotInstagram();
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            setText("[Bot] [Instagram] [Run] [Error]:" + e, true);
-        }
-        setLockScreen(true);
-    }
-
     public void handleOnClickBtnGetLink(View v){
         setLockScreen(false);
         botInstagram.getMediaByCode("CcKOS7iA3oq", new Callback.Media() {
@@ -184,6 +170,20 @@ public class MainActivity extends AppCompatActivity {
                 setLockScreen(true);
             }
         });
+    }
+
+    public void handleOnClickBtnRunBot(View v){
+        setLockScreen(false);
+        try {
+            launchPackage("com.instagram.android");
+            if(spnTypeBot.getSelectedItemPosition() == 0){ // 0= Instagram
+                startBotInstagram();
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            setText("[Bot] [Instagram] [Run] [Error]:" + e, true);
+        }
+        setLockScreen(true);
     }
 
 }

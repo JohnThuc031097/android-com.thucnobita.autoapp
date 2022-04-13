@@ -46,9 +46,8 @@ class MediaUtils {
             val uri = Uri.parse(filePath)
             val mmr = MediaMetadataRetriever()
             mmr.setDataSource(context, uri)
-            val durationStr =
-                mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
-            return durationStr.toInt()
+            val durationStr = mmr.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+            return durationStr!!.toInt()
         }
 
         @JvmStatic
@@ -64,12 +63,8 @@ class MediaUtils {
             } else {
                 val retriever = MediaMetadataRetriever()
                 retriever.setDataSource(filePath)
-                val width =
-                    retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)
-                        .toInt()
-                val height =
-                    retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)
-                        .toInt()
+                val width = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH)!!.toInt()
+                val height = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT)!!.toInt()
                 retriever.release()
                 return intArrayOf(width, height)
             }

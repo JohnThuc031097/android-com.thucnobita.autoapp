@@ -62,15 +62,12 @@ public class Utils {
                 .subscribe(igLoginResponse -> {
                     if (igLoginResponse.getStatus().equals(IGConstants.STATUS_SUCCESS)) {
                         callback.successful("OK");
-                    }
-                    if (igLoginResponse.getStatus().equals(IGConstants.STATUS_FAIL)){
+                    }else if (igLoginResponse.getStatus().equals(IGConstants.STATUS_FAIL)){
                         if (igLoginResponse.isLock()){
                             callback.failed("Account is blocked");
-                        }
-                        if (igLoginResponse.isSpam()){
+                        }else if (igLoginResponse.isSpam()){
                             callback.failed("Account is spam");
-                        }
-                        if (igLoginResponse.isTwoFactorRequired()){
+                        }else if (igLoginResponse.isTwoFactorRequired()){
                             final EditText txtCodeTwoAuth = new EditText(context);
                             new AlertDialog.Builder(context)
                                     .setTitle("Login with Two Auth in Instagram")
@@ -86,6 +83,8 @@ public class Utils {
                                                         if (igLoginResponse.getStatus().equals(IGConstants.STATUS_FAIL)) {
                                                             callback.failed(igLoginResponse.getStatus());
                                                         }
+                                                    }, error -> {
+                                                        callback.failed(error.getLocalizedMessage());
                                                     });
                                         }
                                         dialog.dismiss();
@@ -96,10 +95,13 @@ public class Utils {
                                     })
                                     .create()
                                     .show();
+                        }else{
+                            callback.failed(igLoginResponse.getErrorType() +"\n"+
+                                    igLoginResponse.getMessage());
                         }
                     }
                 }, error -> {
-                    callback.failed(error.getMessage());
+                    callback.failed(error.getLocalizedMessage());
                 });
     }
 
@@ -114,7 +116,7 @@ public class Utils {
                         callback.successful(videoVersionList.get(0).getUrl() + "");
                     }
                 }, error -> {
-                    callback.failed(error.getMessage());
+                    callback.failed(error.getLocalizedMessage());
                 });
     }
 
