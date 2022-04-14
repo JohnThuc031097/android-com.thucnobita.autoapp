@@ -1,5 +1,7 @@
 package com.thucnobita.autoapp.bots.instagram;
 
+import android.content.DialogInterface;
+
 public interface Callback {
     interface Login{
         void successful(String message);

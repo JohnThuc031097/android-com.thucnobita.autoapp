@@ -134,10 +134,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void handleOnClickBtnLoginForDownload(View v) {
         setLockScreen(false);
-//        String username = "johnthuc03101997";
-//        String password = "John@Thuc@0310";
-        String username = "rowing_fan";
-        String password = "UuyJYd5!";
+        String username = "johnthuc03101997";
+        String password = "John@Thuc@0310";
+//        String username = "rowing_fan";
+//        String password = "UuyJYd5!";
         botInstagram.loginForDonwload(username, password, new Callback.Login(){
             @Override
             public void successful(String message) {
