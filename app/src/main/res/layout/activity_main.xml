@@ -74,6 +74,40 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/txtLabelInputCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="Input Code"
+            android:textSize="24sp"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:id="@+id/grpInputCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:orientation="horizontal">
+
+            <EditText
+                android:id="@+id/txtInputCode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="5dp"
+                android:layout_weight="1"
+                android:ems="6"
+                android:inputType="numberDecimal" />
+
+            <Button
+                android:id="@+id/btnConfirmInputCode"
+                android:layout_width="5dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="handleOnClickBtnConfirmInputCode"
+                android:text="Confirm" />
+        </LinearLayout>
+
+        <TextView
             android:id="@+id/txtLabelLog"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"

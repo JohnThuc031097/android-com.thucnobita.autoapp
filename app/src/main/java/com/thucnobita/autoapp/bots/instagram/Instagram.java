@@ -1,7 +1,9 @@
 package com.thucnobita.autoapp.bots.instagram;
 
 import android.content.Context;
+import android.os.Build;
 
+import androidx.annotation.RequiresApi;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
@@ -63,6 +65,7 @@ public class Instagram {
         return mAutomatorService.click(selector);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     public void loginForDonwload(String username, String password, Callback.Login callback) {
         utils.loginForDonwload(username, password, callback);
     }

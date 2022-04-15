@@ -3,35 +3,30 @@ package com.thucnobita.autoapp.bots.instagram;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Environment;
 import android.os.StrictMode;
 import android.widget.EditText;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.instagram4j.instagram4j.IGClient;
 import com.github.instagram4j.instagram4j.exceptions.IGLoginException;
+import com.github.instagram4j.instagram4j.exceptions.IGResponseException;
+import com.github.instagram4j.instagram4j.responses.accounts.LoginResponse;
 import com.github.instagram4j.instagram4j.utils.IGChallengeUtils;
-import com.thucnobita.instaapi.IGConstants;
-import com.thucnobita.instaapi.IGRequest;
-import com.thucnobita.instaapi.InstaClient;
-import com.thucnobita.instaapi.model.media.VideoVersion;
-import com.thucnobita.instaapi.model.timeline.MediaOrAd;
-import com.thucnobita.instaapi.processor.AccountProcessor;
-import com.thucnobita.instaapi.response.*;
 
 import java.io.File;
-import java.util.List;
-import java.util.Scanner;
+import java.util.Objects;
 import java.util.concurrent.Callable;
-
-import io.reactivex.Observer;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.disposables.Disposable;
-import io.reactivex.functions.Consumer;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
+import java.util.function.Function;
 
 public class Utils {
     private Context context;
@@ -60,26 +55,49 @@ public class Utils {
         return new ObjectMapper().writeValueAsString(obj);
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.N)
     @SuppressLint("CheckResult")
-    public void loginForDonwload(String username, String password, Callback.Login callback){
+    public void loginForDonwload(String username, String password, Callback.Login callback) {
 
-        Callable<String> inputCodeTwoFactor = () -> showDialogInputCode("Login with two factor", "Enter your code?", "Confirm", "Cancel");
+//        Callable<String> inputCodeTwoFactor = () -> {
+//            AtomicBoolean isConfirm = new AtomicBoolean(false);
+//            final EditText txtCode = new EditText(context);
+//            new AlertDialog.Builder(context)
+//                    .setTitle("Login with two factor")
+//                    .setMessage("Enter your code?")
+//                    .setView(txtCode)
+//                    .setPositiveButton("Confirm", (dialog, which) -> {
+//                        isConfirm.set(true);
+//                        dialog.dismiss();
+//                    })
+//                    .setNegativeButton("Cancel", (dialog, which) -> {
+//                        isConfirm.set(true);
+//                        dialog.cancel();
+//                    })
+//                    .create()
+//                    .show();
+//            while (!isConfirm.get()){
+//                Thread.sleep(100);
+//            }
+//            return txtCode.getText().toString();
+//        };
         // handler for two factor login
-        IGClient.Builder.LoginHandler twoFactorHandler = (client, response) -> IGChallengeUtils.resolveTwoFactor(client, response, inputCodeTwoFactor);
-        Callable<String> inputCodeChallenge = () -> showDialogInputCode("Login with challenge", "Enter your code?", "Confirm", "Cancel");
+//        IGClient.Builder.LoginHandler twoFactorHandler = (client, response) -> IGChallengeUtils.resolveTwoFactor(client, response, callback.inputCode());
+        IGClient.Builder.LoginHandler twoFactorHandler = callback::inputCode;
+//        Callable<String> inputCodeChallenge = () -> showDialogInputCode("Login with challenge", "Enter your code?", "Confirm", "Cancel");
         // handler for challenge login
-        IGClient.Builder.LoginHandler challengeHandler = (client, response) -> IGChallengeUtils.resolveChallenge(client, response, inputCodeChallenge);
-
+//        IGClient.Builder.LoginHandler challengeHandler = (client, response) -> IGChallengeUtils.resolveChallenge(client, response, inputCodeChallenge);
         try{
             client = IGClient.builder().username(username).password(password)
-                    .onTwoFactor(twoFactorHandler)
-                    .onChallenge(challengeHandler)
-                    .login();
-            callback.successful("OK");
+                .onTwoFactor(twoFactorHandler)
+//                .onChallenge(challengeHandler)
+                  .login();
+            callback.successful("ok");
         }catch (IGLoginException igLoginException){
             callback.failed(igLoginException.getLoginResponse().getError_type());
         }
-//        InstaClient instaClient = new InstaClient(context, username, password);
+
+        //        InstaClient instaClient = new InstaClient(context, username, password);
 //        AccountProcessor accountProcessor = instaClient.accountProcessor;
 //        accountProcessor.login()
 //                .observeOn(AndroidSchedulers.mainThread())
@@ -143,23 +161,6 @@ public class Utils {
 //                });
     }
 
-    private String showDialogInputCode(String title, String message, String textLeft, String textRight){
-        final EditText txtCode = new EditText(context);
-        new AlertDialog.Builder(context)
-                .setTitle(title)
-                .setMessage(message)
-                .setView(txtCode)
-                .setPositiveButton(textLeft, (dialog, which) -> {
-                    dialog.dismiss();
-                })
-                .setNegativeButton(textRight, (dialog, which) -> {
-                    dialog.cancel();
-                })
-                .create()
-                .show();
-        return txtCode.getText().toString();
-    }
-
     private String getIdFromCode(String code) {
         String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
         long id = 0;
@@ -169,4 +170,5 @@ public class Utils {
         }
         return id + "";
     }
+
 }
