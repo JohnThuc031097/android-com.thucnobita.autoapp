@@ -12,6 +12,7 @@ import android.app.AlertDialog;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
@@ -47,12 +48,12 @@ public class MainActivity extends AppCompatActivity {
     private Spinner spnTypeBot;
     private LinearLayout grpInputcode;
 
-    private final ExecutorService executor = Executors.newFixedThreadPool(2);
+    private final ExecutorService executor = Executors.newFixedThreadPool(3);
     private AutomatorServiceImpl automatorService;
     private Instagram botInstagram;
     private boolean isConfirmInputCode = false;
+    private String inputCode = "";
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -82,14 +83,14 @@ public class MainActivity extends AppCompatActivity {
     private void init(){
         try{
             setLockScreen(false);
-            setText("[Init] [UiAutomator] ", false);
+            setText("[App] [Init] [UiAutomator] ", false);
             Class<?> clsInstrumentation = Class.forName("com.thucnobita.autoapp.InstrumentationImpl");
             Object obj = clsInstrumentation.newInstance();
             Method mGetInstrumentation = obj.getClass().getDeclaredMethod("getmInstrumentation");
             Instrumentation instrumentation = (Instrumentation) mGetInstrumentation.invoke(obj);
             automatorService = new AutomatorServiceImpl(instrumentation);
             setText("=> OK", true);
-            setText("[Init] [Bot] [Instagram] ", false);
+            setText("[App] [Init] [Bot] ", false);
             botInstagram = new Instagram(this, automatorService);
             setText("=> OK", true);
             setLockScreen(true);
@@ -114,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void launchPackage(String packageName) {
-        setText("[Launch] Start open app Instagram ", false);
+        setText("[App] [Action] Start open app Instagram ", false);
         UiDevice device = UiDevice.getInstance(automatorService.getInstrumentation());
 
         final Intent intent = getPackageManager().getLaunchIntentForPackage(packageName);
@@ -147,51 +148,38 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
     public void handleOnClickBtnLoginForDownload(View v) {
         setLockScreen(false);
-        String username = "johnthuc03101997";
-        String password = "John@Thuc@0310";
-//        String username = "rowing_fan";
-//        String password = "UuyJYd5!";
+//        String username = "johnthuc03101997";
+//        String password = "John@Thuc@0310";
+        String username = "rowing_fan";
+        String password = "UuyJYd5!";
         executor.submit(() -> {
             botInstagram.loginForDonwload(username, password, new Callback.Login(){
                 @Override
-                public LoginResponse inputCode(IGClient client, LoginResponse response) {
-                    String identifier = response.getTwo_factor_info().getTwo_factor_identifier();
-                    int retries = 3;
-                    do {
-                        try {
-                            runOnUiThread(() -> {
-                                grpInputcode.setVisibility(View.VISIBLE);
-                            });
-                            while(!isConfirmInputCode){
-                                Thread.sleep(1000);
-                            }
-
-                            while (!isConfirmInputCode){
-                                Thread.sleep(1000);
-                            }
-                            String code = txtInputCode.getText().toString();
-                            response = client.sendLoginRequest(code, identifier)
-                                    .exceptionally(t -> IGResponseException.IGFailedResponse.of(Objects.requireNonNull(t.getCause()), LoginResponse.class))
-                                    .join();
-                        } catch (Exception e) {
-                            setText("[Bot] [Instagram] [InputCode] [Result] " + e, true);
+                public Callable<String> getCode() {
+                    return () -> {
+                        runOnUiThread(() -> {
+                            grpInputcode.setVisibility(View.VISIBLE);
+                            txtInputCode.setShowSoftInputOnFocus(true);
+                        });
+                        while(!isConfirmInputCode){
+                            Thread.sleep(1000);
                         }
-                    } while (!response.getStatus().equals("ok") && --retries > 0);
-                    return response;
+                        isConfirmInputCode = false;
+                        return inputCode;
+                    };
                 }
 
                 @Override
-                public void successful(String message) {
-                    setText("[Bot] [Instagram] [Login] [Result] " + message, true);
+                public void success(String message) {
+                    setText("[Bot] [Instagram] [Login] " + message, true);
                     setLockScreen(true);
                 }
 
                 @Override
-                public void failed(String message) {
-                    setText("[Bot] [Instagram] [Login] [Result] " + message, true);
+                public void fail(String message) {
+                    setText("[Bot] [Instagram] [Login]" + message, true);
                     setLockScreen(true);
                     runOnUiThread(() -> {
                         btnGetLink.setEnabled(false);
@@ -204,6 +192,10 @@ public class MainActivity extends AppCompatActivity {
     public void handleOnClickBtnConfirmInputCode(View v){
         runOnUiThread(() -> {
             if(txtInputCode.length() == 6){
+                txtInputCode.clearFocus();
+                txtInputCode.setShowSoftInputOnFocus(false);
+                inputCode = txtInputCode.getText().toString();
+                txtInputCode.setText(null);
                 grpInputcode.setVisibility(View.GONE);
                 isConfirmInputCode = true;
             }
@@ -212,18 +204,20 @@ public class MainActivity extends AppCompatActivity {
 
     public void handleOnClickBtnGetLink(View v){
         setLockScreen(false);
-        botInstagram.getMediaByCode("CcKOS7iA3oq", new Callback.Media() {
-            @Override
-            public void successful(String linkVideo) {
-                setText("[Bot] [Instagram] [GetLink] [Result] " + linkVideo, true);
-                setLockScreen(true);
-            }
+        executor.submit(() -> {
+            botInstagram.getMediaByCode("CcKOS7iA3oq", new Callback.Media() {
+                @Override
+                public void success(String linkVideo) {
+                    setText("[Bot] [Instagram] [GetLink] " + linkVideo, true);
+                    setLockScreen(true);
+                }
 
-            @Override
-            public void failed(String message) {
-                setText("[Bot] [Instagram] [GetLink] [Result] " + message, true);
-                setLockScreen(true);
-            }
+                @Override
+                public void fail(String message) {
+                    setText("[Bot] [Instagram] [GetLink] " + message, true);
+                    setLockScreen(true);
+                }
+            });
         });
     }
 

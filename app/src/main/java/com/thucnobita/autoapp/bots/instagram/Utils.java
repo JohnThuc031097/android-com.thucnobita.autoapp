@@ -1,36 +1,38 @@
 package com.thucnobita.autoapp.bots.instagram;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Environment;
 import android.os.StrictMode;
-import android.widget.EditText;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.instagram4j.instagram4j.IGClient;
 import com.github.instagram4j.instagram4j.exceptions.IGLoginException;
-import com.github.instagram4j.instagram4j.exceptions.IGResponseException;
-import com.github.instagram4j.instagram4j.responses.accounts.LoginResponse;
+import com.github.instagram4j.instagram4j.models.media.VideoVersionsMeta;
+import com.github.instagram4j.instagram4j.models.media.timeline.TimelineVideoMedia;
+import com.github.instagram4j.instagram4j.requests.media.MediaInfoRequest;
+import com.github.instagram4j.instagram4j.requests.media.MediaPermalinkRequest;
 import com.github.instagram4j.instagram4j.utils.IGChallengeUtils;
+import com.github.instagram4j.instagram4j.utils.IGUtils;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.File;
-import java.util.Objects;
-import java.util.concurrent.Callable;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public class Utils {
     private Context context;
-    protected IGClient client;
+    private IGClient client = null;
+    private String pathSaveClient = Environment.getExternalStorageDirectory().getPath() + "/auto-app/sessions";
 
     public Utils(Context context){
         this.context = context;
@@ -55,120 +57,84 @@ public class Utils {
         return new ObjectMapper().writeValueAsString(obj);
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.N)
-    @SuppressLint("CheckResult")
+    public JsonNode string2Json(String str) throws JsonProcessingException {
+        return new ObjectMapper().readTree(str);
+    }
+
     public void loginForDonwload(String username, String password, Callback.Login callback) {
-
-//        Callable<String> inputCodeTwoFactor = () -> {
-//            AtomicBoolean isConfirm = new AtomicBoolean(false);
-//            final EditText txtCode = new EditText(context);
-//            new AlertDialog.Builder(context)
-//                    .setTitle("Login with two factor")
-//                    .setMessage("Enter your code?")
-//                    .setView(txtCode)
-//                    .setPositiveButton("Confirm", (dialog, which) -> {
-//                        isConfirm.set(true);
-//                        dialog.dismiss();
-//                    })
-//                    .setNegativeButton("Cancel", (dialog, which) -> {
-//                        isConfirm.set(true);
-//                        dialog.cancel();
-//                    })
-//                    .create()
-//                    .show();
-//            while (!isConfirm.get()){
-//                Thread.sleep(100);
-//            }
-//            return txtCode.getText().toString();
-//        };
-        // handler for two factor login
-//        IGClient.Builder.LoginHandler twoFactorHandler = (client, response) -> IGChallengeUtils.resolveTwoFactor(client, response, callback.inputCode());
-        IGClient.Builder.LoginHandler twoFactorHandler = callback::inputCode;
-//        Callable<String> inputCodeChallenge = () -> showDialogInputCode("Login with challenge", "Enter your code?", "Confirm", "Cancel");
-        // handler for challenge login
-//        IGClient.Builder.LoginHandler challengeHandler = (client, response) -> IGChallengeUtils.resolveChallenge(client, response, inputCodeChallenge);
-        try{
-            client = IGClient.builder().username(username).password(password)
-                .onTwoFactor(twoFactorHandler)
-//                .onChallenge(challengeHandler)
-                  .login();
-            callback.successful("ok");
-        }catch (IGLoginException igLoginException){
-            callback.failed(igLoginException.getLoginResponse().getError_type());
+        client = loadClientCookie(username, callback);
+        if(client != null){
+            callback.success("Ok");
+        }else {
+            IGClient.Builder.LoginHandler twoFactorHandler = (client, response) -> IGChallengeUtils.resolveTwoFactor(client, response, callback.getCode());
+            IGClient.Builder.LoginHandler challengeHandler = (client, response) -> IGChallengeUtils.resolveChallenge(client, response, callback.getCode());
+            try{
+                client = IGClient.builder()
+                        .username(username)
+                        .password(password)
+                        .onTwoFactor(twoFactorHandler)
+                        .onChallenge(challengeHandler)
+                        .login();
+                saveClientCookie(client, username, callback);
+                callback.success("Ok");
+            }catch (IGLoginException igLoginException){
+                callback.fail(igLoginException.getLoginResponse().getMessage());
+            }
         }
-
-        //        InstaClient instaClient = new InstaClient(context, username, password);
-//        AccountProcessor accountProcessor = instaClient.accountProcessor;
-//        accountProcessor.login()
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(igLoginResponse -> {
-//                    if (igLoginResponse.getStatus().equals(IGConstants.STATUS_SUCCESS)) {
-//                        callback.successful("OK");
-//                    }else if (igLoginResponse.getStatus().equals(IGConstants.STATUS_FAIL)){
-//                        if (igLoginResponse.isLock()){
-//                            callback.failed("Account is blocked");
-//                        }else if (igLoginResponse.isSpam()){
-//                            callback.failed("Account is spam");
-//                        }else if (igLoginResponse.isTwoFactorRequired()){
-//                            final EditText txtCodeTwoAuth = new EditText(context);
-//                            new AlertDialog.Builder(context)
-//                                    .setTitle("Login with Two Auth in Instagram")
-//                                    .setMessage("Enter your code? (8 digits)")
-//                                    .setView(txtCodeTwoAuth)
-//                                    .setPositiveButton("Confirm", (dialog, which) -> {
-//                                        if (txtCodeTwoAuth.getText().length() == 8) {
-//                                            accountProcessor.twoStepAuth(txtCodeTwoAuth.toString())
-//                                                    .subscribe(igLoginResponseTwoStepAuth -> {
-//                                                        if (igLoginResponseTwoStepAuth.getStatus().equals(IGConstants.STATUS_SUCCESS)) {
-//                                                            callback.successful("Ok");
-//                                                        }
-//                                                        if (igLoginResponse.getStatus().equals(IGConstants.STATUS_FAIL)) {
-//                                                            callback.failed(igLoginResponse.getMessage());
-//                                                        }
-//                                                    }, error -> {
-//                                                        callback.failed(error.getLocalizedMessage());
-//                                                    });
-//                                        }
-//                                        dialog.dismiss();
-//                                    })
-//                                    .setOnCancelListener(dialog -> {
-//                                        callback.failed("Cancel Login");
-//                                        dialog.dismiss();
-//                                    })
-//                                    .create()
-//                                    .show();
-//                        }else{
-//                            callback.failed(igLoginResponse.getMessage());
-//                        }
-//                    }
-//                }, error -> {
-//                    callback.failed(error.getLocalizedMessage());
-//                });
     }
 
-    @SuppressLint("CheckResult")
+    private IGClient loadClientCookie(String username, Callback.Login callback){
+        String pathSaveUser = pathSaveClient + "/" + username;
+        if(new File(pathSaveUser).exists()){
+            File clientFile = new File(pathSaveUser,"client.cer");
+            File cookieFile = new File(pathSaveUser,"cookie.cer");
+            if(clientFile.exists() && cookieFile.exists()){
+                try{
+                    return IGClient.deserialize(clientFile, cookieFile);
+                }catch (IOException | ClassNotFoundException e){
+                    e.printStackTrace();
+                    callback.fail("Load session error:" + e.getMessage());
+                }
+            }
+        }
+        return null;
+    }
+
+    private void saveClientCookie(IGClient client, String username, Callback.Login callback) {
+        String pathSaveUser = pathSaveClient + "/" + username;
+        if(!new File(pathSaveUser).exists()){
+            new File(pathSaveUser).mkdirs();
+        }
+        if(client != null){
+            if(client.isLoggedIn()){
+                try{
+                    client.serialize(new File(pathSaveUser, "client.cer"), new File(pathSaveUser,"cookie.cer"));
+                }catch (IOException e){
+                    e.printStackTrace();
+                    callback.fail("Save session error:" + e.getMessage());
+                }
+            }
+        }
+    }
+
     public void getMediaByCode(String code, Callback.Media callback){
-//        String id = getIdFromCode(code);
-//        InstaClient.getInstanceCurrentUser(context).mediaProcessor.getMediaById(id)
-//                .subscribe(igMediaResponse -> {
-//                    List<MediaOrAd> mediaOrAdList = igMediaResponse.getItems();
-//                    if(mediaOrAdList.get(0).getMediaType() == 2){
-//                        List<VideoVersion> videoVersionList = mediaOrAdList.get(0).getVideoVersions();
-//                        callback.successful(videoVersionList.get(0).getUrl() + "");
-//                    }
-//                }, error -> {
-//                    callback.failed(error.getLocalizedMessage());
-//                });
-    }
-
-    private String getIdFromCode(String code) {
-        String alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_";
-        long id = 0;
-        for (int i = 0; i < code.length(); i++) {
-            char c = code.charAt(i);
-            id = id * 64 + alphabet.indexOf(c);
-        }
-        return id + "";
+        new MediaInfoRequest(IGUtils.fromCode(code) + "")
+                .execute(client)
+                .thenAccept(mediaInfoResponse -> {
+                    try {
+                        JsonNode jsonMedia = string2Json(object2String(mediaInfoResponse));
+                        String linkVideo = jsonMedia.get("items").get(0).get("video_versions").get(0).get("url").toString();
+                        callback.success(linkVideo);
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                        callback.fail(e.getMessage());
+                    }
+                })
+                .exceptionally(throwable -> {
+                    callback.fail(throwable.getMessage());
+                    return null;
+                })
+                .join();
     }
 
 }

@@ -70,7 +70,8 @@
                 android:layout_marginLeft="5dp"
                 android:layout_weight="1"
                 android:onClick="handleOnClickBtnGetLink"
-                android:text="Get Link" />
+                android:text="Get Link"
+                android:textColor="#FFFFFF" />
         </LinearLayout>
 
         <TextView
@@ -96,6 +97,7 @@
                 android:layout_margin="5dp"
                 android:layout_weight="1"
                 android:ems="6"
+                android:hint="6-digit code"
                 android:inputType="numberDecimal" />
 
             <Button

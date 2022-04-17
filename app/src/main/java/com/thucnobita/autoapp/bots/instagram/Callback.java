@@ -9,12 +9,12 @@ import java.util.concurrent.Callable;
 
 public interface Callback {
     interface Login{
-        LoginResponse inputCode(IGClient client,LoginResponse response);
-        void successful(String message);
-        void failed(String message);
+        Callable<String> getCode();
+        void success(String message);
+        void fail(String message);
     }
     interface Media{
-        void successful(String linkVideo);
-        void failed(String message);
+        void success(String linkVideo);
+        void fail(String message);
     }
 }
