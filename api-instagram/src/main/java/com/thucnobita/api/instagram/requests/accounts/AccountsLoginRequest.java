@@ -38,10 +38,6 @@ public class AccountsLoginRequest extends IGPostRequest<LoginResponse> {
         @NonNull
         private String enc_password;
         private int login_attempt_account = 0;
-
-        public LoginPayload(String username, String password) {
-
-        }
     }
 
 }
