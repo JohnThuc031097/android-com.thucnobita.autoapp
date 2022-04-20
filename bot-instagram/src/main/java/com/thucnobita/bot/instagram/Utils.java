@@ -50,17 +50,17 @@ public class Utils {
         UiDevice device = UiDevice.getInstance(instrumentation);
 
         final Intent intent = context.getPackageManager().getLaunchIntentForPackage(packageName);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_NEW_TASK |Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
         context.startActivity(intent);
 
         device.wait(Until.hasObject(By.pkg(packageName).depth(0)), timeWait);
     }
 
-    private String object2String(Object obj) throws JsonProcessingException {
+    public String object2String(Object obj) throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(obj);
     }
 
-    private JsonNode string2Json(String str) throws JsonProcessingException {
+    public JsonNode string2Json(String str) throws JsonProcessingException {
         return new ObjectMapper().readTree(str);
     }
 

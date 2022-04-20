@@ -90,10 +90,10 @@ public class MainActivity extends AppCompatActivity {
             setText("[Init] [Error] " + e, true);
         }
         // Debug Test
-        botInstagram = new Instagram(automatorService);
-        utilsInstagram = new Utils();
-        setLockScreen(true);
-        btnGetLink.setEnabled(false);
+//        botInstagram = new Instagram(automatorService);
+//        utilsInstagram = new Utils();
+//        setLockScreen(true);
+//        btnGetLink.setEnabled(false);
     }
 
     protected void askPermissions() {
@@ -105,21 +105,26 @@ public class MainActivity extends AppCompatActivity {
         requestPermissions(permissions, requestCode);
     }
 
-    private void startBot(int index) throws UiObjectNotFoundException {
-        switch (index){
-            case 0: // Instagram
-                setText("[Bot] [Instagram] [Package] Open ", false);
-                utilsInstagram.launchPackage(
-                        this,
-                        automatorService.getInstrumentation(),
-                        "com.instagram.android",
-                        5000L);
-                setText("=> Ok", false);
-                setText("[Bot] [Instagram] [Action] Click Profile", false);
-                boolean clicked = (boolean) botInstagram.action(Instagram.ACTION.CLICK_PROFILE, null);
-                setText("=> " + clicked, true);
-            default:
-                break;
+    private void startBot(int index) {
+        try {
+            switch (index){
+                case 0: // Instagram
+                    setText("[Bot] [Instagram] [Package] Open ", false);
+                    utilsInstagram.launchPackage(
+                            this,
+                            automatorService.getInstrumentation(),
+                            "com.instagram.android",
+                            5000L);
+                    setText("=> Ok", false);
+                    setText("[Bot] [Instagram] [Action] Get count videos of saved", false);
+                    String info = (String) botInstagram.action(Instagram.ACTION.get_videos_of_saved, null);
+                    setText("=> " + info, true);
+                default:
+                    break;
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            setText("\n[Bot] [Instagram] [Action] " + e, true);
         }
     }
 
