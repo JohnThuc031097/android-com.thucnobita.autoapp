@@ -1,18 +1,14 @@
 package com.thucnobita.api.instagram;
 
-import android.util.Log;
-
 import java.io.File;
 import java.io.IOException;
 import java.io.ObjectStreamException;
 import java.io.Serializable;
-import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-import com.thucnobita.api.instagram.actions.IGClientActions;
 import com.thucnobita.api.instagram.exceptions.ExceptionallyHandler;
 import com.thucnobita.api.instagram.exceptions.IGLoginException;
 import com.thucnobita.api.instagram.exceptions.IGResponseException.IGFailedResponse;
@@ -53,7 +49,6 @@ public class IGClient implements Serializable {
     @Accessors(chain = true)
     private transient OkHttpClient httpClient;
     private transient String sessionId;
-    private transient IGClientActions actions;
     @Accessors(chain = true)
     private transient ExceptionallyHandler exceptionallyHandler;
     private String deviceId;
@@ -64,7 +59,7 @@ public class IGClient implements Serializable {
     @Setter(AccessLevel.PRIVATE)
     private Profile selfProfile;
     @Accessors(chain = true)
-    private IGDevice device = IGAndroidDevice.GOOD_DEVICES[0];
+    private IGDevice device;
 
     public IGClient(String username, String password) {
         this(username, password, IGUtils.defaultHttpClientBuilder().build());
@@ -73,6 +68,7 @@ public class IGClient implements Serializable {
     public IGClient(String username, String password, OkHttpClient client) {
         this.username = username;
         this.password = password;
+        this.device = IGAndroidDevice.GOOD_DEVICES[new Random().nextInt(2)];
         this.guid = IGUtils.randomUuid();
         this.phoneId = IGUtils.randomUuid();
         this.deviceId = IGUtils.generateDeviceId(username, password);
@@ -82,7 +78,6 @@ public class IGClient implements Serializable {
 
     private void initializeDefaults() {
         this.sessionId = IGUtils.randomUuid();
-        this.actions = new IGClientActions(this);
         this.exceptionallyHandler = new ExceptionallyHandler() {
 
             @Override
@@ -91,10 +86,6 @@ public class IGClient implements Serializable {
             }
 
         };
-    }
-
-    public IGClientActions actions() {
-        return this.actions;
     }
 
     public CompletableFuture<LoginResponse> sendLoginRequest() {
@@ -236,30 +227,16 @@ public class IGClient implements Serializable {
         private String username;
         private String password;
         private OkHttpClient client;
-        private IGDevice device = IGAndroidDevice.GOOD_DEVICES[0];
+        private IGDevice device;
         private LoginHandler onChallenge;
         private LoginHandler onTwoFactor;
         private BiConsumer<IGClient, LoginResponse> onLogin = (client, login) -> {
         };
 
         public IGClient build() {
+            this.device = IGAndroidDevice.GOOD_DEVICES[new Random().nextInt(2)];
             return new IGClient(username, password, Optional.ofNullable(client)
                     .orElseGet(() -> IGUtils.defaultHttpClientBuilder().build())).setDevice(device);
-        }
-
-        public IGClient simulatedLogin(Consumer<List<CompletableFuture<?>>> postLoginResponses)
-                throws IGLoginException {
-            IGClient client = build();
-            client.actions.simulate().preLoginFlow().forEach(CompletableFuture::join);
-            onLogin.accept(client, performLogin(client));
-            postLoginResponses.accept(client.actions.simulate().postLoginFlow());
-
-            return client;
-        }
-
-        public IGClient simulatedLogin() throws IGLoginException {
-            return simulatedLogin((res) -> {
-            });
         }
 
         public IGClient login() throws IGLoginException {
@@ -295,8 +272,8 @@ public class IGClient implements Serializable {
         }
 
         @FunctionalInterface
-        public static interface LoginHandler {
-            public LoginResponse accept(IGClient client, LoginResponse t);
+        public interface LoginHandler {
+            LoginResponse accept(IGClient client, LoginResponse t);
         }
 
     }

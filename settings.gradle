@@ -16,3 +16,4 @@ rootProject.name = "Auto App"
 include ':app'
 include ':uiautomator'
 include ':api-instagram'
+include ':bot-instagram'

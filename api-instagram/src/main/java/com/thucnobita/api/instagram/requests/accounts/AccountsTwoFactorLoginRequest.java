@@ -15,9 +15,9 @@ public class AccountsTwoFactorLoginRequest extends IGPostRequest<LoginResponse> 
     @NonNull
     private String username, password, code, identifier;
 
-    public AccountsTwoFactorLoginRequest(String username, String encryptPassword, String code, String identifier) {
-        super();
-    }
+//    public AccountsTwoFactorLoginRequest(String username, String encryptPassword, String code, String identifier) {
+//        super();
+//    }
 
     @Override
     public IGPayload getPayload(IGClient client) {

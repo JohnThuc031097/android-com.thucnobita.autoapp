@@ -20,7 +20,7 @@ public class IGChallengeUtils {
     private IGChallengeUtils() {}
 
     private static LoginResponse handleException(Throwable t) {
-        Log.i(t.getCause().toString());
+        log.info(t.getCause().toString());
         return IGFailedResponse.of(t.getCause(), LoginResponse.class);
     }
 
@@ -68,7 +68,7 @@ public class IGChallengeUtils {
         if (name.equalsIgnoreCase("select_verify_method")) {
             // verify by phone or email
             selectVerifyMethod(client, challenge, stateResponse.getStep_data().getChoice(), false);
-            Log.i("select_verify_method option security code sent to "
+            log.info("select_verify_method option security code sent to "
                     + (stateResponse.getStep_data().getChoice().equals("1") ? "email" : "phone"));
             do {
                 try {
@@ -76,12 +76,12 @@ public class IGChallengeUtils {
                             .exceptionally(IGChallengeUtils::handleException)
                             .join();
                 } catch (Exception e) {
-                    Log.i(e.toString());
+                    log.info(e.toString());
                 }
             } while (!response.getStatus().equalsIgnoreCase("ok") && --retries > 0);
         } else if (name.equalsIgnoreCase("delta_login_review")) {
             // 'This was me' option
-            Log.i("delta_login_review option sent choice 0");
+            log.info("delta_login_review option sent choice 0");
             response = selectVerifyMethodDelta(client, challenge, "0", false)
                     .exceptionally(IGChallengeUtils::handleException)
                     .join();
@@ -117,7 +117,7 @@ public class IGChallengeUtils {
                         .exceptionally(IGChallengeUtils::handleException)
                         .join();
             } catch (Exception e) {
-                Log.i(e.toString());
+                log.info(e.toString());
             }
         } while (!response.getStatus().equals("ok") && --retries > 0);
 

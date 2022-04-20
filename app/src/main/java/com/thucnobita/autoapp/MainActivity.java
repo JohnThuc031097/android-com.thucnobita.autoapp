@@ -1,19 +1,10 @@
 package com.thucnobita.autoapp;
 
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.test.uiautomator.By;
-import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObjectNotFoundException;
-import androidx.test.uiautomator.Until;
 
 import android.annotation.SuppressLint;
-import android.app.AlertDialog;
 import android.app.Instrumentation;
-import android.content.Context;
-import android.content.Intent;
-import android.graphics.Color;
-import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -23,23 +14,16 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.github.instagram4j.instagram4j.IGClient;
-import com.github.instagram4j.instagram4j.exceptions.IGResponseException;
-import com.github.instagram4j.instagram4j.responses.accounts.LoginResponse;
-import com.github.instagram4j.instagram4j.utils.IGChallengeUtils;
-import com.thucnobita.autoapp.bots.instagram.Callback;
-import com.thucnobita.autoapp.bots.instagram.Instagram;
+import com.thucnobita.bot.instagram.*;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 
 import java.lang.reflect.Method;
-import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Function;
 
 public class MainActivity extends AppCompatActivity {
+    // UI
     private TextView txtOutput;
     private EditText txtInputCode;
     private Button btnRunBot;
@@ -50,9 +34,11 @@ public class MainActivity extends AppCompatActivity {
 
     private final ExecutorService executor = Executors.newFixedThreadPool(3);
     private AutomatorServiceImpl automatorService;
-    private Instagram botInstagram;
     private boolean isConfirmInputCode = false;
     private String inputCode = "";
+    // Bots
+    private Instagram botInstagram;
+    private Utils utilsInstagram;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -83,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
     private void init(){
         try{
             setLockScreen(false);
+
             setText("[App] [Init] [UiAutomator] ", false);
             Class<?> clsInstrumentation = Class.forName("com.thucnobita.autoapp.InstrumentationImpl");
             Object obj = clsInstrumentation.newInstance();
@@ -90,9 +77,12 @@ public class MainActivity extends AppCompatActivity {
             Instrumentation instrumentation = (Instrumentation) mGetInstrumentation.invoke(obj);
             automatorService = new AutomatorServiceImpl(instrumentation);
             setText("=> OK", true);
+
             setText("[App] [Init] [Bot] ", false);
-            botInstagram = new Instagram(this, automatorService);
-            setText("=> OK", true);
+            botInstagram = new Instagram(automatorService);
+            utilsInstagram = new Utils();
+            setText("=> Instagram OK", true);
+
             setLockScreen(true);
             btnGetLink.setEnabled(false);
         }catch (Exception e){
@@ -100,7 +90,8 @@ public class MainActivity extends AppCompatActivity {
             setText("[Init] [Error] " + e, true);
         }
         // Debug Test
-        botInstagram = new Instagram(this, automatorService);
+        botInstagram = new Instagram(automatorService);
+        utilsInstagram = new Utils();
         setLockScreen(true);
         btnGetLink.setEnabled(false);
     }
@@ -114,22 +105,22 @@ public class MainActivity extends AppCompatActivity {
         requestPermissions(permissions, requestCode);
     }
 
-    private void launchPackage(String packageName) {
-        setText("[App] [Action] Start open app Instagram ", false);
-        UiDevice device = UiDevice.getInstance(automatorService.getInstrumentation());
-
-        final Intent intent = getPackageManager().getLaunchIntentForPackage(packageName);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_NEW_TASK |Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-        startActivity(intent);
-
-        device.wait(Until.hasObject(By.pkg(packageName).depth(0)), 5000L);
-        setText("=> OK", true);
-    }
-
-    private void startBotInstagram() throws UiObjectNotFoundException {
-        setText("[Bot] [Instagram] [Action] Click Profile", false);
-        boolean clicked = (boolean) botInstagram.action(Instagram.ACTION.CLICK_PROFILE, null);
-        setText("=> " + clicked, true);
+    private void startBot(int index) throws UiObjectNotFoundException {
+        switch (index){
+            case 0: // Instagram
+                setText("[Bot] [Instagram] [Package] Open ", false);
+                utilsInstagram.launchPackage(
+                        this,
+                        automatorService.getInstrumentation(),
+                        "com.instagram.android",
+                        5000L);
+                setText("=> Ok", false);
+                setText("[Bot] [Instagram] [Action] Click Profile", false);
+                boolean clicked = (boolean) botInstagram.action(Instagram.ACTION.CLICK_PROFILE, null);
+                setText("=> " + clicked, true);
+            default:
+                break;
+        }
     }
 
     @SuppressLint("SetTextI18n")
@@ -155,7 +146,7 @@ public class MainActivity extends AppCompatActivity {
         String username = "rowing_fan";
         String password = "UuyJYd5!";
         executor.submit(() -> {
-            botInstagram.loginForDonwload(username, password, new Callback.Login(){
+            utilsInstagram.login(username, password, new Callback.Login(){
                 @Override
                 public Callable<String> getCode() {
                     return () -> {
@@ -205,7 +196,7 @@ public class MainActivity extends AppCompatActivity {
     public void handleOnClickBtnGetLink(View v){
         setLockScreen(false);
         executor.submit(() -> {
-            botInstagram.getMediaByCode("CcKOS7iA3oq", new Callback.Media() {
+            utilsInstagram.getLinkVideoByCode("CcKOS7iA3oq", new Callback.Media() {
                 @Override
                 public void success(String linkVideo) {
                     setText("[Bot] [Instagram] [GetLink] " + linkVideo, true);
@@ -224,10 +215,7 @@ public class MainActivity extends AppCompatActivity {
     public void handleOnClickBtnRunBot(View v){
         setLockScreen(false);
         try {
-            launchPackage("com.instagram.android");
-            if(spnTypeBot.getSelectedItemPosition() == 0){ // 0= Instagram
-                startBotInstagram();
-            }
+            startBot(spnTypeBot.getSelectedItemPosition());
         }catch (Exception e){
             e.printStackTrace();
             setText("[Bot] [Instagram] [Run] [Error]:" + e, true);

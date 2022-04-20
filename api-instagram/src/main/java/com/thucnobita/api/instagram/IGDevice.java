@@ -10,4 +10,5 @@ public class IGDevice implements Serializable {
     private final String userAgent;
     private final String capabilities;
     private final Map<String, Object> deviceMap;
+
 }

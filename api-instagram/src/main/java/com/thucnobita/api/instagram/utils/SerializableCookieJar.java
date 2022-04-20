@@ -23,7 +23,7 @@ public class SerializableCookieJar implements CookieJar, Serializable {
 
     @Override
     public List<Cookie> loadForRequest(HttpUrl url) {
-        return map.getOrDefault(url.host(), new ArrayList<SerializableCookie>()).stream()
+        return map.getOrDefault(url.host(), new ArrayList<>()).stream()
                 .map(c -> c.cookie)
                 .collect(Collectors.toList());
     }

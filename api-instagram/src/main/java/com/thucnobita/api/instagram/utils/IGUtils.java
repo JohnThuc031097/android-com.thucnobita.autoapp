@@ -1,18 +1,19 @@
 package com.thucnobita.api.instagram.utils;
 
+import android.os.Build;
+import android.util.Base64;
+
 import java.io.ByteArrayOutputStream;
 import java.net.URLEncoder;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.security.KeyFactory;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SecureRandom;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.Arrays;
-import java.util.Base64;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
@@ -182,12 +183,12 @@ public class IGUtils {
 
         // Encrypt random key
         String decoded_pub_key =
-                new String(Base64.getDecoder().decode(enc_pub_key), StandardCharsets.UTF_8)
+                new String(Base64.decode(enc_pub_key, Base64.DEFAULT))
                         .replaceAll("-(.*)-|\n", "");
         Cipher rsa_cipher = Cipher.getInstance("RSA/ECB/PKCS1PADDING");
         rsa_cipher.init(Cipher.ENCRYPT_MODE, KeyFactory.getInstance("RSA")
                 .generatePublic(
-                        new X509EncodedKeySpec(Base64.getDecoder().decode(decoded_pub_key))));
+                        new X509EncodedKeySpec(Base64.decode(decoded_pub_key, Base64.DEFAULT))));
         byte[] rand_key_encrypted = rsa_cipher.doFinal(rand_key);
 
         // Encrypt password
@@ -210,7 +211,7 @@ public class IGUtils {
         out.write(Arrays.copyOfRange(password_encrypted, 0, password_encrypted.length - 16));
 
         return String.format("#PWD_INSTAGRAM:%s:%s:%s", "4", time,
-                Base64.getEncoder().encodeToString(out.toByteArray()));
+                Base64.encodeToString(out.toByteArray(), Base64.NO_WRAP));
     }
 
     public static OkHttpClient.Builder defaultHttpClientBuilder() {
