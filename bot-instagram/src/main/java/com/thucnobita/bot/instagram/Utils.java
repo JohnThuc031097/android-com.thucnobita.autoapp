@@ -46,16 +46,6 @@ public class Utils {
         return intentVideo;
     }
 
-    public void launchPackage(Context context, Instrumentation instrumentation, String packageName, long timeWait) {
-        UiDevice device = UiDevice.getInstance(instrumentation);
-
-        final Intent intent = context.getPackageManager().getLaunchIntentForPackage(packageName);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
-        context.startActivity(intent);
-
-        device.wait(Until.hasObject(By.pkg(packageName).depth(0)), timeWait);
-    }
-
     public String object2String(Object obj) throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(obj);
     }

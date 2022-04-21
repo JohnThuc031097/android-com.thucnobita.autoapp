@@ -104,7 +104,7 @@ public class Selector {
         if ((getMask() & Selector.MASK_CHECKED) > 0)
             s = s.checked(isChecked());
         if ((getMask() & Selector.MASK_CLASSNAME) > 0)
-            s = s.className(getClassName()); // API level 16 should support it.... wrong in Android Java Doc
+            s = s.className(getClassName());
         if ((getMask() & Selector.MASK_CLASSNAMEMATCHES) > 0)
             s = s.classNameMatches(getClassNameMatches());
         if ((getMask() & Selector.MASK_CLICKABLE) > 0)

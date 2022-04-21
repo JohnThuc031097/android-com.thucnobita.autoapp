@@ -1,10 +1,14 @@
 package com.thucnobita.autoapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.test.uiautomator.By;
+import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObjectNotFoundException;
+import androidx.test.uiautomator.Until;
 
 import android.annotation.SuppressLint;
 import android.app.Instrumentation;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -18,6 +22,8 @@ import com.thucnobita.bot.instagram.*;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -38,7 +44,8 @@ public class MainActivity extends AppCompatActivity {
     private String inputCode = "";
     // Bots
     private Instagram botInstagram;
-    private Utils utilsInstagram;
+    private com.thucnobita.bot.instagram.Utils utilsInstagram;
+    private Utils utils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,30 +77,23 @@ public class MainActivity extends AppCompatActivity {
         try{
             setLockScreen(false);
 
-            setText("[App] [Init] [UiAutomator] ", false);
+            setText("[App] [Init] ", true);
             Class<?> clsInstrumentation = Class.forName("com.thucnobita.autoapp.InstrumentationImpl");
             Object obj = clsInstrumentation.newInstance();
             Method mGetInstrumentation = obj.getClass().getDeclaredMethod("getmInstrumentation");
             Instrumentation instrumentation = (Instrumentation) mGetInstrumentation.invoke(obj);
             automatorService = new AutomatorServiceImpl(instrumentation);
-            setText("=> OK", true);
-
-            setText("[App] [Init] [Bot] ", false);
+            utils = new Utils(getApplicationContext(), automatorService);
+            setText("=> UiAutomator OK", true);
             botInstagram = new Instagram(automatorService);
-            utilsInstagram = new Utils();
-            setText("=> Instagram OK", true);
-
+            utilsInstagram = new com.thucnobita.bot.instagram.Utils();
+            setText("=> Bot Instagram OK", true);
             setLockScreen(true);
             btnGetLink.setEnabled(false);
         }catch (Exception e){
             e.printStackTrace();
             setText("[Init] [Error] " + e, true);
         }
-        // Debug Test
-//        botInstagram = new Instagram(automatorService);
-//        utilsInstagram = new Utils();
-//        setLockScreen(true);
-//        btnGetLink.setEnabled(false);
     }
 
     protected void askPermissions() {
@@ -109,16 +109,24 @@ public class MainActivity extends AppCompatActivity {
         try {
             switch (index){
                 case 0: // Instagram
-                    setText("[Bot] [Instagram] [Package] Open ", false);
-                    utilsInstagram.launchPackage(
-                            this,
-                            automatorService.getInstrumentation(),
-                            "com.instagram.android",
-                            5000L);
-                    setText("=> Ok", false);
-                    setText("[Bot] [Instagram] [Action] Get count videos of saved", false);
-                    String info = (String) botInstagram.action(Instagram.ACTION.get_videos_of_saved, null);
-                    setText("=> " + info, true);
+                    setText("[Bot] [Instagram] ", false);
+                    launchPackage("com.instagram.android",5000L);
+                    setText("=> Open app => Ok", true);
+                    botInstagram.action(Instagram.ACTION.click_profile, null);
+                    setText("=> Click profile => Ok", true);
+                    botInstagram.action(Instagram.ACTION.click_options, null);
+                    setText("=> Click options => Ok", true);
+                    botInstagram.action(Instagram.ACTION.click_saved, null);
+                    setText("=> Click saved => Ok", true);
+                    int totalVideo = (int) botInstagram.action(Instagram.ACTION.get_count_videos_saved, null);
+                    setText("=> Total videos saved:" + totalVideo, true);
+                    int indexVideo = 0;
+                    if(totalVideo > 1){
+                        indexVideo = new Random().nextInt(totalVideo);
+                        indexVideo = indexVideo > 0 ? (indexVideo -1) : 0;
+                    }
+                    boolean clickVideo = (boolean) botInstagram.action(Instagram.ACTION.click_video_saved, indexVideo);
+                    setText("=> Click video " + clickVideo + " => " +clickVideo, true);
                 default:
                     break;
             }
@@ -126,6 +134,16 @@ public class MainActivity extends AppCompatActivity {
             e.printStackTrace();
             setText("\n[Bot] [Instagram] [Action] " + e, true);
         }
+    }
+
+    private void launchPackage(String packageName, long timeWait) {
+        UiDevice device = UiDevice.getInstance(this.automatorService.getInstrumentation());
+
+        final Intent intent = getPackageManager().getLaunchIntentForPackage(packageName);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
+
+        device.wait(Until.hasObject(By.pkg(packageName).depth(0)), timeWait);
     }
 
     @SuppressLint("SetTextI18n")

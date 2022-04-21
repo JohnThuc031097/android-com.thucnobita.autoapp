@@ -8,28 +8,43 @@ import com.thucnobita.uiautomator.ObjInfo;
 import com.thucnobita.uiautomator.Selector;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 class Data {
     private final AutomatorServiceImpl mAutomatorService;
-    private Utils utils;
+    private final Utils utils;
 
     public Data(AutomatorServiceImpl automatorService){
         this.mAutomatorService = automatorService;
         this.utils = new Utils();
     }
 
-    public String get_videos_of_saved() throws UiObjectNotFoundException, JsonProcessingException {
-        Selector selectorParent = new Selector(mAutomatorService.getInstrumentation());
-        selectorParent.setPackageName(Configs.PACKAGE_NAME);
-        selectorParent.setClassName("androidx.recyclerview.widget.RecyclerView");
-        selectorParent.setResourceId(Configs.PACKAGE_NAME + ":id/clips_tab_grid_recyclerview");
-        selectorParent.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID);
-        Selector selectorChild = new Selector(mAutomatorService.getInstrumentation());
-        selectorChild.setPackageName(Configs.PACKAGE_NAME);
-        selectorChild.setClassName("android.widget.RelativeLayout");
-        selectorChild.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME);
-        return utils.object2String(mAutomatorService.objInfo(selectorParent));
+    public ArrayList<String> get_videos_saved() {
+        ArrayList<String> idObjs = new ArrayList<>();
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Configs.PACKAGE_NAME);
+        selector.setClassName("android.widget.Button");
+        selector.setResourceId(Configs.PACKAGE_NAME + ":id/image_button");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID);
+        ObjInfo[] objInfos = mAutomatorService.objInfoOfAllInstances(selector);
+        if(objInfos.length > 0){
+            for (ObjInfo objInfo: objInfos) {
+                Selector selectorChild = new Selector(mAutomatorService.getInstrumentation());
+                selectorChild.setPackageName(objInfo.getPackageName());
+                selectorChild.setClassName(objInfo.getClassName());
+                selectorChild.setDescription(objInfo.getContentDescription());
+                selectorChild.setMask(
+                        Selector.MASK_PACKAGENAME |
+                        Selector.MASK_CLASSNAME |
+                        Selector.MASK_DESCRIPTION);
+                idObjs.add(mAutomatorService.getUiObject(selectorChild));
+            }
+        }
+        return idObjs;
     }
 
     public List<Selector> selector_saved(){
@@ -57,6 +72,13 @@ class Data {
         selector.setPackageName(Configs.PACKAGE_NAME);
         selector.setClassName("android.widget.ImageView");
         selector.setResourceId(Configs.PACKAGE_NAME + ":id/profile_tab_icon_view");
+        selector.setDescription("Saved posts");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID | Selector.MASK_DESCRIPTION);
+        selectors.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Configs.PACKAGE_NAME);
+        selector.setClassName("android.view.View");
+        selector.setResourceId(Configs.PACKAGE_NAME + ":id/save_collection_tabs_bottom_divider");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID);
         selectors.add(selector);
         return selectors;

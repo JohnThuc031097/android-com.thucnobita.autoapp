@@ -1211,7 +1211,7 @@ public class AutomatorServiceImpl implements AutomatorService {
         uiObjects.put(key, obj);
         // schedule the clear timer.
         Timer clearTimer = new Timer();
-        clearTimer.schedule(new ClearUiObjectTimerTask(key), 60 * 1000);
+        clearTimer.schedule(new ClearUiObjectTimerTask(key), 60 * 24 * 1000);
         return key;
     }
 
