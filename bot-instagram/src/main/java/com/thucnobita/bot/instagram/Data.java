@@ -21,14 +21,23 @@ public class Data {
         selector.setPackageName(Configs.PACKAGE_NAME);
         selector.setClassName("android.widget.FrameLayout");
         selector.setResourceId(Configs.PACKAGE_NAME + ":id/media_content_location");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID);
+        if(!mAutomatorService.exist(selector)) {
+            selector.setResourceId(Configs.PACKAGE_NAME + ":id/zoomable_view_container");
+        }
+        selectors.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Configs.PACKAGE_NAME);
+        selector.setClassName("android.widget.ImageView");
+        selector.setResourceId(Configs.PACKAGE_NAME + ":id/play_pause_button");
+        selector.setDescription("Play or pause");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID | Selector.MASK_DESCRIPTION);
         selectors.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Configs.PACKAGE_NAME);
         selector.setClassName("android.widget.ImageView");
         selector.setResourceId(Configs.PACKAGE_NAME + ":id/more_button");
-        selector.setDescription("More");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID | Selector.MASK_DESCRIPTION);
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID);
         selectors.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Configs.PACKAGE_NAME);
@@ -39,10 +48,27 @@ public class Data {
         selectors.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Configs.PACKAGE_NAME);
+        selector.setClassName("android.widget.FrameLayout");
+        selector.setResourceId(Configs.PACKAGE_NAME + ":id/layout_container_main");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID);
+        selectors.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Configs.PACKAGE_NAME);
         selector.setClassName("android.widget.Button");
         selector.setResourceId(Configs.PACKAGE_NAME + ":id/action_sheet_row_text_view");
         selector.setText("Remove from saved");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID | Selector.MASK_TEXT);
+        selectors.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Configs.PACKAGE_NAME);
+        selector.setResourceId(Configs.PACKAGE_NAME + ":id/back_button");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        selectors.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Configs.PACKAGE_NAME);
+        selector.setResourceId(Configs.PACKAGE_NAME + ":id/action_bar_button_back");
+        selector.setDescription("Back");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID | Selector.MASK_DESCRIPTION);
         selectors.add(selector);
         return selectors;
     }
@@ -55,14 +81,22 @@ public class Data {
         selector.setResourceId(Configs.PACKAGE_NAME + ":id/image_button");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID);
         ObjInfo[] objInfos = mAutomatorService.objInfoOfAllInstances(selector);
+        int tryAgain = 3;
+        while (tryAgain-- > 0 && objInfos.length == 0){
+            try {
+                Thread.sleep(1000L);
+                objInfos = mAutomatorService.objInfoOfAllInstances(selector);
+            }catch (Exception e){
+                tryAgain = 0;
+            }
+        }
         if(objInfos.length > 0){
             for (ObjInfo objInfo: objInfos) {
                 Selector selectorChild = new Selector(mAutomatorService.getInstrumentation());
                 selectorChild.setPackageName(objInfo.getPackageName());
                 selectorChild.setClassName(objInfo.getClassName());
                 selectorChild.setDescription(objInfo.getContentDescription());
-                selectorChild.setResourceId(objInfo.getResourceName());
-                selectorChild.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
+                selectorChild.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_DESCRIPTION);
                 idObjs.add(mAutomatorService.getUiObject(selectorChild));
             }
         }

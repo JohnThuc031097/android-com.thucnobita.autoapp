@@ -111,25 +111,26 @@ public class MainActivity extends AppCompatActivity {
         requestPermissions(permissions, requestCode);
     }
 
-    @SuppressLint("ShowToast")
     private void startBot(int index) {
         try {
             if(index == 0){ // Instagram
-                Calendar c = Calendar.getInstance();
-                @SuppressLint("SimpleDateFormat") SimpleDateFormat dateformat = new SimpleDateFormat("hh:mm:ss.SSS");
                 setText("+ [Bot] [Instagram] [Action]", true);
                 Method mtLaunchPackage = clsDeviceApp.getDeclaredMethod("launchPackage", String.class,long.class);
                 mtLaunchPackage.invoke(objDeviceApp,"com.instagram.android", 5);
                 setText("=> Open app => Ok", true);
+                Thread.sleep(1000);
                 mInstagram.action(Instagram.ACTION.click_profile);
                 setText("=> Click profile => Ok", true);
+                Thread.sleep(1000);
                 mInstagram.action(Instagram.ACTION.click_options);
                 setText("=> Click options => Ok", true);
+                Thread.sleep(1000);
                 mInstagram.action(Instagram.ACTION.click_saved);
-                setText("=> [" + dateformat.format(c.getTime()) + "] Click saved => Ok", true);
+                setText("=> Click saved => Ok", true);
+                Thread.sleep(1000);
                 ArrayList<String> idObjVideos = (ArrayList<String>) mInstagram.action(Instagram.ACTION.get_videos_saved);
                 if(idObjVideos.size() > 0){
-                    setText("=> [" + dateformat.format(c.getTime()) + "] Total videos saved:" + idObjVideos.size(), true);
+                    setText("=> Total videos saved:" + idObjVideos.size(), true);
                     int totalVideo = idObjVideos.size();
                     int indexVideo = 0;
                     if(totalVideo > 1){
@@ -138,11 +139,13 @@ public class MainActivity extends AppCompatActivity {
                     }
                     boolean clickVideo = (boolean) mInstagram.action(Instagram.ACTION.click_video_saved, indexVideo, idObjVideos);
                     setText("=> Click video " + indexVideo + " => " + clickVideo, true);
+                    Thread.sleep(1000);
                     mInstagram.action(Instagram.ACTION.click_get_link_video_saved);
                     setText("=> Click get link video => Ok", true);
-                    automatorService.pressKey("back");
-                    automatorService.pressKey("back");
-                    setText("=> Press key [back] => Ok", true);
+                    Thread.sleep(1000);
+                    runOnUiThread(() -> {
+                        setText("=> Link: " + automatorService.getClipboard(), true);
+                    });
                 }
             }
         }catch (Exception e){

@@ -29,45 +29,72 @@ public class Instagram {
     }
 
     public Object action(ACTION action, Object ...value) throws UiObjectNotFoundException {
-        switch (action){
-            case click_profile:
-                return click(data.get_selector_profile(), 5);
-            case click_options:
-                return click(data.get_selector_options(), 5);
-            case click_saved:
-                ArrayList<Selector> listSelectorSaved = data.get_selector_saved();
-                if(click(listSelectorSaved.get(0), 5)){
-                    if(click(listSelectorSaved.get(1), 2)){
-                        return waitGone(listSelectorSaved.get(2), 10);
+        try {
+            switch (action) {
+                case click_profile:
+                    return click(data.get_selector_profile(), 5);
+                case click_options:
+                    return click(data.get_selector_options(), 5);
+                case click_saved:
+                    ArrayList<Selector> listSelectorSaved = data.get_selector_saved();
+                    if (click(listSelectorSaved.get(0), 5)) {
+                        Thread.sleep(1000);
+                        if (click(listSelectorSaved.get(1), 2)) {
+                            return waitGone(listSelectorSaved.get(2), 10);
+                        }
                     }
-                }
-                return false;
-            case click_video_saved:
-                if(value.length > 0){
-                    int index = (int) value[0];
-                    ArrayList<String> idObjs = (ArrayList<String>) value[1];
-                    if(index >= 0 && index < idObjs.size()){
-                        return click(idObjs.get(index), 5);
+                    return false;
+                case click_video_saved:
+                    if (value.length > 0) {
+                        int index = (int) value[0];
+                        ArrayList<String> idObjs = (ArrayList<String>) value[1];
+                        if (index >= 0 && index < idObjs.size()) {
+                            return click(idObjs.get(index), 5);
+                        }
                     }
-                }
-                return false;
-            case click_get_link_video_saved:
-                ArrayList<Selector> listSelectorLinkVideoSaved = data.get_link_video_saved();
-                if(click(listSelectorLinkVideoSaved.get(0), 5)){
-                    if(click(listSelectorLinkVideoSaved.get(1), 2)){
-                        if(click(listSelectorLinkVideoSaved.get(2), 2)){
-                            if(click(listSelectorLinkVideoSaved.get(1), 2)){
-                                return click(listSelectorLinkVideoSaved.get(3), 2);
+                    return false;
+                case click_get_link_video_saved:
+                    ArrayList<Selector> listSelectorLinkVideoSaved = data.get_link_video_saved();
+                    if (click(listSelectorLinkVideoSaved.get(0), 5)) { // Select video
+                        Thread.sleep(1000);
+                        if (automatorService.exist(listSelectorLinkVideoSaved.get(1))) {
+                            click(listSelectorLinkVideoSaved.get(1), 5);
+                            Thread.sleep(1500);
+                        }
+                        if (click(listSelectorLinkVideoSaved.get(2), 5)) { // Show dialog
+                            if (click(listSelectorLinkVideoSaved.get(3), 5)) { // 1.Copy link
+                                Thread.sleep(2000);
+                                if (click(listSelectorLinkVideoSaved.get(4), 5)) { // Again Select video
+                                    if (click(listSelectorLinkVideoSaved.get(2), 5)) { // Show dialog
+                                        if (click(listSelectorLinkVideoSaved.get(5), 5)) { // 2.Remove video
+                                            Thread.sleep(2000);
+                                            if (click(listSelectorLinkVideoSaved.get(4), 5)) { // Again Select video
+                                                if (click(listSelectorLinkVideoSaved.get(6), 5)) { // Back 1
+                                                    Thread.sleep(500);
+                                                    return click(listSelectorLinkVideoSaved.get(7), 5); // Back 2
+                                                } else {
+                                                    if (click(listSelectorLinkVideoSaved.get(7), 5)) { // Back 2
+                                                        Thread.sleep(500);
+                                                        return click(listSelectorLinkVideoSaved.get(7), 5); // Back 2
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
                             }
                         }
                     }
-                }
-                return false;
-            case get_videos_saved:
-                return data.get_videos_saved();
-            default:
-                return null;
+                    return false;
+                case get_videos_saved:
+                    return data.get_videos_saved();
+                default:
+                    return null;
+            }
+        } catch (InterruptedException e) {
+
         }
+        return null;
     }
 
     private boolean click(Selector selector, long timeWaitExist) throws UiObjectNotFoundException {

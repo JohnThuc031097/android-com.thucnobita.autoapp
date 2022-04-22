@@ -1,6 +1,6 @@
 [Permission]
 adb -d shell appops set com.thucnobita.autoapp SYSTEM_ALERT_WINDOW allow
-adb -d shell pm grant com.thucnobita.autoapp android.permission.INJECT_EVENTS
+adb -d shell pm grant com.thucnobita.autoapp android.permission.READ_LOGS
 adb shell am force-stop com.thucnobita.autoapp
 
 [Build APK]
