@@ -106,6 +106,8 @@ public class AutomatorServiceImpl implements AutomatorService {
 
     public UiDevice getUiDevice() { return device; }
 
+    public ClipboardManager getClipboardManager() { return clipboard; }
+
     public void setToastListener(boolean enabled) {
         if (enabled) {
             // default uiAutomation serviceInfo.eventTypes is -1

@@ -20,10 +20,10 @@ public class Data {
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Configs.PACKAGE_NAME);
         selector.setClassName("android.widget.FrameLayout");
-        selector.setResourceId(Configs.PACKAGE_NAME + ":id/media_content_location");
+        selector.setResourceId(Configs.PACKAGE_NAME + ":id/zoomable_view_container");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID);
         if(!mAutomatorService.exist(selector)) {
-            selector.setResourceId(Configs.PACKAGE_NAME + ":id/zoomable_view_container");
+            selector.setResourceId(Configs.PACKAGE_NAME + ":id/media_content_location");
         }
         selectors.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());

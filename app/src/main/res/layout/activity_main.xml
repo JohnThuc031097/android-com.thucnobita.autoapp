@@ -23,6 +23,16 @@
             android:textSize="24sp"
             android:textStyle="bold" />
 
+        <TextView
+            android:id="@+id/txtLabelClipboard"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:text="Clipboard"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:visibility="gone" />
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -46,22 +56,6 @@
                 android:onClick="handleOnClickBtnRunBot"
                 android:text="Run" />
 
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
-            android:orientation="horizontal">
-
-            <Button
-                android:id="@+id/btnGetClipboard"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="handleOnClickBtnGetClipboard"
-                android:text="Get Clipboard" />
         </LinearLayout>
 
         <LinearLayout

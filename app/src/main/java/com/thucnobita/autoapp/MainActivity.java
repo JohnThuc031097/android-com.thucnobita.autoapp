@@ -10,8 +10,10 @@ import android.content.Context;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.RemoteException;
 import android.view.View;
+import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -37,19 +39,18 @@ import java.util.concurrent.Executors;
 public class MainActivity extends AppCompatActivity {
     // UI
     private TextView txtOutput;
+    private TextView txtLabelClipboard;
     private EditText txtInputCode;
     private Button btnRunBot;
-    private Button btnGetClipboard;
     private Button btnLoginForDownload;
     private Button btnGetLink;
     private Spinner spnTypeBot;
     private LinearLayout grpInputcode;
 
     private final ExecutorService executor = Executors.newFixedThreadPool(3);
-    private ClipboardManager clipboard;
-    private String textClipboard;
     private boolean isConfirmInputCode = false;
     private String inputCode = "";
+    private String textClipboard = null;
     // Class DeviceApp
     private Object objDeviceApp;
     private Class<?> clsDeviceApp;
@@ -67,9 +68,9 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         txtOutput = findViewById(R.id.txtOutput);
+        txtLabelClipboard = findViewById(R.id.txtLabelClipboard);
         txtInputCode = findViewById(R.id.txtInputCode);
         btnRunBot = findViewById(R.id.btnRunBot);
-        btnGetClipboard = findViewById(R.id.btnGetClipboard);
         btnLoginForDownload = findViewById(R.id.btnLoginForDownload);
         btnGetLink = findViewById(R.id.btnGetLink);
         spnTypeBot = findViewById(R.id.spnTypeBot);
@@ -82,18 +83,6 @@ public class MainActivity extends AppCompatActivity {
 //        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 //        StrictMode.setThreadPolicy(policy);
         grpInputcode.setVisibility(View.GONE);
-        clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        clipboard.addPrimaryClipChangedListener(() -> {
-            ClipData clip = clipboard.getPrimaryClip();
-            if (clip != null && clip.getItemCount() > 0 && clipboard.getPrimaryClip().getItemAt(0).getText() != null) {
-                String textClipboardNew = clipboard.getPrimaryClip().getItemAt(0).getText().toString();
-                if(!textClipboard.equals(textClipboardNew)){
-                    textClipboard = textClipboardNew;
-                }
-            }
-
-            // Access your context here using YourActivityName.this
-        });
         // Show Dialog Permission
         askPermissions();
         // Init load class UiAutomator
@@ -133,37 +122,31 @@ public class MainActivity extends AppCompatActivity {
     private void startBot(int index) {
         try {
             if(index == 0){ // Instagram
-                setText("+ [Bot] [Instagram] [Action]", true);
-                Method mtLaunchPackage = clsDeviceApp.getDeclaredMethod("launchPackage", String.class,long.class);
-                mtLaunchPackage.invoke(objDeviceApp,"com.instagram.android", 5);
-                setText("=> Open app => Ok", true);
-                Thread.sleep(1000);
-                mInstagram.action(Instagram.ACTION.click_profile);
-                setText("=> Click profile => Ok", true);
-                Thread.sleep(1000);
-                mInstagram.action(Instagram.ACTION.click_options);
-                setText("=> Click options => Ok", true);
-                Thread.sleep(1000);
-                mInstagram.action(Instagram.ACTION.click_saved);
-                setText("=> Click saved => Ok", true);
-                Thread.sleep(1000);
-                ArrayList<String> idObjVideos = (ArrayList<String>) mInstagram.action(Instagram.ACTION.get_videos_saved);
-                if(idObjVideos.size() > 0){
-                    setText("=> Total videos saved:" + idObjVideos.size(), true);
-                    int totalVideo = idObjVideos.size();
-                    int indexVideo = 0;
-                    if(totalVideo > 1){
-                        indexVideo = new Random().nextInt(totalVideo);
-                        indexVideo = indexVideo > 0 ? (indexVideo -1) : 0;
+                com.thucnobita.autoapp.bot.Instagram bot = new com.thucnobita.autoapp.bot.Instagram(mInstagram);
+                bot.step1(new com.thucnobita.autoapp.utils.Callback.Log() {
+                    @Override
+                    public void begin() {
+                        setText("=> Begin Step 1", true);
                     }
-                    boolean clickVideo = (boolean) mInstagram.action(Instagram.ACTION.click_video_saved, indexVideo, idObjVideos);
-                    setText("=> Click video " + indexVideo + " => " + clickVideo, true);
-                    Thread.sleep(1000);
-                    mInstagram.action(Instagram.ACTION.click_get_link_video_saved);
-                    setText("=> Click get link video => Ok", true);
-                    Thread.sleep(2000);
-                    setText("=> Link: " + textClipboard, true);
-                }
+
+                    @Override
+                    public void write(String message) {
+                        setText(message, true);
+                    }
+
+                    @Override
+                    public void done() {
+                        txtLabelClipboard.forceLayout();
+                        setText("=> Link: " + textClipboard, true);
+                        setText("=> End Step 1", true);
+                    }
+
+                    @Override
+                    public void error(String message) {
+                        setText("=> Error: " + message, true);
+                        setText("=> End Step 1", true);
+                    }
+                });
             }
         }catch (Exception e){
             e.printStackTrace();
@@ -191,14 +174,6 @@ public class MainActivity extends AppCompatActivity {
             btnLoginForDownload.setEnabled(lock);
             btnGetLink.setEnabled(lock);
         });
-    }
-
-    private String getClipboard() {
-        final ClipData clip = clipboard.getPrimaryClip();
-        if (clip != null && clip.getItemCount() > 0 && clipboard.getPrimaryClip().getItemAt(0).getText() != null) {
-            return clipboard.getPrimaryClip().getItemAt(0).getText().toString();
-        }
-        return null;
     }
 
     public void handleOnClickBtnLoginForDownload(View v) {
@@ -285,8 +260,12 @@ public class MainActivity extends AppCompatActivity {
         setLockScreen(true);
     }
 
-    public void handleOnClickBtnGetClipboard(View v){
-        setText(textClipboard, true);
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if(hasFocus){
+            textClipboard = automatorService.getClipboard();
+        }
     }
 
 }
