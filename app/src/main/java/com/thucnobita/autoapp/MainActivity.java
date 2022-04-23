@@ -4,6 +4,8 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.Instrumentation;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.icu.text.SimpleDateFormat;
 import android.icu.util.Calendar;
@@ -37,18 +39,22 @@ public class MainActivity extends AppCompatActivity {
     private TextView txtOutput;
     private EditText txtInputCode;
     private Button btnRunBot;
+    private Button btnGetClipboard;
     private Button btnLoginForDownload;
     private Button btnGetLink;
     private Spinner spnTypeBot;
     private LinearLayout grpInputcode;
 
     private final ExecutorService executor = Executors.newFixedThreadPool(3);
+    private ClipboardManager clipboard;
+    private String textClipboard;
     private boolean isConfirmInputCode = false;
     private String inputCode = "";
     // Class DeviceApp
     private Object objDeviceApp;
     private Class<?> clsDeviceApp;
     private AutomatorServiceImpl automatorService;
+
     // Bots
     // ==== Instagram ====
     private Instagram mInstagram;
@@ -63,6 +69,7 @@ public class MainActivity extends AppCompatActivity {
         txtOutput = findViewById(R.id.txtOutput);
         txtInputCode = findViewById(R.id.txtInputCode);
         btnRunBot = findViewById(R.id.btnRunBot);
+        btnGetClipboard = findViewById(R.id.btnGetClipboard);
         btnLoginForDownload = findViewById(R.id.btnLoginForDownload);
         btnGetLink = findViewById(R.id.btnGetLink);
         spnTypeBot = findViewById(R.id.spnTypeBot);
@@ -75,6 +82,18 @@ public class MainActivity extends AppCompatActivity {
 //        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
 //        StrictMode.setThreadPolicy(policy);
         grpInputcode.setVisibility(View.GONE);
+        clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        clipboard.addPrimaryClipChangedListener(() -> {
+            ClipData clip = clipboard.getPrimaryClip();
+            if (clip != null && clip.getItemCount() > 0 && clipboard.getPrimaryClip().getItemAt(0).getText() != null) {
+                String textClipboardNew = clipboard.getPrimaryClip().getItemAt(0).getText().toString();
+                if(!textClipboard.equals(textClipboardNew)){
+                    textClipboard = textClipboardNew;
+                }
+            }
+
+            // Access your context here using YourActivityName.this
+        });
         // Show Dialog Permission
         askPermissions();
         // Init load class UiAutomator
@@ -142,10 +161,8 @@ public class MainActivity extends AppCompatActivity {
                     Thread.sleep(1000);
                     mInstagram.action(Instagram.ACTION.click_get_link_video_saved);
                     setText("=> Click get link video => Ok", true);
-                    Thread.sleep(1000);
-                    runOnUiThread(() -> {
-                        setText("=> Link: " + automatorService.getClipboard(), true);
-                    });
+                    Thread.sleep(2000);
+                    setText("=> Link: " + textClipboard, true);
                 }
             }
         }catch (Exception e){
@@ -174,6 +191,14 @@ public class MainActivity extends AppCompatActivity {
             btnLoginForDownload.setEnabled(lock);
             btnGetLink.setEnabled(lock);
         });
+    }
+
+    private String getClipboard() {
+        final ClipData clip = clipboard.getPrimaryClip();
+        if (clip != null && clip.getItemCount() > 0 && clipboard.getPrimaryClip().getItemAt(0).getText() != null) {
+            return clipboard.getPrimaryClip().getItemAt(0).getText().toString();
+        }
+        return null;
     }
 
     public void handleOnClickBtnLoginForDownload(View v) {
@@ -258,6 +283,10 @@ public class MainActivity extends AppCompatActivity {
             setText("[Bot] [Instagram] [Run] [Error]:" + e, true);
         }
         setLockScreen(true);
+    }
+
+    public void handleOnClickBtnGetClipboard(View v){
+        setText(textClipboard, true);
     }
 
 }

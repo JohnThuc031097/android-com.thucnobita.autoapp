@@ -70,11 +70,9 @@ public class Instagram {
                                             Thread.sleep(2000);
                                             if (click(listSelectorLinkVideoSaved.get(4), 5)) { // Again Select video
                                                 if (click(listSelectorLinkVideoSaved.get(6), 5)) { // Back 1
-                                                    Thread.sleep(500);
                                                     return click(listSelectorLinkVideoSaved.get(7), 5); // Back 2
                                                 } else {
                                                     if (click(listSelectorLinkVideoSaved.get(7), 5)) { // Back 2
-                                                        Thread.sleep(500);
                                                         return click(listSelectorLinkVideoSaved.get(7), 5); // Back 2
                                                     }
                                                 }

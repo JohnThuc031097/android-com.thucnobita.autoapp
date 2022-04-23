@@ -83,7 +83,9 @@ public class AutomatorServiceImpl implements AutomatorService {
         device = UiDevice.getInstance(mInstrumentation);
         touchController = new TouchController(mInstrumentation);
 
-        handler.post(() -> clipboard = (ClipboardManager) mInstrumentation.getTargetContext().getSystemService(Context.CLIPBOARD_SERVICE));
+        handler.post(() -> {
+            clipboard = (ClipboardManager) mInstrumentation.getTargetContext().getSystemService(Context.CLIPBOARD_SERVICE);
+        });
 
         // Reset Configurator Wait Timeout
         Configurator configurator = Configurator.getInstance();
