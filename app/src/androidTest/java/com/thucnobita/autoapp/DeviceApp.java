@@ -29,7 +29,11 @@ public class DeviceApp {
         UiDevice device = UiDevice.getInstance(getInstrumentation());
 
         final Intent intent = mContext.getPackageManager().getLaunchIntentForPackage(packageName);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                Intent.FLAG_ACTIVITY_NEW_TASK |
+                Intent.FLAG_ACTIVITY_NO_ANIMATION |
+                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        intent.setPackage(packageName);
         mContext.startActivity(intent);
 
         device.wait(Until.hasObject(By.pkg(packageName).depth(0)), timeWait * 1000L);

@@ -1,5 +1,7 @@
 package com.thucnobita.autoapp.instagram;
 
+import android.os.RemoteException;
+
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
@@ -15,6 +17,28 @@ public class Actions {
     public Actions(AutomatorServiceImpl automatorService){
         this.automatorService = automatorService;
         this.selectors = new Data(automatorService);
+    }
+
+    public boolean click_recent_app(String name) throws RemoteException, UiObjectNotFoundException {
+        return automatorService.pressKey("recent") && click(selectors.app_current(name), 5);
+    }
+
+    public boolean post_feed(String content) throws UiObjectNotFoundException, InterruptedException, RemoteException {
+        ArrayList<Selector> arrSelector = selectors.post_feed();
+        if(click(arrSelector.get(0), 5)){
+            if(click(arrSelector.get(1), 60)){
+                if(waitExist(arrSelector.get(2), 30)){
+                    if(automatorService.setText(arrSelector.get(2), content)){
+                        Thread.sleep(2500);
+                        automatorService.pressKey("back");
+                        if(click(arrSelector.get(3), 2)){
+                            return waitExist(arrSelector.get(4), 60 * 10);
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
     public boolean click_profile() throws UiObjectNotFoundException {
@@ -36,16 +60,16 @@ public class Actions {
         return false;
     }
 
-    public boolean click_video_saved(boolean randIndex) throws UiObjectNotFoundException {
+    public boolean click_video_saved() throws UiObjectNotFoundException {
         ArrayList<String> idObjs = selectors.videos_saved();
-        if(idObjs.size() > 0) {
-            int index = randIndex ? (new Random().nextInt(idObjs.size()-1)) : 0;
-            return click(idObjs.get(index), 5);
+        int index = 0;
+        if(idObjs.size() > 1) {
+            index = (new Random().nextInt(idObjs.size()-1));
         }
-        return false;
+        return click(idObjs.get(index), 5);
     }
 
-    public boolean click_copy_and_remove_link_video_saved() throws UiObjectNotFoundException, InterruptedException {
+    public boolean click_copy_link_video_saved() throws UiObjectNotFoundException, InterruptedException {
         ArrayList<Selector> listSelectorLinkVideoSaved = selectors.copy_remove_link_video_saved();
         if (click(listSelectorLinkVideoSaved.get(0), 5)) { // Select video
             Thread.sleep(1000);
@@ -59,16 +83,17 @@ public class Actions {
                     if (click(listSelectorLinkVideoSaved.get(4), 5)) { // Again Select video
                         if (click(listSelectorLinkVideoSaved.get(2), 5)) { // Show dialog
                             if (click(listSelectorLinkVideoSaved.get(5), 5)) { // 2.Remove video
-                                Thread.sleep(2000);
-                                if (click(listSelectorLinkVideoSaved.get(4), 5)) { // Again Select video
-                                    if (click(listSelectorLinkVideoSaved.get(6), 5)) { // Back 1
-                                        return click(listSelectorLinkVideoSaved.get(7), 5); // Back 2
-                                    } else {
-                                        if (click(listSelectorLinkVideoSaved.get(7), 5)) { // Back 2
-                                            return click(listSelectorLinkVideoSaved.get(7), 5); // Back 2
-                                        }
-                                    }
-                                }
+                                Thread.sleep(1000);
+//                                if (click(listSelectorLinkVideoSaved.get(4), 5)) { // Again Select video
+//                                    if (click(listSelectorLinkVideoSaved.get(6), 5)) { // Back 1
+//                                        return click(listSelectorLinkVideoSaved.get(7), 5); // Back 2
+//                                    } else {
+//                                        if (click(listSelectorLinkVideoSaved.get(7), 5)) { // Back 2
+//                                            return click(listSelectorLinkVideoSaved.get(7), 5); // Back 2
+//                                        }
+//                                    }
+//                                }
+                                return click(listSelectorLinkVideoSaved.get(4), 5);
                             }
                         }
                     }

@@ -1,10 +1,12 @@
 package com.thucnobita.autoapp;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import android.annotation.SuppressLint;
 import android.app.Instrumentation;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.RemoteException;
 import android.view.View;
@@ -17,11 +19,10 @@ import android.widget.TextView;
 
 import com.thucnobita.autoapp.instagram.Bot;
 import com.thucnobita.autoapp.instagram.Callback;
-import com.thucnobita.autoapp.instagram.Config;
+import com.thucnobita.autoapp.instagram.Constants;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 
 import java.io.File;
-import java.net.URLEncoder;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -119,21 +120,21 @@ public class MainActivity extends AppCompatActivity {
                 if(index == 0){ // Instagram
                     setText("[Bot] [Instagram] [Action]", true);
                     clsDeviceApp.getDeclaredMethod("launchPackage", String.class, long.class)
-                            .invoke(objDeviceApp, Config.PACKAGE_NAME, 5);
+                            .invoke(objDeviceApp, Constants.PACKAGE_NAME_INSTAGRAM, 5);
                     setText("=> Open app Ok", true);
                     botInstagram.get_link_video();
+                    setText("=> Copy link video Ok", true);
                     txtLabelClipboard.forceLayout();
-                    setText("=> Get link video Ok", true);
                 }
             }catch (Exception e){
                 e.printStackTrace();
                 setText("=> Error: " + e, true);
-                try {
-                    automatorService.pressKey("recent");
-                }catch (RemoteException re){
-                    re.printStackTrace();
-                    setText("=> Error: " + re, true);
-                }
+            }
+            try {
+                botInstagram.recent_app();
+            }catch (RemoteException | UiObjectNotFoundException re){
+                re.printStackTrace();
+                setText("=> Error: " + re, true);
             }
         });
     }
@@ -240,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
     public void handleOnClickBtnDownload(View v){
         executor.submit(() -> {
             try {
-                fileVideo = botInstagram.download_video(textLinkVideo + ".mp4", textCodeVideo, textUsername);
+                fileVideo = botInstagram.download_video(textLinkVideo, textCodeVideo, textUsername);
                 setText("[Bot] [Instagram] [DonwloadVideo] " + fileVideo.getAbsolutePath(), true);
             }catch (Exception e){
                 setText("[Bot] [Instagram] [DonwloadVideo] " + e, true);
@@ -251,11 +252,22 @@ public class MainActivity extends AppCompatActivity {
     public void handleOnClickBtnUpload(View v){
         executor.submit(() -> {
            try {
-                botInstagram.upload_video(fileVideo);
+               Intent intentShare = botInstagram.share_video(this, fileVideo);
+               startActivity(intentShare);
+               setText("[Bot] [Instagram] [ShareVideo] Ok", true);
+               Thread.sleep(1000);
+               botInstagram.post_feed(textClipboard);
                setText("[Bot] [Instagram] [UploadVideo] Ok", true);
            }catch (Exception e){
+               e.printStackTrace();
                setText("[Bot] [Instagram] [UploadVideo] " + e, true);
            }
+            try {
+                botInstagram.recent_app();
+            }catch (RemoteException | UiObjectNotFoundException re){
+                re.printStackTrace();
+                setText("=> Error: " + re, true);
+            }
         });
     }
 
