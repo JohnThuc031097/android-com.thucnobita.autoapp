@@ -4,63 +4,55 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
 import android.app.Instrumentation;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.Context;
-import android.icu.text.SimpleDateFormat;
-import android.icu.util.Calendar;
 import android.os.Bundle;
-import android.os.Handler;
 import android.os.RemoteException;
 import android.view.View;
-import android.view.Window;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.thucnobita.bot.instagram.Instagram;
-import com.thucnobita.bot.instagram.*;
+import com.thucnobita.autoapp.instagram.Bot;
+import com.thucnobita.autoapp.instagram.Callback;
+import com.thucnobita.autoapp.instagram.Config;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 
-import java.lang.reflect.Method;
-import java.sql.Time;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.TimeZone;
-import java.util.Timer;
+import java.io.File;
+import java.net.URLEncoder;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
-    // UI
     private TextView txtOutput;
     private TextView txtLabelClipboard;
     private EditText txtInputCode;
     private Button btnRunBot;
-    private Button btnLoginForDownload;
+    private Button btnLogin;
     private Button btnGetLink;
+    private Button btnDownload;
+    private Button btnUpload;
     private Spinner spnTypeBot;
     private LinearLayout grpInputcode;
 
-    private final ExecutorService executor = Executors.newFixedThreadPool(3);
+    private final ExecutorService executor = Executors.newFixedThreadPool(6);
+    private String textUsername = "rowing_fan";
+    private String textPassword = "UuyJYd5!";
     private boolean isConfirmInputCode = false;
-    private String inputCode = "";
+    private String inputCode = null;
     private String textClipboard = null;
+    private String textLinkVideo = null;
+    private String textCodeVideo = null;
+    private File fileVideo = null;
     // Class DeviceApp
     private Object objDeviceApp;
     private Class<?> clsDeviceApp;
     private AutomatorServiceImpl automatorService;
-
-    // Bots
-    // ==== Instagram ====
-    private Instagram mInstagram;
-    private com.thucnobita.bot.instagram.Utils utilsBotInstagram;
-
+    // BOT
+    private Bot botInstagram = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,8 +63,10 @@ public class MainActivity extends AppCompatActivity {
         txtLabelClipboard = findViewById(R.id.txtLabelClipboard);
         txtInputCode = findViewById(R.id.txtInputCode);
         btnRunBot = findViewById(R.id.btnRunBot);
-        btnLoginForDownload = findViewById(R.id.btnLoginForDownload);
+        btnLogin = findViewById(R.id.btnLogin);
         btnGetLink = findViewById(R.id.btnGetLink);
+        btnDownload = findViewById(R.id.btnDownload);
+        btnUpload = findViewById(R.id.btnUpload);
         spnTypeBot = findViewById(R.id.spnTypeBot);
         grpInputcode = findViewById(R.id.grpInputCode);
         // Add Item into Spinner
@@ -91,19 +85,19 @@ public class MainActivity extends AppCompatActivity {
 
     private void init(){
         try{
-            setLockScreen(false);
             setText("+ [App] [Init] ", true);
             Class<?> clsInstrumentation = Class.forName("com.thucnobita.autoapp.DeviceApp");
-            objDeviceApp = clsInstrumentation.getConstructor(Context.class).newInstance(getApplicationContext());
+            objDeviceApp = clsInstrumentation
+                    .getConstructor(Context.class)
+                    .newInstance(getApplicationContext());
             clsDeviceApp = objDeviceApp.getClass();
-            Instrumentation instrumentation = (Instrumentation) clsDeviceApp.getDeclaredMethod("getInstrumentation").invoke(objDeviceApp);
+            Instrumentation instrumentation = (Instrumentation) clsDeviceApp
+                    .getDeclaredMethod("getInstrumentation")
+                    .invoke(objDeviceApp);
             automatorService = new AutomatorServiceImpl(instrumentation);
             setText("=> UiAutomator OK", true);
-            mInstagram = new Instagram(automatorService);
-            utilsBotInstagram = new com.thucnobita.bot.instagram.Utils();
+            botInstagram = new Bot(automatorService);
             setText("=> Bot Instagram OK", true);
-            setLockScreen(true);
-            btnGetLink.setEnabled(false);
         }catch (Exception e){
             e.printStackTrace();
             setText("=> Error: " + e, true);
@@ -120,44 +114,28 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void startBot(int index) {
-        try {
-            if(index == 0){ // Instagram
-                com.thucnobita.autoapp.bot.Instagram bot = new com.thucnobita.autoapp.bot.Instagram(mInstagram);
-                bot.step1(new com.thucnobita.autoapp.utils.Callback.Log() {
-                    @Override
-                    public void begin() {
-                        setText("=> Begin Step 1", true);
-                    }
-
-                    @Override
-                    public void write(String message) {
-                        setText(message, true);
-                    }
-
-                    @Override
-                    public void done() {
-                        txtLabelClipboard.forceLayout();
-                        setText("=> Link: " + textClipboard, true);
-                        setText("=> End Step 1", true);
-                    }
-
-                    @Override
-                    public void error(String message) {
-                        setText("=> Error: " + message, true);
-                        setText("=> End Step 1", true);
-                    }
-                });
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-            setText("=> Error: " + e, true);
+        executor.submit(() -> {
             try {
-                automatorService.pressKey("recent");
-            }catch (Exception e1){
-                e1.printStackTrace();
+                if(index == 0){ // Instagram
+                    setText("[Bot] [Instagram] [Action]", true);
+                    clsDeviceApp.getDeclaredMethod("launchPackage", String.class, long.class)
+                            .invoke(objDeviceApp, Config.PACKAGE_NAME, 5);
+                    setText("=> Open app Ok", true);
+                    botInstagram.get_link_video();
+                    txtLabelClipboard.forceLayout();
+                    setText("=> Get link video Ok", true);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
                 setText("=> Error: " + e, true);
+                try {
+                    automatorService.pressKey("recent");
+                }catch (RemoteException re){
+                    re.printStackTrace();
+                    setText("=> Error: " + re, true);
+                }
             }
-        }
+        });
     }
 
     @SuppressLint("SetTextI18n")
@@ -167,23 +145,26 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    private void setLockScreen(boolean lock){
-        runOnUiThread(() -> {
-            spnTypeBot.setEnabled(lock);
-            btnRunBot.setEnabled(lock);
-            btnLoginForDownload.setEnabled(lock);
-            btnGetLink.setEnabled(lock);
-        });
+    @Override
+    public void onWindowFocusChanged(boolean hasFocus) {
+        super.onWindowFocusChanged(hasFocus);
+        if(hasFocus && automatorService != null){
+            textClipboard = automatorService.getClipboard();
+        }
     }
 
-    public void handleOnClickBtnLoginForDownload(View v) {
-        setLockScreen(false);
-//        String username = "johnthuc03101997";
-//        String password = "John@Thuc@0310";
-        String username = "rowing_fan";
-        String password = "UuyJYd5!";
+    public void handleOnClickBtnRunBot(View v){
+        try {
+            startBot(spnTypeBot.getSelectedItemPosition());
+        }catch (Exception e){
+            e.printStackTrace();
+            setText("[Bot] [Instagram] [Run] [Error]:" + e, true);
+        }
+    }
+
+    public void handleOnClickBtnLogin(View v) {
         executor.submit(() -> {
-            utilsBotInstagram.login(username, password, new Callback.Login(){
+            botInstagram.login(textUsername, textPassword, new Callback.Login(){
                 @Override
                 public Callable<String> getCode() {
                     return () -> {
@@ -202,16 +183,11 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void success(String message) {
                     setText("[Bot] [Instagram] [Login] " + message, true);
-                    setLockScreen(true);
                 }
 
                 @Override
                 public void fail(String message) {
                     setText("[Bot] [Instagram] [Login]" + message, true);
-                    setLockScreen(true);
-                    runOnUiThread(() -> {
-                        btnGetLink.setEnabled(false);
-                    });
                 }
             });
         });
@@ -231,41 +207,56 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void handleOnClickBtnGetLink(View v){
-        setLockScreen(false);
         executor.submit(() -> {
-            utilsBotInstagram.getLinkVideoByCode("CcKOS7iA3oq", new Callback.Media() {
-                @Override
-                public void success(String linkVideo) {
-                    setText("[Bot] [Instagram] [GetLink] " + linkVideo, true);
-                    setLockScreen(true);
-                }
+            try {
+                // Code "CcKOS7iA3oq"
+                String urlLink = textClipboard.split("\\?")[0];
+                String[] codeVideo = urlLink.split("/");
+                textCodeVideo = codeVideo[codeVideo.length-1];
+                botInstagram.getLinkVideoByCode(textCodeVideo, new Callback.Media() {
+                    @Override
+                    public void success(String linkVideo) {
+                        try {
+                            textLinkVideo = linkVideo;
+                            setText("[Bot] [Instagram] [GetLink] Ok", true);
+                        }catch (Exception e){
+                            e.printStackTrace();
+                            setText("[Bot] [Instagram] [GetLink] " + e, true);
+                        }
+                    }
 
-                @Override
-                public void fail(String message) {
-                    setText("[Bot] [Instagram] [GetLink] " + message, true);
-                    setLockScreen(true);
-                }
-            });
+                    @Override
+                    public void fail(String message) {
+                        setText("[Bot] [Instagram] [GetLink] " + message, true);
+                    }
+                });
+            }catch (Exception e){
+                e.printStackTrace();
+                setText("[Bot] [Instagram] [GetLink] " + e, true);
+            }
         });
     }
 
-    public void handleOnClickBtnRunBot(View v){
-        setLockScreen(false);
-        try {
-            startBot(spnTypeBot.getSelectedItemPosition());
-        }catch (Exception e){
-            e.printStackTrace();
-            setText("[Bot] [Instagram] [Run] [Error]:" + e, true);
-        }
-        setLockScreen(true);
+    public void handleOnClickBtnDownload(View v){
+        executor.submit(() -> {
+            try {
+                fileVideo = botInstagram.download_video(textLinkVideo + ".mp4", textCodeVideo, textUsername);
+                setText("[Bot] [Instagram] [DonwloadVideo] " + fileVideo.getAbsolutePath(), true);
+            }catch (Exception e){
+                setText("[Bot] [Instagram] [DonwloadVideo] " + e, true);
+            }
+        });
     }
 
-    @Override
-    public void onWindowFocusChanged(boolean hasFocus) {
-        super.onWindowFocusChanged(hasFocus);
-        if(hasFocus){
-            textClipboard = automatorService.getClipboard();
-        }
+    public void handleOnClickBtnUpload(View v){
+        executor.submit(() -> {
+           try {
+                botInstagram.upload_video(fileVideo);
+               setText("[Bot] [Instagram] [UploadVideo] Ok", true);
+           }catch (Exception e){
+               setText("[Bot] [Instagram] [UploadVideo] " + e, true);
+           }
+        });
     }
 
 }

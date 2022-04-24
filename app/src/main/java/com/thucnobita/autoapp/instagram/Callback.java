@@ -1,4 +1,4 @@
-package com.thucnobita.bot.instagram;
+package com.thucnobita.autoapp.instagram;
 
 import java.util.concurrent.Callable;
 
