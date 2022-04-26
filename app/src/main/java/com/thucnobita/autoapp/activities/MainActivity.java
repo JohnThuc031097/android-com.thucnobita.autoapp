@@ -1,6 +1,8 @@
-package com.thucnobita.autoapp;
+package com.thucnobita.autoapp.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ViewDataBinding;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import android.annotation.SuppressLint;
@@ -17,12 +19,16 @@ import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.thucnobita.autoapp.R;
 import com.thucnobita.autoapp.instagram.Bot;
 import com.thucnobita.autoapp.instagram.Callback;
 import com.thucnobita.autoapp.instagram.Constants;
+import com.thucnobita.autoapp.utils.Util;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -48,6 +54,8 @@ public class MainActivity extends AppCompatActivity {
     private String textLinkVideo = null;
     private String textCodeVideo = null;
     private File fileVideo = null;
+    // Data configs
+    private JsonNode jsConfigs = null;
     // Class DeviceApp
     private Object objDeviceApp;
     private Class<?> clsDeviceApp;
@@ -69,14 +77,12 @@ public class MainActivity extends AppCompatActivity {
         btnDownload = findViewById(R.id.btnDownload);
         btnUpload = findViewById(R.id.btnUpload);
         spnTypeBot = findViewById(R.id.spnTypeBot);
-        grpInputcode = findViewById(R.id.grpInputCode);
         // Add Item into Spinner
         ArrayAdapter<CharSequence> adapterSpnTypeBot = ArrayAdapter.createFromResource(this,
                 R.array.typeboy_array,
                 androidx.constraintlayout.widget.R.layout.support_simple_spinner_dropdown_item);
         spnTypeBot.setAdapter(adapterSpnTypeBot);
-//        StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
-//        StrictMode.setThreadPolicy(policy);
+
         grpInputcode.setVisibility(View.GONE);
         // Show Dialog Permission
         askPermissions();
@@ -87,6 +93,10 @@ public class MainActivity extends AppCompatActivity {
     private void init(){
         try{
             setText("+ [App] [Init] ", true);
+
+            loadConfigs();
+            setText("=> Load Configs OK", true);
+
             Class<?> clsInstrumentation = Class.forName("com.thucnobita.autoapp.DeviceApp");
             objDeviceApp = clsInstrumentation
                     .getConstructor(Context.class)
@@ -97,15 +107,28 @@ public class MainActivity extends AppCompatActivity {
                     .invoke(objDeviceApp);
             automatorService = new AutomatorServiceImpl(instrumentation);
             setText("=> UiAutomator OK", true);
+
             botInstagram = new Bot(automatorService);
             setText("=> Bot Instagram OK", true);
+
         }catch (Exception e){
             e.printStackTrace();
             setText("=> Error: " + e, true);
         }
     }
 
-    protected void askPermissions() {
+    private void loadConfigs() throws IOException {
+        String folderConfigs = String.format("%s/%s", Constants.FOLDER_ROOT, Constants.FOLDER_NAME_APP);
+        if(!new File(folderConfigs).exists())
+            new File(folderConfigs).mkdirs();
+        String pathConfigs = String.format("%s/%s", folderConfigs, Constants.FILE_CONFIGS);
+        if(new File(pathConfigs).exists()){
+            jsConfigs = Util.string2Json(new File(pathConfigs));
+
+        }
+    }
+
+    private void askPermissions() {
         String[] permissions = {
                 "android.permission.READ_EXTERNAL_STORAGE",
                 "android.permission.WRITE_EXTERNAL_STORAGE",
@@ -164,47 +187,44 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void handleOnClickBtnLogin(View v) {
-        executor.submit(() -> {
-            botInstagram.login(textUsername, textPassword, new Callback.Login(){
-                @Override
-                public Callable<String> getCode() {
-                    return () -> {
-                        runOnUiThread(() -> {
-                            grpInputcode.setVisibility(View.VISIBLE);
-                            txtInputCode.setShowSoftInputOnFocus(true);
-                        });
-                        while(!isConfirmInputCode){
-                            Thread.sleep(1000);
-                        }
-                        isConfirmInputCode = false;
-                        return inputCode;
-                    };
-                }
-
-                @Override
-                public void success(String message) {
-                    setText("[Bot] [Instagram] [Login] " + message, true);
-                }
-
-                @Override
-                public void fail(String message) {
-                    setText("[Bot] [Instagram] [Login]" + message, true);
-                }
-            });
-        });
-    }
-
-    public void handleOnClickBtnConfirmInputCode(View v){
-        runOnUiThread(() -> {
-            if(txtInputCode.length() == 6){
-                txtInputCode.clearFocus();
-                txtInputCode.setShowSoftInputOnFocus(false);
-                inputCode = txtInputCode.getText().toString();
-                txtInputCode.setText(null);
-                grpInputcode.setVisibility(View.GONE);
-                isConfirmInputCode = true;
+        Intent intentLogin = new Intent(MainActivity.this, LoginActivity.class);
+        if(jsConfigs.isEmpty()){
+            if(jsConfigs.get("login").isArray()){
+                JsonNode jsLogin = jsConfigs.get("login");
+                intentLogin.putExtra("username", jsLogin.get("username").textValue());
+                intentLogin.putExtra("password", jsLogin.get("password").textValue());
+                intentLogin.putExtra("isChecked", jsLogin.get("isChecked").booleanValue());
             }
-        });
+        }
+        startActivity(intentLogin);
+//        executor.submit(() -> {
+//            botInstagram.login(textUsername, textPassword, new Callback.Login(){
+//                @Override
+//                public Callable<String> getCode() {
+//                    return () -> {
+//                        runOnUiThread(() -> {
+//                            grpInputcode.setVisibility(View.VISIBLE);
+//                            txtInputCode.setShowSoftInputOnFocus(true);
+//                        });
+//                        while(!isConfirmInputCode){
+//                            Thread.sleep(1000);
+//                        }
+//                        isConfirmInputCode = false;
+//                        return inputCode;
+//                    };
+//                }
+//
+//                @Override
+//                public void success(String message) {
+//                    setText("[Bot] [Instagram] [Login] " + message, true);
+//                }
+//
+//                @Override
+//                public void fail(String message) {
+//                    setText("[Bot] [Instagram] [Login]" + message, true);
+//                }
+//            });
+//        });
     }
 
     public void handleOnClickBtnGetLink(View v){

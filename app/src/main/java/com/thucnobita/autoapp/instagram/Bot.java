@@ -18,6 +18,7 @@ import com.thucnobita.api.instagram.exceptions.IGLoginException;
 import com.thucnobita.api.instagram.requests.media.MediaInfoRequest;
 import com.thucnobita.api.instagram.utils.IGChallengeUtils;
 import com.thucnobita.api.instagram.utils.IGUtils;
+import com.thucnobita.autoapp.utils.Util;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 
 import java.io.File;
