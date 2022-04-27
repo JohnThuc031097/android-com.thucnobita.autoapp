@@ -3,16 +3,31 @@ package com.thucnobita.autoapp.services;
 import android.app.Service;
 import android.content.Intent;
 import android.os.IBinder;
+import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import com.lzf.easyfloat.EasyFloat;
+import com.lzf.easyfloat.EasyFloatInitializer;
+import com.lzf.easyfloat.enums.ShowPattern;
+import com.lzf.easyfloat.enums.SidePattern;
+import com.lzf.easyfloat.interfaces.OnFloatCallbacks;
+import com.lzf.easyfloat.interfaces.OnTouchRangeListener;
+import com.lzf.easyfloat.utils.DragUtils;
+import com.lzf.easyfloat.widget.BaseSwitchView;
 import com.thucnobita.autoapp.R;
-import com.thucnobita.autoapp.utils.FloatView;
+import com.thucnobita.autoapp.activities.MainActivity;
+
+import java.util.List;
+import java.util.Objects;
 
 public class FloatingViewService extends Service {
 
-    private WindowManager mWindowManager;
-    private View mFloatingView;
+    private boolean canClick = true;
 
     public FloatingViewService() {
     }
@@ -25,73 +40,71 @@ public class FloatingViewService extends Service {
     @Override
     public void onCreate() {
         super.onCreate();
-        FloatView floatView = new FloatView(getApplicationContext(), R.layout.floating_view);
-        floatView.show();
-//        //Inflate the floating view layout we created
-//        mFloatingView = LayoutInflater.from(this).inflate(R.layout.floating_view, null);
-//
-//        //Add the view to the window.
-//        final WindowManager.LayoutParams params = new WindowManager.LayoutParams(
-//                WindowManager.LayoutParams.WRAP_CONTENT,
-//                WindowManager.LayoutParams.WRAP_CONTENT,
-//                WindowManager.LayoutParams.TYPE_PHONE,
-//                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-//                PixelFormat.TRANSLUCENT);
-//
-//        //Specify the view position
-//        params.gravity = Gravity.START;        //Initially view will be added to top-left corner
-//        params.x = 0;
-//        params.y = 0;
-//
-//        //Add the view to the window
-//        mWindowManager = (WindowManager) getSystemService(WINDOW_SERVICE);
-//        mWindowManager.addView(mFloatingView, params);
-//
-//        //Drag and move floating view using user's touch action.
-//        mFloatingView.findViewById(R.id.root_container).setOnTouchListener(new View.OnTouchListener() {
-//            private int initialX;
-//            private int initialY;
-//            private float initialTouchX;
-//            private float initialTouchY;
-//
-//
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                switch (event.getAction()) {
-//                    case MotionEvent.ACTION_DOWN:
-//
-//                        //remember the initial position.
-//                        initialX = params.x;
-//                        initialY = params.y;
-//
-//                        //get the touch location
-//                        initialTouchX = event.getRawX();
-//                        initialTouchY = event.getRawY();
-//                        return true;
-//                    case MotionEvent.ACTION_UP:
-//                        Intent intent = new Intent(FloatingViewService.this, MainActivity.class);
-//                        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//                        startActivity(intent);
-//                        //close the service and remove view from the view hierarchy
-//                        stopSelf();
-//                    case MotionEvent.ACTION_MOVE:
-//                        //Calculate the X and Y coordinates of the view.
-//                        params.x = initialX + (int) (event.getRawX() - initialTouchX);
-//                        params.y = initialY + (int) (event.getRawY() - initialTouchY);
-//
-//
-//                        //Update the layout with new X & Y coordinate
-//                        mWindowManager.updateViewLayout(mFloatingView, params);
-//                        return true;
-//                }
-//                return false;
-//            }
-//        });
-    }
+        EasyFloat.with(this)
+                .setTag("FloatingViewService")
+                .setLayout(R.layout.floating_view)
+                .setShowPattern(ShowPattern.BACKGROUND)
+                .setGravity(Gravity.START, 0,100)
+                .setSidePattern(SidePattern.RESULT_HORIZONTAL)
+                .registerCallbacks(new OnFloatCallbacks() {
 
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        if (mFloatingView != null) mWindowManager.removeView(mFloatingView);
+                    @Override
+                    public void createdResult(boolean b, String s, View view) {
+
+                    }
+
+                    @Override
+                    public void show(View view) {
+
+                    }
+
+                    @Override
+                    public void hide(View view) {
+
+                    }
+
+                    @Override
+                    public void dismiss() {
+
+                    }
+
+                    @Override
+                    public void touchEvent(View view, MotionEvent motionEvent) {
+                        if(motionEvent.getAction() == MotionEvent.ACTION_UP){
+                            if(canClick){
+                                Intent intent = new Intent(FloatingViewService.this, MainActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NEW_TASK);
+                                startActivity(intent);
+                                stopSelf();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void drag(View view, MotionEvent motionEvent) {
+                        canClick = false;
+                        DragUtils.INSTANCE.registerDragClose(motionEvent, new OnTouchRangeListener() {
+                            @Override
+                            public void touchInRange(boolean inRange, BaseSwitchView baseSwitchView) {
+                                baseSwitchView.<TextView>findViewById(com.lzf.easyfloat.R.id.tv_delete).setText(
+                                        inRange ? "Accept delete" : "Drag here"
+                                );
+                                baseSwitchView.<ImageView>findViewById(com.lzf.easyfloat.R.id.iv_delete).setImageResource(
+                                        inRange ? com.lzf.easyfloat.R.drawable.icon_delete_selected : com.lzf.easyfloat.R.drawable.icon_delete_normal
+                                );
+                            }
+
+                            @Override
+                            public void touchUpInRange() {
+                                EasyFloat.dismiss("FloatingViewService");
+                            }
+                        }, com.lzf.easyfloat.R.layout.default_close_layout, ShowPattern.BACKGROUND);
+                    }
+
+                    @Override
+                    public void dragEnd(View view) {
+                        canClick = true;
+                    }
+                }).show();
     }
 }
