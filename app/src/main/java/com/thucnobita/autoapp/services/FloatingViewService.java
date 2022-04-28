@@ -16,7 +16,9 @@ import com.lzf.easyfloat.EasyFloatInitializer;
 import com.lzf.easyfloat.enums.ShowPattern;
 import com.lzf.easyfloat.enums.SidePattern;
 import com.lzf.easyfloat.interfaces.OnFloatCallbacks;
+import com.lzf.easyfloat.interfaces.OnPermissionResult;
 import com.lzf.easyfloat.interfaces.OnTouchRangeListener;
+import com.lzf.easyfloat.permission.PermissionUtils;
 import com.lzf.easyfloat.utils.DragUtils;
 import com.lzf.easyfloat.widget.BaseSwitchView;
 import com.thucnobita.autoapp.R;
@@ -49,8 +51,7 @@ public class FloatingViewService extends Service {
                 .registerCallbacks(new OnFloatCallbacks() {
 
                     @Override
-                    public void createdResult(boolean b, String s, View view) {
-
+                    public void createdResult(boolean easyFloatResult, String s, View view) {
                     }
 
                     @Override

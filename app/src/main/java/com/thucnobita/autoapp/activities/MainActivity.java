@@ -1,76 +1,58 @@
 package com.thucnobita.autoapp.activities;
 
-import androidx.activity.result.ActivityResultLauncher;
-import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.constraintlayout.widget.ConstraintLayout;
+import androidx.fragment.app.Fragment;
+import androidx.viewpager2.widget.ViewPager2;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
-import android.view.View;
-import android.widget.Button;
 import android.widget.Toast;
 
+import com.google.android.material.tabs.TabLayout;
+import com.google.android.material.tabs.TabLayoutMediator;
+import com.lzf.easyfloat.permission.PermissionUtils;
 import com.thucnobita.autoapp.R;
+import com.thucnobita.autoapp.adapters.ViewPagerAdapter;
 import com.thucnobita.autoapp.services.FloatingViewService;
 
 
 public class MainActivity extends AppCompatActivity   {
-    private ConstraintLayout mainActivity;
-    private Button btnFloatingView;
+    private TabLayout tabLayout;
+    private ViewPager2 viewPager;
 
-    private static final int CODE_DRAW_OVER_OTHER_APP_PERMISSION = 2084;
-    private boolean isComfirmPermission = false;
+    private ViewPagerAdapter viewPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        btnFloatingView = findViewById(R.id.btnbtnFloatingView);
+        tabLayout = findViewById(R.id.tabLayoutMain);
+        viewPager = findViewById(R.id.viewPagerMain);
 
-    }
+        viewPagerAdapter = new ViewPagerAdapter(this);
+        viewPager.setAdapter(viewPagerAdapter);
 
-    public void handleBtnFloatingView(View v){
-        if(!Settings.canDrawOverlays(this)){
-            Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION, Uri.parse("package:" + getPackageName()));
-            intent.putExtra("REQUEST_CODE", CODE_DRAW_OVER_OTHER_APP_PERMISSION);
-            openActivityResultLauncher(intent);
-        }else{
-            initializeView();
-        }
+        String[] arrTabName = { "Bot", "Account" };
+        new TabLayoutMediator(tabLayout, viewPager,
+                (tab, position) -> tab.setText(arrTabName[position])
+        ).attach();
+
     }
 
     private void initializeView() {
-        startService(new Intent(MainActivity.this, FloatingViewService.class));
-        finish();
-    }
-
-    private void openActivityResultLauncher(Intent intent){
-        registerForActivityResult(
-                new ActivityResultContracts.StartActivityForResult(),
-                result -> {
-                    Intent intentResult = result.getData();
-                    if (intentResult != null) {
-                        Bundle bundle = intentResult.getExtras();
-                        if (bundle != null) {
-                            if (bundle.getInt("REQUEST_CODE") == CODE_DRAW_OVER_OTHER_APP_PERMISSION) {
-                                if (result.getResultCode() == RESULT_OK) {
-                                    initializeView();
-                                } else { //Permission is not available
-                                    Toast.makeText(this,
-                                            "Draw over other app permission not available. Closing the application",
-                                            Toast.LENGTH_SHORT).show();
-
-                                    finish();
-                                }
-                            }
-                        }
-                    }
-
-                }).launch(intent);
+        if(!Settings.canDrawOverlays(this)){
+            PermissionUtils.checkPermission(this);
+            PermissionUtils.requestPermission(this, permissionResult -> {
+                if(!permissionResult){
+                    Toast.makeText(this,"Floating view permission validation failed", Toast.LENGTH_SHORT).show();
+                }
+            });
+        }else{
+            startService(new Intent(MainActivity.this, FloatingViewService.class));
+            finish();
+        }
     }
 
 }

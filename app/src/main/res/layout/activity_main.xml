@@ -1,17 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activities.MainActivity">
+    android:orientation="vertical">
 
-    <Button
-        android:id="@+id/btnbtnFloatingView"
-        android:layout_width="wrap_content"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbarMain"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:onClick="handleBtnFloatingView"
-        android:text="Floating View"
-        tools:layout_editor_absoluteX="115dp"
-        tools:layout_editor_absoluteY="105dp" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:background="@color/black"
+        android:minHeight="?attr/actionBarSize"
+        android:theme="?attr/actionBarTheme"
+        app:title="AutoApp - Instagram v1"
+        app:titleTextColor="@color/white" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayoutMain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        app:tabIndicatorColor="#C13333"
+        app:tabSelectedTextColor="#C13333"
+        app:tabTextColor="@color/purple_700" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/viewPagerMain"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+</LinearLayout>
