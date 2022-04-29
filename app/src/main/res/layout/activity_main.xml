@@ -2,6 +2,7 @@
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
@@ -16,10 +17,21 @@
         app:title="AutoApp - Instagram v1"
         app:titleTextColor="@color/white" />
 
+    <Switch
+        android:id="@+id/switchShowFloatingView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:onClick="handleOnClickSwitchFloatingView"
+        android:text="Show Floating View"
+        android:textSize="20sp"
+        tools:ignore="UseSwitchCompatOrMaterialXml" />
+
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayoutMain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="10dp"
         android:background="@color/white"
         app:tabIndicatorColor="#C13333"
         app:tabSelectedTextColor="#C13333"
@@ -29,6 +41,7 @@
         android:id="@+id/viewPagerMain"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_margin="10dp"
         android:layout_weight="1" />
 
 </LinearLayout>

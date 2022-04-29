@@ -16,7 +16,10 @@ public class ViewPagerAdapter extends FragmentStateAdapter {
 
     public ViewPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
-        this.arrFragment.add(new BotFragment());
+    }
+
+    public void addFragment(Fragment fragment){
+        this.arrFragment.add(fragment);
     }
 
     @NonNull

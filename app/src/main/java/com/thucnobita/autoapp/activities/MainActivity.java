@@ -1,37 +1,61 @@
 package com.thucnobita.autoapp.activities;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.lzf.easyfloat.EasyFloat;
+import com.lzf.easyfloat.enums.ShowPattern;
+import com.lzf.easyfloat.interfaces.OnFloatCallbacks;
+import com.lzf.easyfloat.interfaces.OnTouchRangeListener;
 import com.lzf.easyfloat.permission.PermissionUtils;
+import com.lzf.easyfloat.utils.DragUtils;
+import com.lzf.easyfloat.widget.BaseSwitchView;
 import com.thucnobita.autoapp.R;
 import com.thucnobita.autoapp.adapters.ViewPagerAdapter;
-import com.thucnobita.autoapp.services.FloatingViewService;
+import com.thucnobita.autoapp.fragments.AccountFragment;
+import com.thucnobita.autoapp.fragments.BotFragment;
+import com.thucnobita.autoapp.utils.Util;
+
+import java.util.concurrent.atomic.AtomicBoolean;
 
 
 public class MainActivity extends AppCompatActivity   {
+    @SuppressLint("UseSwitchCompatOrMaterialCode")
+    private Switch switchShowFloatingView;
     private TabLayout tabLayout;
     private ViewPager2 viewPager;
-
     private ViewPagerAdapter viewPagerAdapter;
+
+    private static final String TAG_NAME_FLOATING_VIEW = "FloatingView";
+    private boolean canClick = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        switchShowFloatingView = findViewById(R.id.switchShowFloatingView);
         tabLayout = findViewById(R.id.tabLayoutMain);
         viewPager = findViewById(R.id.viewPagerMain);
 
         viewPagerAdapter = new ViewPagerAdapter(this);
+        viewPagerAdapter.addFragment(new BotFragment());
+        viewPagerAdapter.addFragment(new AccountFragment());
         viewPager.setAdapter(viewPagerAdapter);
 
         String[] arrTabName = { "Bot", "Account" };
@@ -41,18 +65,79 @@ public class MainActivity extends AppCompatActivity   {
 
     }
 
-    private void initializeView() {
-        if(!Settings.canDrawOverlays(this)){
-            PermissionUtils.checkPermission(this);
-            PermissionUtils.requestPermission(this, permissionResult -> {
-                if(!permissionResult){
-                    Toast.makeText(this,"Floating view permission validation failed", Toast.LENGTH_SHORT).show();
-                }
-            });
+    public void handleOnClickSwitchFloatingView(View v){
+        if(switchShowFloatingView.isChecked()){
+            showFloatingView();
         }else{
-            startService(new Intent(MainActivity.this, FloatingViewService.class));
-            finish();
+            EasyFloat.dismiss(TAG_NAME_FLOATING_VIEW);
         }
     }
 
+    private void showFloatingView() {
+        AtomicBoolean isShow = new AtomicBoolean(true);
+        if(!Settings.canDrawOverlays(this)){
+            PermissionUtils.checkPermission(this);
+            PermissionUtils.requestPermission(this, isShow::set);
+        }
+        if(isShow.get()){
+            Util.createFloatingView(this, TAG_NAME_FLOATING_VIEW, new OnFloatCallbacks() {
+                @Override
+                public void hide(@NonNull View view) {
+
+                }
+                @Override
+                public void createdResult(boolean b, @Nullable String s, @Nullable View view) {
+
+                }
+                @Override
+                public void show(View view) {
+                    runOnUiThread(() -> {
+                        switchShowFloatingView.setChecked(true);
+                    });
+                }
+                @Override
+                public void dismiss() {
+                    runOnUiThread(() -> {
+                        switchShowFloatingView.setChecked(false);
+                    });
+                }
+                @Override
+                public void touchEvent(View view, MotionEvent motionEvent) {
+                    if(motionEvent.getAction() == MotionEvent.ACTION_UP){
+                        if(canClick){
+                            Intent intent = new Intent(getApplicationContext(), MainActivity.class);
+                            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                            startActivity(intent);
+                        }
+                    }
+                }
+                @Override
+                public void drag(View view, MotionEvent motionEvent) {
+                    canClick = false;
+                    DragUtils.INSTANCE.registerDragClose(motionEvent, new OnTouchRangeListener() {
+                        @Override
+                        public void touchInRange(boolean inRange, BaseSwitchView baseSwitchView) {
+                            baseSwitchView.<TextView>findViewById(com.lzf.easyfloat.R.id.tv_delete).setText(
+                                    inRange ? "Accept delete" : "Drag here"
+                            );
+                            baseSwitchView.<ImageView>findViewById(com.lzf.easyfloat.R.id.iv_delete).setImageResource(
+                                    inRange ? com.lzf.easyfloat.R.drawable.icon_delete_selected : com.lzf.easyfloat.R.drawable.icon_delete_normal
+                            );
+                        }
+
+                        @Override
+                        public void touchUpInRange() {
+                            EasyFloat.dismiss(TAG_NAME_FLOATING_VIEW);
+                        }
+                    }, com.lzf.easyfloat.R.layout.default_close_layout, ShowPattern.BACKGROUND);
+                }
+                @Override
+                public void dragEnd(View view) {
+                    canClick = true;
+                }
+            });
+        }else{
+            Toast.makeText(this,"Floating view permission validation failed", Toast.LENGTH_SHORT).show();
+        }
+    }
 }

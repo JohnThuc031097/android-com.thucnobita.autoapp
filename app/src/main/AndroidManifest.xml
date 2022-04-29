@@ -27,13 +27,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.NoActionBar">
 
-        <service android:name=".services.FloatingViewService"
-            android:enabled="true"
-            android:exported="false">
-<!--            <intent-filter android:priority="10000">-->
-<!--            </intent-filter>-->
-        </service>
-
         <activity
             android:name=".activities.MainActivity"
             android:exported="true">
