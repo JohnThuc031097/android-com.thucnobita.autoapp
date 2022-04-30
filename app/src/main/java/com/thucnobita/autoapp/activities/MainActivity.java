@@ -29,8 +29,10 @@ import com.thucnobita.autoapp.R;
 import com.thucnobita.autoapp.adapters.ViewPagerAdapter;
 import com.thucnobita.autoapp.fragments.AccountFragment;
 import com.thucnobita.autoapp.fragments.BotFragment;
+import com.thucnobita.autoapp.models.Account;
 import com.thucnobita.autoapp.utils.Util;
 
+import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 

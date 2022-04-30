@@ -14,8 +14,8 @@
         android:background="@color/black"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        app:title="AutoApp - Instagram v1"
-        app:titleTextColor="@color/white" />
+        app:title="AutoApp - Instagram - v1"
+        app:titleTextColor="@android:color/holo_orange_light" />
 
     <Switch
         android:id="@+id/switchShowFloatingView"
@@ -24,7 +24,7 @@
         android:layout_margin="10dp"
         android:onClick="handleOnClickSwitchFloatingView"
         android:text="Show Floating View"
-        android:textSize="20sp"
+        android:textSize="15sp"
         tools:ignore="UseSwitchCompatOrMaterialXml" />
 
     <com.google.android.material.tabs.TabLayout

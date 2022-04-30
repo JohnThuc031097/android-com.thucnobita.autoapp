@@ -4,10 +4,11 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.ImageView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
+import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableField;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -18,12 +19,24 @@ import com.thucnobita.autoapp.models.Account;
 import java.util.ArrayList;
 
 public class ItemAccountAdapter extends RecyclerView.Adapter<ItemAccountAdapter.ViewHolder> {
-    public Button btnAccountName;
+    public interface ItemClickListener {
+        void onClick(View view, int position,boolean isLongClick);
+    }
 
-    public class ViewHolder extends RecyclerView.ViewHolder{
+    public static class ViewHolder extends RecyclerView.ViewHolder{
+        public ImageView imageViewActived;
+        public ItemAccountBinding itemAccountBinding;
+        private ItemAccountAdapter.ItemClickListener itemClickListener;
+
         public ViewHolder(View itemView){
             super(itemView);
-            btnAccountName = itemView.findViewById(R.id.btnAccountName);
+            itemView.setOnClickListener(this);
+            imageViewActived = itemView.findViewById(R.id.imgIsActivedAccount);
+            itemAccountBinding = DataBindingUtil.bind(itemView);
+        }
+
+        public void setBinding(Account account){
+            this.itemAccountBinding.setAccount(account);
         }
     }
 
@@ -38,22 +51,19 @@ public class ItemAccountAdapter extends RecyclerView.Adapter<ItemAccountAdapter.
     public ItemAccountAdapter.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType){
         Context context = parent.getContext();
         LayoutInflater inflater = LayoutInflater.from(context);
-
-        // Inflate the custom layout
-        View accountView = inflater.inflate(R.layout.item_account, parent, false);
-
-        // Return a new holder instance
-        return new ViewHolder(accountView);
+        View viewItem = inflater.inflate(R.layout.item_account, parent, false);
+        return new ItemAccountAdapter.ViewHolder(viewItem);
     }
 
     @Override
     public void onBindViewHolder(ItemAccountAdapter.ViewHolder holder, int position) {
-        // Get the data model based on position
         Account account = listAccount.get(position);
-        btnAccountName.setText(account.username.toString());
+        holder.imageViewActived.setImageResource(account.isActived() ?
+                R.drawable.ic_baseline_check_circle_outline_24 :
+                R.drawable.ic_baseline_radio_button_unchecked_24);
+        holder.setBinding(account);
     }
 
-    // Returns the total count of items in the list
     @Override
     public int getItemCount() {
         return listAccount.size();

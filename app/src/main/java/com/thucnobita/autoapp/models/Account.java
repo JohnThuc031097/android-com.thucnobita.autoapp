@@ -1,28 +1,36 @@
 package com.thucnobita.autoapp.models;
 
 import androidx.databinding.BaseObservable;
-import androidx.databinding.ObservableField;
+import androidx.databinding.Bindable;
+import com.thucnobita.autoapp.BR;
 
-import java.util.ArrayList;
 
 public class Account extends BaseObservable {
-    public ObservableField<String> username, password;
-    public ObservableField<Boolean> isActived;
-    public ObservableField<ArrayList<String>> header;
-    public ObservableField<ArrayList<String>> content;
-    public ObservableField<ArrayList<String>> footer;
+    private String username;
+    private boolean isActived;
 
-    public Account(String username,
-                   String password,
-                   boolean isActived,
-                   ArrayList<String> header,
-                   ArrayList<String> content,
-                   ArrayList<String> footer) {
-        this.username.set(username);
-        this.password.set(password);
-        this.isActived.set(isActived);
-        this.header.set(header);
-        this.content.set(content);
-        this.footer.set(footer);
+    public Account(String username, boolean isActived) {
+        this.username = username;
+        this.isActived = isActived;
+    }
+
+    @Bindable
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+        notifyPropertyChanged(BR.username);
+    }
+
+    @Bindable
+    public boolean isActived() {
+        return isActived;
+    }
+
+    public void setActived(boolean actived) {
+        isActived = actived;
+        notifyPropertyChanged(BR.actived);
     }
 }
