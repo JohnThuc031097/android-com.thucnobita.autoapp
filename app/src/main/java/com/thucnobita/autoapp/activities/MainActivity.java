@@ -65,14 +65,14 @@ public class MainActivity extends AppCompatActivity   {
                 (tab, position) -> tab.setText(arrTabName[position])
         ).attach();
 
-    }
+        switchShowFloatingView.setOnClickListener(v -> {
+            if(switchShowFloatingView.isChecked()){
+                showFloatingView();
+            }else{
+                EasyFloat.dismiss(TAG_NAME_FLOATING_VIEW);
+            }
+        });
 
-    public void handleOnClickSwitchFloatingView(View v){
-        if(switchShowFloatingView.isChecked()){
-            showFloatingView();
-        }else{
-            EasyFloat.dismiss(TAG_NAME_FLOATING_VIEW);
-        }
     }
 
     private void showFloatingView() {

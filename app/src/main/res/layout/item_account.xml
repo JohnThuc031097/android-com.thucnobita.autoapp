@@ -23,7 +23,7 @@
             android:gravity="bottom">
 
             <ImageView
-                android:id="@+id/imgIsActivedAccount"
+                android:id="@+id/imgActivedAccount"
                 android:layout_width="50dp"
                 android:layout_height="match_parent"
                 app:srcCompat="@drawable/ic_baseline_radio_button_unchecked_24" />
@@ -49,7 +49,7 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="5dp"
+            android:layout_height="1dp"
             android:background="@color/black" />
     </LinearLayout>
 </layout>
