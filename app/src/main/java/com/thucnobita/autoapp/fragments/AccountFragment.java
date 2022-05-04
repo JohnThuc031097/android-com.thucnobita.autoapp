@@ -21,8 +21,13 @@ import com.thucnobita.autoapp.activities.MainActivity;
 import com.thucnobita.autoapp.adapters.ItemAccountAdapter;
 import com.thucnobita.autoapp.databinding.FragmentAccountBinding;
 import com.thucnobita.autoapp.models.Account;
+import com.thucnobita.autoapp.utils.Constants;
 import com.thucnobita.autoapp.utils.Util;
 
+import java.io.File;
+import java.io.FileFilter;
+import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -40,6 +45,38 @@ public class AccountFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        File fileFolder = new File(String.format("%s/%s/%s",
+                Constants.FOLDER_ROOT,
+                Constants.FOLDER_NAME_APP,
+                Constants.FOLDER_NAME_ACCOUNT));
+        if(!fileFolder.exists()){
+            fileFolder.mkdirs();
+        }else{
+            File[] fileAccounts = fileFolder.listFiles(pathname -> pathname.getPath().endsWith(".json"));
+            if(fileAccounts != null){
+                for (File src : fileAccounts) {
+                    try {
+                        Account account = Util.file2Object(src, Account.class);
+                        listAccount.add(account);
+                    }catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+        }
+//        for (int i = 0; i < 20; i++) {
+//            boolean isPassword = (new Random().nextBoolean());
+//            Account account = new Account(
+//                    "username_" + i,
+//                    isPassword ? "password_" + i : null,
+//                    (new Random().nextBoolean()),
+//                    "|", !isPassword ? "header_" + i : "",
+//                    "|", !isPassword ? "content_" + i : "",
+//                    "|", !isPassword ? "footer_" + i : ""
+//            );
+//            listAccount.add(account);
+//        }
     }
 
     @Override
@@ -48,19 +85,6 @@ public class AccountFragment extends Fragment {
         View view = fragmentAccountBinding.getRoot();
 
         facAddAccount = view.findViewById(R.id.facAddAccount);
-
-        for (int i = 0; i < 20; i++) {
-            boolean isPassword = (new Random().nextBoolean());
-            Account account = new Account(
-                    "username_" + i,
-                    isPassword ? "password_" + i : null,
-                    (new Random().nextBoolean()),
-                    "|", !isPassword ? "header_" + i : "",
-                    "|", !isPassword ? "content_" + i : "",
-                    "|", !isPassword ? "footer_" + i : ""
-            );
-            listAccount.add(account);
-        }
 
         ItemAccountAdapter itemAccountAdapter = new ItemAccountAdapter(listAccount);
         fragmentAccountBinding.rvAccount.setLayoutManager(new LinearLayoutManager(getContext()));

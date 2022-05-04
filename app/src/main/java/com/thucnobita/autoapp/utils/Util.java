@@ -1,27 +1,16 @@
 package com.thucnobita.autoapp.utils;
 
 import android.content.Context;
-import android.content.Intent;
-import android.content.SharedPreferences;
 import android.view.Gravity;
-import android.view.MotionEvent;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lzf.easyfloat.EasyFloat;
 import com.lzf.easyfloat.enums.ShowPattern;
 import com.lzf.easyfloat.enums.SidePattern;
 import com.lzf.easyfloat.interfaces.OnFloatCallbacks;
-import com.lzf.easyfloat.interfaces.OnTouchRangeListener;
-import com.lzf.easyfloat.utils.DragUtils;
-import com.lzf.easyfloat.widget.BaseSwitchView;
 import com.thucnobita.autoapp.R;
-import com.thucnobita.autoapp.activities.MainActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,16 +23,20 @@ public class Util {
         return new ObjectMapper().writeValueAsString(obj);
     }
 
+    public static <T> T file2Object(File src, Class<T> valueType) throws IOException {
+        return new ObjectMapper().readValue(src, valueType);
+    }
+
+    public static void object2File(File resultFile, Object obj) throws IOException {
+        new ObjectMapper().writeValue(resultFile, obj);
+    }
+
+    public static JsonNode string2Json(String src) throws JsonProcessingException {
+        return new ObjectMapper().readTree(src);
+    }
+
     public static <T> T string2Object(String data, Class<T> valueType) throws JsonProcessingException {
         return new ObjectMapper().readValue(data, valueType);
-    }
-
-    public static JsonNode string2Json(String data) throws JsonProcessingException {
-        return new ObjectMapper().readTree(data);
-    }
-
-    public static JsonNode string2Json(File file) throws IOException {
-        return new ObjectMapper().readTree(file);
     }
 
     public static void createFloatingView(Context context, String tagName, OnFloatCallbacks onFloatCallbacks){

@@ -58,6 +58,8 @@ public class MainActivity extends AppCompatActivity   {
         tabLayout = findViewById(R.id.tabLayoutMain);
         viewPager = findViewById(R.id.viewPagerMain);
 
+        askPermissions();
+
         viewPagerAdapter = new ViewPagerAdapter(this);
         viewPagerAdapter.addFragment(new BotFragment());
         viewPagerAdapter.addFragment(new AccountFragment());
@@ -79,6 +81,15 @@ public class MainActivity extends AppCompatActivity   {
                 EasyFloat.dismiss(TAG_NAME_FLOATING_VIEW);
             }
         });
+    }
+
+    private void askPermissions() {
+        String[] permissions = {
+                "android.permission.READ_EXTERNAL_STORAGE",
+                "android.permission.WRITE_EXTERNAL_STORAGE",
+        };
+        int requestCode = 200;
+        requestPermissions(permissions, requestCode);
     }
 
     private void showFloatingView() {

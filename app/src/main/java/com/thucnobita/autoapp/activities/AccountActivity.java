@@ -22,8 +22,11 @@ import com.thucnobita.autoapp.R;
 import com.thucnobita.autoapp.databinding.ActivityAccountBinding;
 import com.thucnobita.autoapp.fragments.AccountFragment;
 import com.thucnobita.autoapp.models.Account;
+import com.thucnobita.autoapp.utils.Constants;
 import com.thucnobita.autoapp.utils.Util;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.regex.Pattern;
 
 public class AccountActivity extends AppCompatActivity {
@@ -59,8 +62,8 @@ public class AccountActivity extends AppCompatActivity {
                     try {
                         account = Util.string2Object(bundle.getString("account"), Account.class);
                         binding.setAccount(account);
-                    }catch (JsonProcessingException jsonpe){
-                        jsonpe.printStackTrace();
+                    }catch (JsonProcessingException e){
+                        e.printStackTrace();
                     }
                 }
             }
@@ -73,20 +76,40 @@ public class AccountActivity extends AppCompatActivity {
         runOnUiThread(() -> {
             if(account.getPassword() != null){
                 binding.ckbUserLogin.setChecked(true);
-            }else{
-                binding.ckbUserLogin.setChecked(false);
-            }
-            if(binding.ckbUserLogin.isChecked()){
                 binding.grpPasswordLogin.setVisibility(View.VISIBLE);
                 binding.grpPostContent.setVisibility(View.GONE);
             }else{
+                binding.ckbUserLogin.setChecked(false);
                 binding.grpPasswordLogin.setVisibility(View.GONE);
                 binding.grpPostContent.setVisibility(View.VISIBLE);
+                if(account.getSplitHeader() != null && account.getHeader() != null){
+                    try {
+                        String[] data = account.getHeader().split(Pattern.quote(String.valueOf(account.getSplitHeader().charAt(0))));
+                        binding.txtTotalHeader.setText(String.valueOf(data.length));
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                if(account.getSplitContent() != null && account.getContent() != null){
+                    try {
+                        String[] data = account.getContent().split(Pattern.quote(String.valueOf(account.getSplitContent().charAt(0))));
+                        binding.txtTotalContent.setText(String.valueOf(data.length));
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                if(account.getSplitFooter() != null && account.getFooter() != null){
+                    try {
+                        String[] data = account.getFooter().split(Pattern.quote(String.valueOf(account.getSplitFooter().charAt(0))));
+                        binding.txtTotalFooter.setText(String.valueOf(data.length));
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
             }
         });
     }
 
-    @SuppressLint("SetTextI18n")
     private void initAction(){
         binding.ckbUserLogin.setOnClickListener(v -> {
             runOnUiThread(() -> {
@@ -106,7 +129,7 @@ public class AccountActivity extends AppCompatActivity {
                 if(strData != null && charSplit != null){
                     try {
                         String[] data = strData.toString().split(Pattern.quote(String.valueOf(charSplit.charAt(0))));
-                        binding.txtTotalHeader.setText(data.length + "");
+                        binding.txtTotalHeader.setText(String.valueOf(data.length));
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -121,7 +144,7 @@ public class AccountActivity extends AppCompatActivity {
                 if(strData != null && charSplit != null){
                     try {
                         String[] data = strData.toString().split(Pattern.quote(String.valueOf(charSplit.charAt(0))));
-                        binding.txtTotalContent.setText(data.length + "");
+                        binding.txtTotalContent.setText(String.valueOf(data.length));
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -136,7 +159,7 @@ public class AccountActivity extends AppCompatActivity {
                 if(strData != null && charSplit != null){
                     try {
                         String[] data = strData.toString().split(Pattern.quote(String.valueOf(charSplit.charAt(0))));
-                        binding.txtTotalFooter.setText(data.length + "");
+                        binding.txtTotalFooter.setText(String.valueOf(data.length));
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -150,12 +173,42 @@ public class AccountActivity extends AppCompatActivity {
             startActivity(intent);
         });
         binding.btnSaveAccount.setOnClickListener(v -> {
-            Intent intent = new Intent(this, MainActivity.class);
-            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             try {
-                intent.putExtra("account", Util.object2String(account));
-                startActivity(intent);
-            } catch (JsonProcessingException e) {
+                String fileFolder = String.format("%s/%s/%s",
+                        Constants.FOLDER_ROOT,
+                        Constants.FOLDER_NAME_APP,
+                        Constants.FOLDER_NAME_ACCOUNT);
+                String username = binding.txtUsername.getText().toString().trim();
+                if(username.length() > 0){
+                    binding.getAccount().setUsername(username);
+                    File fileAccount = new File(fileFolder, username + ".json");
+                    String password = binding.txtPassword.getText().toString().trim();
+                    if(password.length() > 0){
+                        binding.getAccount().setPassword(password);
+                    }else {
+                        String splitHeader = String.valueOf(binding.txtStrSplitHeader.getText().charAt(0));
+                        String splitContent = String.valueOf(binding.txtStrSplitContent.getText().charAt(0));
+                        String splitFooter = String.valueOf(binding.txtStrSplitFooter.getText().charAt(0));
+                        String dataHeader = binding.txtStrDataHeader.getText().toString();
+                        String dataContent = binding.txtStrDataContent.getText().toString();
+                        String dataFooter = binding.txtStrDataFooter.getText().toString();
+                        if(splitHeader.length() > 0 && dataHeader.length() > 0 &&
+                                splitContent.length() > 0 && dataContent.length() > 0 &&
+                                splitFooter.length() > 0 && dataFooter.length() > 0
+                        ){
+                            binding.getAccount().setSplitHeader(splitHeader);
+                            binding.getAccount().setSplitContent(splitContent);
+                            binding.getAccount().setSplitFooter(splitFooter);
+                            binding.getAccount().setHeader(dataHeader);
+                            binding.getAccount().setContent(dataContent);
+                            binding.getAccount().setFooter(dataFooter);
+                        }
+                    }
+                    Util.object2File(fileAccount, binding.getAccount());
+                    Intent intent = new Intent(this, MainActivity.class);
+                    startActivity(intent);
+                }
+            } catch (IOException e) {
                 e.printStackTrace();
             }
         });

@@ -19,10 +19,14 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.thucnobita.autoapp.R;
 import com.thucnobita.autoapp.activities.AccountActivity;
+import com.thucnobita.autoapp.activities.MainActivity;
 import com.thucnobita.autoapp.databinding.ItemAccountBinding;
 import com.thucnobita.autoapp.models.Account;
+import com.thucnobita.autoapp.utils.Constants;
 import com.thucnobita.autoapp.utils.Util;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class ItemAccountAdapter extends RecyclerView.Adapter<ItemAccountAdapter.ViewHolder> {
@@ -46,7 +50,11 @@ public class ItemAccountAdapter extends RecyclerView.Adapter<ItemAccountAdapter.
         }
     }
 
-    public ArrayList<Account> listAccount;
+    private final String fileFolderAccount = String.format("%s/%s/%s",
+            Constants.FOLDER_ROOT,
+            Constants.FOLDER_NAME_APP,
+            Constants.FOLDER_NAME_ACCOUNT);
+    private final ArrayList<Account> listAccount;
 
     public ItemAccountAdapter(ArrayList<Account> listAccount){
         this.listAccount = listAccount;
@@ -70,34 +78,49 @@ public class ItemAccountAdapter extends RecyclerView.Adapter<ItemAccountAdapter.
         holder.imgActived.setImageResource(account.isActived() ?
                 R.drawable.ic_baseline_check_circle_outline_24 :
                 R.drawable.ic_baseline_radio_button_unchecked_24);
-        // Click Actived
+        // Event Click Actived
         holder.imgActived.setOnClickListener(v -> {
             if(v.getTag().equals(true)){
                 v.setTag(false);
-                listAccount.get(position).setActived(false);
+                account.setActived(false);
                 holder.imgActived.setImageResource(R.drawable.ic_baseline_radio_button_unchecked_24);
             }else{
                 v.setTag(true);
-                listAccount.get(position).setActived(true);
+                account.setActived(true);
                 holder.imgActived.setImageResource(R.drawable.ic_baseline_check_circle_outline_24);
             }
-            notifyItemChanged(position);
+            File fileAccount = new File(fileFolderAccount, account.getUsername() + ".json");
+            try {
+                Util.object2File(fileAccount, account);
+                notifyItemChanged(position);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         });
-        // Click Remove
+        // Event Click Remove
         holder.imgRemove.setOnClickListener(v -> {
             new AlertDialog.Builder(v.getContext())
                     .setTitle("Delete account")
                     .setMessage("Are you sure you want to delete this account?")
                     .setPositiveButton(android.R.string.yes, (dialog, which) -> {
-                        listAccount.remove(position);
-                        notifyItemRemoved(position);
-                        notifyItemRangeChanged(position, listAccount.size());
+                        try{
+                            File fileAccount = new File(fileFolderAccount, account.getUsername() + ".json");
+                            if(fileAccount.exists()){
+                                if(fileAccount.delete()){
+                                    listAccount.remove(position);
+                                    notifyItemRemoved(position);
+                                    notifyItemRangeChanged(position, listAccount.size());
+                                }
+                            }
+                        }catch (Exception e){
+                            e.printStackTrace();
+                        }
                     })
                     .setNegativeButton(android.R.string.no, null)
                     .setIcon(android.R.drawable.ic_delete)
                     .show();
         });
-        // Click Edit
+        // Event Click Edit
         holder.txtAccountName.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), AccountActivity.class);
             intent.putExtra("type", "edit");

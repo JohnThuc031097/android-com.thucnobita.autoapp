@@ -91,9 +91,6 @@ public class MainTestActivity extends AppCompatActivity {
         try{
             setText("+ [App] [Init] ", true);
 
-            loadConfigs();
-            setText("=> Load Configs OK", true);
-
             Class<?> clsInstrumentation = Class.forName("com.thucnobita.autoapp.DeviceApp");
             objDeviceApp = clsInstrumentation
                     .getConstructor(Context.class)
@@ -114,16 +111,6 @@ public class MainTestActivity extends AppCompatActivity {
         }
     }
 
-    private void loadConfigs() throws IOException {
-        String folderConfigs = String.format("%s/%s", Constants.FOLDER_ROOT, Constants.FOLDER_NAME_APP);
-        if(!new File(folderConfigs).exists())
-            new File(folderConfigs).mkdirs();
-        String pathConfigs = String.format("%s/%s", folderConfigs, Constants.FILE_CONFIGS);
-        if(new File(pathConfigs).exists()){
-            jsConfigs = Util.string2Json(new File(pathConfigs));
-
-        }
-    }
 
     private void askPermissions() {
         String[] permissions = {

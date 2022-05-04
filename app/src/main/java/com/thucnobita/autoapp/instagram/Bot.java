@@ -63,7 +63,7 @@ public class Bot {
         String pathFolder = String.format("%s/%s/%s/%s",
                 Constants.FOLDER_ROOT,
                 Constants.FOLDER_NAME_APP,
-                Constants.FOLDER_NAME_VIDEOS,
+                Constants.FOLDER_NAME_VIDEO,
                 username);
         if (!new File(pathFolder).exists()) {
             new File(pathFolder).mkdirs();
