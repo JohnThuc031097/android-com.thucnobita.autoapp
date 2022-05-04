@@ -3,9 +3,7 @@ package com.thucnobita.autoapp.instagram;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
-import android.os.Build;
 import android.os.RemoteException;
-import android.os.StrictMode;
 import android.util.Log;
 
 import androidx.core.content.FileProvider;
@@ -18,6 +16,7 @@ import com.thucnobita.api.instagram.exceptions.IGLoginException;
 import com.thucnobita.api.instagram.requests.media.MediaInfoRequest;
 import com.thucnobita.api.instagram.utils.IGChallengeUtils;
 import com.thucnobita.api.instagram.utils.IGUtils;
+import com.thucnobita.autoapp.utils.Constants;
 import com.thucnobita.autoapp.utils.Util;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 

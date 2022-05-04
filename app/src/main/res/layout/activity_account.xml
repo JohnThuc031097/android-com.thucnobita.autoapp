@@ -28,7 +28,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:ems="10"
-                android:inputType="textPersonName" />
+                android:text="@{account.username}"
+                android:inputType="text" />
 
             <CheckBox
                 android:id="@+id/ckbUserLogin"
@@ -59,7 +60,8 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:ems="10"
-                    android:inputType="textPersonName" />
+                    android:text="@{account.password}"
+                    android:inputType="text" />
             </LinearLayout>
 
             <LinearLayout
@@ -120,6 +122,7 @@
                             android:layout_weight="1"
                             android:ems="10"
                             android:hint='Ex: "," or "|" or ";" ....'
+                            android:text="@{account.splitHeader}"
                             android:inputType="text" />
 
                     </LinearLayout>
@@ -131,6 +134,7 @@
                         android:layout_margin="10dp"
                         android:ems="10"
                         android:hint="String data"
+                        android:text="@{account.header}"
                         android:inputType="text" />
                 </LinearLayout>
 
@@ -184,6 +188,7 @@
                             android:layout_weight="1"
                             android:ems="10"
                             android:hint='Ex: "," or "|" or ";" ....'
+                            android:text="@{account.splitContent}"
                             android:inputType="text" />
 
                     </LinearLayout>
@@ -195,6 +200,7 @@
                         android:layout_margin="10dp"
                         android:ems="10"
                         android:hint="String data"
+                        android:text="@{account.content}"
                         android:inputType="text" />
                 </LinearLayout>
 
@@ -248,6 +254,7 @@
                             android:layout_weight="1"
                             android:ems="10"
                             android:hint='Ex: "," or "|" or ";" ....'
+                            android:text="@{account.splitFooter}"
                             android:inputType="text" />
 
                     </LinearLayout>
@@ -259,6 +266,7 @@
                         android:layout_margin="10dp"
                         android:ems="10"
                         android:hint="String data"
+                        android:text="@{account.footer}"
                         android:inputType="text" />
                 </LinearLayout>
 

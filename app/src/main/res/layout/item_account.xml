@@ -28,8 +28,8 @@
                 android:layout_height="match_parent"
                 app:srcCompat="@drawable/ic_baseline_radio_button_unchecked_24" />
 
-            <Button
-                android:id="@+id/btnAccountName"
+            <TextView
+                android:id="@+id/txtAccountName"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"

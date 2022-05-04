@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lzf.easyfloat.EasyFloat;
@@ -31,6 +32,10 @@ public class Util {
     }
     public static String object2String(Object obj) throws JsonProcessingException {
         return new ObjectMapper().writeValueAsString(obj);
+    }
+
+    public static <T> T string2Object(String data, Class<T> valueType) throws JsonProcessingException {
+        return new ObjectMapper().readValue(data, valueType);
     }
 
     public static JsonNode string2Json(String data) throws JsonProcessingException {

@@ -21,7 +21,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.thucnobita.autoapp.R;
 import com.thucnobita.autoapp.instagram.Bot;
 import com.thucnobita.autoapp.instagram.Callback;
-import com.thucnobita.autoapp.instagram.Constants;
+import com.thucnobita.autoapp.utils.Constants;
 import com.thucnobita.autoapp.utils.Util;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 

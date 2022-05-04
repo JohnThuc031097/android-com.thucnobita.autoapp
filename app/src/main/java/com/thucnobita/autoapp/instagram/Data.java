@@ -1,5 +1,6 @@
 package com.thucnobita.autoapp.instagram;
 
+import com.thucnobita.autoapp.utils.Constants;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 import com.thucnobita.uiautomator.ObjInfo;
 import com.thucnobita.uiautomator.Selector;

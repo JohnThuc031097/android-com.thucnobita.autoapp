@@ -3,10 +3,12 @@ package com.thucnobita.autoapp.adapters;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
@@ -14,9 +16,12 @@ import androidx.databinding.ObservableBoolean;
 import androidx.databinding.ObservableField;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.thucnobita.autoapp.R;
+import com.thucnobita.autoapp.activities.AccountActivity;
 import com.thucnobita.autoapp.databinding.ItemAccountBinding;
 import com.thucnobita.autoapp.models.Account;
+import com.thucnobita.autoapp.utils.Util;
 
 import java.util.ArrayList;
 
@@ -25,13 +30,15 @@ public class ItemAccountAdapter extends RecyclerView.Adapter<ItemAccountAdapter.
     public static class ViewHolder extends RecyclerView.ViewHolder{
         public ImageView imgActived;
         public ImageView imgRemove;
+        public TextView txtAccountName;
         public ItemAccountBinding itemAccountBinding;
 
-        public ViewHolder(View itemView){
-            super(itemView);
-            imgActived = itemView.findViewById(R.id.imgActivedAccount);
-            imgRemove = itemView.findViewById(R.id.imgRemoveAccount);
-            itemAccountBinding = DataBindingUtil.bind(itemView);
+        public ViewHolder(View view){
+            super(view);
+            imgActived = view.findViewById(R.id.imgActivedAccount);
+            imgRemove = view.findViewById(R.id.imgRemoveAccount);
+            txtAccountName = view.findViewById(R.id.txtAccountName);
+            itemAccountBinding = DataBindingUtil.bind(view);
         }
 
         public void setBinding(Account account){
@@ -90,6 +97,18 @@ public class ItemAccountAdapter extends RecyclerView.Adapter<ItemAccountAdapter.
                     .setIcon(android.R.drawable.ic_delete)
                     .show();
         });
+        // Click Edit
+        holder.txtAccountName.setOnClickListener(v -> {
+            Intent intent = new Intent(v.getContext(), AccountActivity.class);
+            intent.putExtra("type", "edit");
+            try {
+                intent.putExtra("account", Util.object2String(account));
+                v.getContext().startActivity(intent);
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
+        });
+
     }
 
     @Override

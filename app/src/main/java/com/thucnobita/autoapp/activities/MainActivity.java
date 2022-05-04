@@ -6,6 +6,8 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.annotation.SuppressLint;
+import android.app.Fragment;
+import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -16,6 +18,7 @@ import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.material.tabs.TabLayout;
 import com.google.android.material.tabs.TabLayoutMediator;
 import com.lzf.easyfloat.EasyFloat;
@@ -65,6 +68,10 @@ public class MainActivity extends AppCompatActivity   {
                 (tab, position) -> tab.setText(arrTabName[position])
         ).attach();
 
+        initAction();
+    }
+
+    private void initAction(){
         switchShowFloatingView.setOnClickListener(v -> {
             if(switchShowFloatingView.isChecked()){
                 showFloatingView();
@@ -72,7 +79,6 @@ public class MainActivity extends AppCompatActivity   {
                 EasyFloat.dismiss(TAG_NAME_FLOATING_VIEW);
             }
         });
-
     }
 
     private void showFloatingView() {

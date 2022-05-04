@@ -13,12 +13,15 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thucnobita.autoapp.R;
 import com.thucnobita.autoapp.activities.AccountActivity;
+import com.thucnobita.autoapp.activities.MainActivity;
 import com.thucnobita.autoapp.adapters.ItemAccountAdapter;
 import com.thucnobita.autoapp.databinding.FragmentAccountBinding;
 import com.thucnobita.autoapp.models.Account;
+import com.thucnobita.autoapp.utils.Util;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -47,12 +50,14 @@ public class AccountFragment extends Fragment {
         facAddAccount = view.findViewById(R.id.facAddAccount);
 
         for (int i = 0; i < 20; i++) {
+            boolean isPassword = (new Random().nextBoolean());
             Account account = new Account(
                     "username_" + i,
+                    isPassword ? "password_" + i : null,
                     (new Random().nextBoolean()),
-                    "header_" + i,
-                    "content_" + i,
-                    "footer_" + i
+                    "|", !isPassword ? "header_" + i : "",
+                    "|", !isPassword ? "content_" + i : "",
+                    "|", !isPassword ? "footer_" + i : ""
             );
             listAccount.add(account);
         }
@@ -68,7 +73,7 @@ public class AccountFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         facAddAccount.setOnClickListener(v -> {
-            Intent intent = new Intent(getContext(), AccountActivity.class);
+            Intent intent = new Intent(v.getContext(), AccountActivity.class);
             intent.putExtra("type", "create");
             startActivity(intent);
         });
