@@ -3,12 +3,13 @@ package com.thucnobita.autoapp.activities;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
 
 import android.annotation.SuppressLint;
-import android.app.Fragment;
 import android.app.FragmentTransaction;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.MotionEvent;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity   {
 
     private static final String TAG_NAME_FLOATING_VIEW = "FloatingView";
     private boolean canClick = true;
+    private boolean isFirstUpdateFragment = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -79,6 +81,24 @@ public class MainActivity extends AppCompatActivity   {
                 showFloatingView();
             }else{
                 EasyFloat.dismiss(TAG_NAME_FLOATING_VIEW);
+            }
+        });
+        viewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
+            @Override
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                if(position == 0){
+                    if(isFirstUpdateFragment){
+                        isFirstUpdateFragment = false; // skip first init
+                    }else{
+                        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+                            if (fragment.isVisible() && fragment instanceof BotFragment) {
+                                ((BotFragment) fragment).loadData();
+                                break;
+                            }
+                        }
+                    }
+                }
             }
         });
     }

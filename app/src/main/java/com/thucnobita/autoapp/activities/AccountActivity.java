@@ -33,7 +33,6 @@ public class AccountActivity extends AppCompatActivity {
     private ActivityAccountBinding binding;
     private Account account;
 
-    @SuppressLint("SetTextI18n")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -53,9 +52,9 @@ public class AccountActivity extends AppCompatActivity {
                         "",
                         null,
                         true,
-                        "|","",
-                        "|", "",
-                        "|", "");
+                        "|",null,
+                        "|", null,
+                        "|", null);
                 binding.setAccount(account);
             }else if(bundle.getString("type").equals("edit")){
                 if(bundle.getString("account") != null){
@@ -182,10 +181,20 @@ public class AccountActivity extends AppCompatActivity {
                 if(username.length() > 0){
                     binding.getAccount().setUsername(username);
                     File fileAccount = new File(fileFolder, username + ".json");
-                    String password = binding.txtPassword.getText().toString().trim();
-                    if(password.length() > 0){
-                        binding.getAccount().setPassword(password);
-                    }else {
+                    if(binding.ckbUserLogin.isChecked()){
+                        String password = binding.txtPassword.getText().toString().trim();
+                        if(password.length() > 0){
+                            binding.getAccount().setPassword(password);
+                            binding.getAccount().setHeader(null);
+                            binding.getAccount().setContent(null);
+                            binding.getAccount().setFooter(null);
+                            Util.object2File(fileAccount, binding.getAccount());
+                            Intent intent = new Intent(this, MainActivity.class);
+                            startActivity(intent);
+                        }else{
+                            binding.txtPassword.forceLayout();
+                        }
+                    }else{
                         String splitHeader = String.valueOf(binding.txtStrSplitHeader.getText().charAt(0));
                         String splitContent = String.valueOf(binding.txtStrSplitContent.getText().charAt(0));
                         String splitFooter = String.valueOf(binding.txtStrSplitFooter.getText().charAt(0));
@@ -202,11 +211,12 @@ public class AccountActivity extends AppCompatActivity {
                             binding.getAccount().setHeader(dataHeader);
                             binding.getAccount().setContent(dataContent);
                             binding.getAccount().setFooter(dataFooter);
+                            binding.getAccount().setPassword(null);
+                            Util.object2File(fileAccount, binding.getAccount());
+                            Intent intent = new Intent(this, MainActivity.class);
+                            startActivity(intent);
                         }
                     }
-                    Util.object2File(fileAccount, binding.getAccount());
-                    Intent intent = new Intent(this, MainActivity.class);
-                    startActivity(intent);
                 }
             } catch (IOException e) {
                 e.printStackTrace();

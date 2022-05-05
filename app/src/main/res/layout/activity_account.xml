@@ -60,8 +60,8 @@
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
                     android:ems="10"
-                    android:text="@{account.password}"
-                    android:inputType="text" />
+                    android:inputType="textPassword"
+                    android:text="@{account.password}" />
             </LinearLayout>
 
             <LinearLayout
