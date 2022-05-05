@@ -22,11 +22,9 @@ import com.thucnobita.autoapp.R;
 import com.thucnobita.autoapp.instagram.Bot;
 import com.thucnobita.autoapp.instagram.Callback;
 import com.thucnobita.autoapp.utils.Constants;
-import com.thucnobita.autoapp.utils.Util;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -68,7 +66,7 @@ public class MainTestActivity extends AppCompatActivity {
         txtOutput = findViewById(R.id.txtOutput);
         txtLabelClipboard = findViewById(R.id.txtLabelClipboard);
 //        txtInputCode = findViewById(R.id.txtInputCode);
-        btnRunBot = findViewById(R.id.btnRunBot);
+        btnRunBot = findViewById(R.id.btnStartBot);
         btnLogin = findViewById(R.id.btnLogin);
         btnGetLink = findViewById(R.id.btnGetLink);
         btnDownload = findViewById(R.id.btnDownload);

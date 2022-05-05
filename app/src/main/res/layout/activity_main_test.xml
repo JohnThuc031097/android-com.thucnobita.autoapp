@@ -51,7 +51,7 @@
                 android:background="@drawable/gradient_spinner" />
 
             <Button
-                android:id="@+id/btnRunBot"
+                android:id="@+id/btnStartBot"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
                 android:onClick="handleOnClickBtnRunBot"

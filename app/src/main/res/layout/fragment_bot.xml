@@ -82,15 +82,34 @@
         android:textSize="25dp"
         android:textStyle="bold" />
 
-    <Button
-        android:id="@+id/btnRunBot"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:background="@color/black"
-        android:text="Run"
-        android:textColor="@android:color/holo_orange_light"
-        android:textSize="18sp" />
+        android:orientation="horizontal">
+
+        <Button
+            android:id="@+id/btnStartBot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@color/black"
+            android:text="Start"
+            android:textColor="@android:color/holo_orange_light"
+            android:textSize="18sp" />
+
+        <Button
+            android:id="@+id/btnStopBot"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@color/black"
+            android:text="Stop"
+            android:textColor="@android:color/background_light"
+            android:textSize="18sp"
+            android:visibility="gone" />
+    </LinearLayout>
 
     <TextView
         android:layout_width="match_parent"
@@ -107,7 +126,7 @@
         android:layout_margin="10dp">
 
         <TextView
-            android:id="@+id/txtLog"
+            android:id="@+id/txtLogBot"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="This is a log"

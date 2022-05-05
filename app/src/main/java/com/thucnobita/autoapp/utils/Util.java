@@ -1,7 +1,15 @@
 package com.thucnobita.autoapp.utils;
 
+import android.app.Instrumentation;
 import android.content.Context;
+import android.content.Intent;
+import android.os.RemoteException;
 import android.view.Gravity;
+
+import androidx.test.uiautomator.By;
+import androidx.test.uiautomator.UiDevice;
+import androidx.test.uiautomator.UiObjectNotFoundException;
+import androidx.test.uiautomator.Until;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -37,6 +45,24 @@ public class Util {
 
     public static <T> T string2Object(String data, Class<T> valueType) throws JsonProcessingException {
         return new ObjectMapper().readValue(data, valueType);
+    }
+
+    public static void backApp(Context context, Class<?> classz) {
+        Intent intent = new Intent(context, classz);
+        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        context.startActivity(intent);
+    }
+
+    public static void openApp(Context context, Instrumentation instrumentation, String packageName, long timeWait) {
+        UiDevice device = UiDevice.getInstance(instrumentation);
+        final Intent intent = context.getPackageManager().getLaunchIntentForPackage(packageName);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                Intent.FLAG_ACTIVITY_NEW_TASK |
+                Intent.FLAG_ACTIVITY_NO_ANIMATION |
+                Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        intent.setPackage(packageName);
+        context.startActivity(intent);
+        device.wait(Until.hasObject(By.pkg(packageName).depth(0)), timeWait * 1000L);
     }
 
     public static void createFloatingView(Context context, String tagName, OnFloatCallbacks onFloatCallbacks){

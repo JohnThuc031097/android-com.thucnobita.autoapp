@@ -93,7 +93,10 @@ public class MainActivity extends AppCompatActivity   {
                     }else{
                         for (Fragment fragment : getSupportFragmentManager().getFragments()) {
                             if (fragment.isVisible() && fragment instanceof BotFragment) {
-                                ((BotFragment) fragment).loadData();
+                                BotFragment fragmentCrr = (BotFragment) fragment;
+                                if(!fragmentCrr.isRunning){
+                                    fragmentCrr.loadData();
+                                }
                                 break;
                             }
                         }
