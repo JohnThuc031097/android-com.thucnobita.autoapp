@@ -109,6 +109,18 @@
             android:textColor="@android:color/background_light"
             android:textSize="18sp"
             android:visibility="gone" />
+
+        <Button
+            android:id="@+id/btnGetClipbroad"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@color/black"
+            android:text="Get Clipbroad"
+            android:textColor="@android:color/background_light"
+            android:textSize="18sp"
+            android:visibility="gone" />
     </LinearLayout>
 
     <TextView

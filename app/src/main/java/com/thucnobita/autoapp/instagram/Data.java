@@ -14,6 +14,14 @@ class Data {
         this.mAutomatorService = automatorService;
     }
 
+    public Selector app_floating_view(){
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName("com.thucnobita.autoapp");
+        selector.setClassName("android.widget.FrameLayout");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME);
+        return selector;
+    }
+
     public Selector app_current(String name){
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName("com.android.systemui");

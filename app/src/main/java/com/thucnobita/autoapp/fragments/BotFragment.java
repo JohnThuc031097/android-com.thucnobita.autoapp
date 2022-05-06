@@ -11,6 +11,7 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -25,6 +26,7 @@ import com.thucnobita.uiautomator.AutomatorServiceImpl;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -33,6 +35,7 @@ public class BotFragment extends Fragment {
     private Button btnRunTotal;
     private Button btnStartBot;
     private Button btnStopBot;
+    private Button btnGetClipbroad;
     private TextView txtLogBot;
 
     private File fileFolder;
@@ -68,6 +71,7 @@ public class BotFragment extends Fragment {
         btnRunTotal = view.findViewById(R.id.btnTotalAccRun);
         btnStartBot = view.findViewById(R.id.btnStartBot);
         btnStopBot = view.findViewById(R.id.btnStopBot);
+        btnGetClipbroad = view.findViewById(R.id.btnGetClipbroad);
         txtLogBot = view.findViewById(R.id.txtLogBot);
 
         return view;
@@ -84,11 +88,12 @@ public class BotFragment extends Fragment {
     private void addValueDefault(){
         btnLoginTotal.setText("0");
         btnRunTotal.setText("0");
+        txtLogBot.setText(null);
         setLock(false);
     }
 
     private void addEvents(){
-        btnLoginTotal.getViewTreeObserver().addOnWindowFocusChangeListener(hasFocus -> {
+        btnGetClipbroad.getViewTreeObserver().addOnWindowFocusChangeListener(hasFocus -> {
             if(hasFocus && automatorService != null){
                 linkDownloadVideo = automatorService.getClipboard();
             }
@@ -96,8 +101,10 @@ public class BotFragment extends Fragment {
         btnStartBot.setOnClickListener(v -> {
             setLock(true);
             // Code here
-            initBot();
-            remoteApp(v.getContext());
+            executor.submit(() -> {
+                initBot();
+                remoteApp(v.getContext());
+            });
         });
         btnStopBot.setOnClickListener(v -> {
             // Code here
@@ -133,9 +140,12 @@ public class BotFragment extends Fragment {
         try {
             Util.openApp(context, automatorService.getInstrumentation(), Constants.PACKAGE_NAME_INSTAGRAM, 5);
             botInstagram.get_link_video();
-            btnLoginTotal.forceLayout();
+            botInstagram.recent_app();
+            requireActivity().runOnUiThread(() -> {
+                btnGetClipbroad.forceLayout();
+            });
+            Thread.sleep(1000);
             setLog("=> Link download video:" + linkDownloadVideo);
-            Util.backApp(context, MainActivity.class);
         }catch (Exception e){
             e.printStackTrace();
             setLog("=> Error:" + e);
@@ -144,13 +154,17 @@ public class BotFragment extends Fragment {
     }
 
     private void setLog(String text){
-        txtLogBot.setText(String.format("%s\n%s", txtLogBot.getText(), text));
+        requireActivity().runOnUiThread(() -> {
+            txtLogBot.setText(String.format("%s\n%s", txtLogBot.getText(), text));
+        });
     }
 
     private void setLock(boolean isLock){
-        btnStartBot.setVisibility(isLock ? View.GONE : View.VISIBLE);
-        btnStopBot.setVisibility(isLock ? View.VISIBLE : View.GONE);
-        isRunning = isLock;
+        requireActivity().runOnUiThread(() -> {
+            btnStartBot.setVisibility(isLock ? View.GONE : View.VISIBLE);
+            btnStopBot.setVisibility(isLock ? View.VISIBLE : View.GONE);
+            isRunning = isLock;
+        });
     }
 
     public void loadData() {

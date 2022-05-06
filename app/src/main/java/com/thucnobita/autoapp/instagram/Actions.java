@@ -20,7 +20,7 @@ public class Actions {
     }
 
     public boolean click_recent_app(String name) throws RemoteException, UiObjectNotFoundException {
-        return automatorService.pressKey("recent") && click(selectors.app_current(name), 5);
+        return click(selectors.app_floating_view(), 5) || automatorService.pressKey("recent") && click(selectors.app_current(name), 5);
     }
 
     public boolean post_feed(String content) throws UiObjectNotFoundException, InterruptedException, RemoteException {

@@ -4,8 +4,16 @@ import android.app.Instrumentation;
 import android.content.Context;
 import android.content.Intent;
 import android.os.RemoteException;
+import android.provider.Settings;
 import android.view.Gravity;
+import android.view.MotionEvent;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.UiObjectNotFoundException;
@@ -18,10 +26,17 @@ import com.lzf.easyfloat.EasyFloat;
 import com.lzf.easyfloat.enums.ShowPattern;
 import com.lzf.easyfloat.enums.SidePattern;
 import com.lzf.easyfloat.interfaces.OnFloatCallbacks;
+import com.lzf.easyfloat.interfaces.OnPermissionResult;
+import com.lzf.easyfloat.interfaces.OnTouchRangeListener;
+import com.lzf.easyfloat.permission.PermissionUtils;
+import com.lzf.easyfloat.utils.DragUtils;
+import com.lzf.easyfloat.widget.BaseSwitchView;
 import com.thucnobita.autoapp.R;
+import com.thucnobita.autoapp.activities.MainActivity;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Util {
     private Util(){
@@ -45,12 +60,6 @@ public class Util {
 
     public static <T> T string2Object(String data, Class<T> valueType) throws JsonProcessingException {
         return new ObjectMapper().readValue(data, valueType);
-    }
-
-    public static void backApp(Context context, Class<?> classz) {
-        Intent intent = new Intent(context, classz);
-        intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
-        context.startActivity(intent);
     }
 
     public static void openApp(Context context, Instrumentation instrumentation, String packageName, long timeWait) {
