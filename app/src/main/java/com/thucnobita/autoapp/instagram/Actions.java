@@ -85,6 +85,10 @@ public class Actions {
         return click(idObjs.get(index), 5);
     }
 
+    public String get_username_video_saved() throws UiObjectNotFoundException {
+        return automatorService.getText(selectors.username_video_saved());
+    }
+
     public boolean click_copy_link_video_saved() throws UiObjectNotFoundException, InterruptedException {
         ArrayList<Selector> listSelectorLinkVideoSaved = selectors.copy_remove_link_video_saved();
         if (click(listSelectorLinkVideoSaved.get(0), 5)) { // Select video

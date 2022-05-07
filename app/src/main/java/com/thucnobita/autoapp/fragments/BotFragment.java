@@ -130,6 +130,8 @@ public class BotFragment extends Fragment {
                                     setLog("=> Get account " + account.getUsername());
                                     if(botInstagram.get_account(account.getUsername())){
                                         botInstagram.get_link_video();
+                                        String usernameVideo = botInstagram.get_username_video();
+                                        Thread.sleep(500);
                                         botInstagram.recent_app();
                                         requireActivity().runOnUiThread(() -> {
                                             btnGetClipbroad.forceLayout();
@@ -146,10 +148,22 @@ public class BotFragment extends Fragment {
                                             if(fileVideo.exists()){
                                                 botInstagram.share_video(v.getContext().getApplicationContext(), fileVideo);
                                                 setLog("=> Share video");
-                                                botInstagram.post_feed(String.format("%s\n%s\n%s",
-                                                        account.getHeader(),
-                                                        account.getContent(),
-                                                        account.getFooter()));
+                                                String[] temp = account.getHeader().split(Pattern.quote(account.getSplitHeader()));
+                                                String header = temp[temp.length > 0
+                                                        ? new Random().nextInt(temp.length-1)
+                                                        : 0];
+                                                temp = account.getContent().split(Pattern.quote(account.getSplitContent()));
+                                                String content = temp[temp.length > 0
+                                                        ? new Random().nextInt(temp.length-1)
+                                                        : 0];
+                                                temp = account.getFooter().split(Pattern.quote(account.getSplitFooter()));
+                                                String footer = temp[temp.length > 0
+                                                        ? new Random().nextInt(temp.length-1)
+                                                        : 0];
+                                                botInstagram.post_feed(String.format("%s@%s\n%s\n%s",
+                                                        header, usernameVideo,
+                                                        content,
+                                                        footer));
                                                 setLog("=> Post feed");
                                                 botInstagram.recent_app();
                                             }

@@ -54,6 +54,12 @@ public class Bot {
         return result;
     }
 
+    public String get_username_video() throws UiObjectNotFoundException {
+        String username = actions.get_username_video_saved();
+        Log.i(TAG_NAME, "=> Username video:" + username);
+        return username;
+    }
+
     public void get_link_video() throws UiObjectNotFoundException, InterruptedException {
         Object result;
         Thread.sleep(1000);
@@ -105,7 +111,7 @@ public class Bot {
         intentVideo.setType("video/*"); // image/* or video/* or text/plain
         intentVideo.putExtra(Intent.EXTRA_STREAM, uri);
         intentVideo.setPackage(Constants.PACKAGE_NAME_INSTAGRAM);
-        intentVideo.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        intentVideo.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
         context.getApplicationContext().startActivity(intentVideo);
     }
 
@@ -117,10 +123,13 @@ public class Bot {
     }
 
     public boolean login(Context context, String username, String password) {
-        if(client != null){
-            return true;
-        }else {
+        if(client == null){
             client = loadClientCookie(username);
+            // Try Again
+            if(client == null){
+                client = loadClientCookie(username);
+            }
+            // If error then New login
             if(client == null){
                 IGClient.Builder.LoginHandler twoFactorHandler = (client, response) -> IGChallengeUtils.resolveTwoFactor(client, response, () -> {
                     AtomicBoolean accept = new AtomicBoolean(false);
@@ -172,15 +181,13 @@ public class Bot {
                             .onChallenge(challengeHandler)
                             .login();
                     saveClientCookie(client, username);
-                    return true;
                 }catch (IGLoginException igLoginException){
                     igLoginException.printStackTrace();
                     return false;
                 }
-            }else{
-                return false;
             }
         }
+        return true;
     }
 
     public void login(String username, String password, Callback.Login callback) {

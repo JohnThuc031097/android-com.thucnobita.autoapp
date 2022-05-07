@@ -69,6 +69,15 @@ class Data {
         return selectors;
     }
 
+    public Selector username_video_saved(){
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setClassName("android.widget.Button");
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/username");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID);
+        return selector;
+    }
+
     public ArrayList<Selector> copy_remove_link_video_saved(){
         ArrayList<Selector> selectors = new ArrayList<>();
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
