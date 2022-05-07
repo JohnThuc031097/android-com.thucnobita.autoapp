@@ -144,7 +144,7 @@ public class BotFragment extends Fragment {
                                         if(linkDownload != null){
                                             File fileVideo = botInstagram.download_video(linkDownload, textCodeVideo, account.getUsername());
                                             if(fileVideo.exists()){
-                                                botInstagram.share_video(v.getContext(), fileVideo);
+                                                botInstagram.share_video(v.getContext().getApplicationContext(), fileVideo);
                                                 setLog("=> Share video");
                                                 botInstagram.post_feed(String.format("%s\n%s\n%s",
                                                         account.getHeader(),
