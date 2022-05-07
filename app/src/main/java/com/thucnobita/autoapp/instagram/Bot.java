@@ -1,10 +1,12 @@
 package com.thucnobita.autoapp.instagram;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.RemoteException;
 import android.util.Log;
+import android.widget.EditText;
 
 import androidx.core.content.FileProvider;
 import androidx.test.uiautomator.UiObjectNotFoundException;
@@ -25,6 +27,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 
 public class Bot {
     private final String TAG_NAME = "BOT_INSTAGRAM";
@@ -41,10 +45,17 @@ public class Bot {
         Log.i(TAG_NAME, "=> Click recent app => " +  result);
     }
 
-    public void get_link_video() throws UiObjectNotFoundException, InterruptedException {
-        Object result;
+    public boolean get_account(String username) throws InterruptedException, UiObjectNotFoundException, RemoteException {
+        boolean result;
         result = actions.click_profile();
         Log.i(TAG_NAME, "=> Click profile => " + (boolean) result);
+        result = actions.click_switch_account(username);
+        Log.i(TAG_NAME, "=> Click switch user => " + result);
+        return result;
+    }
+
+    public void get_link_video() throws UiObjectNotFoundException, InterruptedException {
+        Object result;
         Thread.sleep(1000);
         result = actions.click_options();
         Log.i(TAG_NAME, "=> Click options => " + (boolean) result);
@@ -82,7 +93,7 @@ public class Bot {
         return pathFile;
     }
 
-    public Intent share_video(Context context, File pathFile){
+    public void share_video(Context context, File pathFile){
 //        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
 //        StrictMode.setVmPolicy(builder.build());
 
@@ -95,7 +106,7 @@ public class Bot {
         intentVideo.putExtra(Intent.EXTRA_STREAM, uri);
         intentVideo.setPackage(Constants.PACKAGE_NAME_INSTAGRAM);
         intentVideo.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-        return intentVideo;
+        context.getApplicationContext().startActivity(intentVideo);
     }
 
     public void post_feed(String content) throws UiObjectNotFoundException, InterruptedException, RemoteException {
@@ -103,6 +114,73 @@ public class Bot {
         result = actions.post_feed(content);
         Log.i(TAG_NAME, "=> Post feed => " + result);
         Thread.sleep(1000);
+    }
+
+    public boolean login(Context context, String username, String password) {
+        if(client != null){
+            return true;
+        }else {
+            client = loadClientCookie(username);
+            if(client == null){
+                IGClient.Builder.LoginHandler twoFactorHandler = (client, response) -> IGChallengeUtils.resolveTwoFactor(client, response, () -> {
+                    AtomicBoolean accept = new AtomicBoolean(false);
+                    EditText input = new EditText(context);
+                    new AlertDialog.Builder(context)
+                            .setTitle("Input digit code")
+                            .setMessage("Login with two factor")
+                            .setView(input)
+                            .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                                if(input.length() > 3){
+                                    accept.set(true);
+                                    dialog.dismiss();
+                                }
+                            })
+                            .setCancelable(false)
+                            .setIcon(android.R.drawable.ic_secure)
+                            .show();
+                    while (!accept.get()){
+                        Thread.sleep(1000);
+                    }
+                    return input.getText().toString();
+                });
+                IGClient.Builder.LoginHandler challengeHandler = (client, response) -> IGChallengeUtils.resolveChallenge(client, response, () -> {
+                    AtomicBoolean accept = new AtomicBoolean(false);
+                    EditText input = new EditText(context);
+                    new AlertDialog.Builder(context)
+                            .setTitle("Input digit code")
+                            .setMessage("Login with two factor")
+                            .setView(input)
+                            .setPositiveButton(android.R.string.yes, (dialog, which) -> {
+                                if(input.length() > 3){
+                                    accept.set(true);
+                                    dialog.dismiss();
+                                }
+                            })
+                            .setCancelable(false)
+                            .setIcon(android.R.drawable.ic_secure)
+                            .show();
+                    while (!accept.get()){
+                        Thread.sleep(1000);
+                    }
+                    return input.getText().toString();
+                });
+                try{
+                    client = IGClient.builder()
+                            .username(username)
+                            .password(password)
+                            .onTwoFactor(twoFactorHandler)
+                            .onChallenge(challengeHandler)
+                            .login();
+                    saveClientCookie(client, username);
+                    return true;
+                }catch (IGLoginException igLoginException){
+                    igLoginException.printStackTrace();
+                    return false;
+                }
+            }else{
+                return false;
+            }
+        }
     }
 
     public void login(String username, String password, Callback.Login callback) {
@@ -131,6 +209,26 @@ public class Bot {
         }
     }
 
+    public String getLinkVideoByCode(String code){
+        AtomicReference<String> result = new AtomicReference<>();
+        new MediaInfoRequest(String.valueOf(IGUtils.fromCode(code)))
+                .execute(client)
+                .thenAccept(mediaInfoResponse -> {
+                    try {
+                        JsonNode jsonMedia = Util.string2Json(Util.object2String(mediaInfoResponse));
+                        String linkVideo = jsonMedia
+                                .get("items").get(0)
+                                .get("video_versions").get(0)
+                                .get("url").textValue();
+                        result.set(linkVideo);
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
+                })
+                .join();
+        return result.get();
+    }
+
     public void getLinkVideoByCode(String code, Callback.Media callback){
         new MediaInfoRequest(IGUtils.fromCode(code) + "")
                 .execute(client)
@@ -154,6 +252,26 @@ public class Bot {
                 .join();
     }
 
+    private IGClient loadClientCookie(String username){
+        String pathFolder = String.format("%s/%s/%s/%s",
+                Constants.FOLDER_ROOT,
+                Constants.FOLDER_NAME_APP,
+                Constants.FOLDER_NAME_SESSION,
+                username);
+        if(new File(pathFolder).exists()){
+            File clientFile = new File(pathFolder,"client.cer");
+            File cookieFile = new File(pathFolder,"cookie.cer");
+            if(clientFile.exists() && cookieFile.exists()){
+                try{
+                    return IGClient.deserialize(clientFile, cookieFile);
+                }catch (IOException | ClassNotFoundException e){
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+
     private IGClient loadClientCookie(String username, Callback.Login callback){
         String pathFolder = String.format("%s/%s/%s/%s",
                 Constants.FOLDER_ROOT,
@@ -173,6 +291,27 @@ public class Bot {
             }
         }
         return null;
+    }
+
+    private void saveClientCookie(IGClient client, String username) {
+        String pathFolder = String.format("%s/%s/%s/%s",
+                Constants.FOLDER_ROOT,
+                Constants.FOLDER_NAME_APP,
+                Constants.FOLDER_NAME_SESSION,
+                username);
+        if(!new File(pathFolder).exists()){
+            new File(pathFolder).mkdirs();
+        }
+        if(client != null){
+            if(client.isLoggedIn()){
+                try{
+                    client.serialize(new File(pathFolder, "client.cer"),
+                            new File(pathFolder,"cookie.cer"));
+                }catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 
     private void saveClientCookie(IGClient client, String username, Callback.Login callback) {

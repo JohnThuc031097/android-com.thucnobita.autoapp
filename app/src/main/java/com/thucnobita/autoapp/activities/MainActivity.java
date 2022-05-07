@@ -60,8 +60,6 @@ public class MainActivity extends AppCompatActivity   {
         tabLayout = findViewById(R.id.tabLayoutMain);
         viewPager = findViewById(R.id.viewPagerMain);
 
-        askPermissions();
-
         viewPagerAdapter = new ViewPagerAdapter(this);
         viewPagerAdapter.addFragment(new BotFragment());
         viewPagerAdapter.addFragment(new AccountFragment());
@@ -73,6 +71,8 @@ public class MainActivity extends AppCompatActivity   {
         ).attach();
 
         initAction();
+
+        askPermissions();
     }
 
     private void initAction(){

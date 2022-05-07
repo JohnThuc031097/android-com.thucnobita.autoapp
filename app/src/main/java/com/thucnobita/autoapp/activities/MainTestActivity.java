@@ -254,8 +254,7 @@ public class MainTestActivity extends AppCompatActivity {
     public void handleOnClickBtnUpload(View v){
         executor.submit(() -> {
            try {
-               Intent intentShare = botInstagram.share_video(this, fileVideo);
-               startActivity(intentShare);
+               botInstagram.share_video(this, fileVideo);
                setText("[Bot] [Instagram] [ShareVideo] Ok", true);
                Thread.sleep(1000);
                botInstagram.post_feed(textClipboard);

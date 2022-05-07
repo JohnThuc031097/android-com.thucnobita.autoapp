@@ -41,6 +41,22 @@ public class Actions {
         return false;
     }
 
+    public boolean click_switch_account(String username) throws UiObjectNotFoundException, InterruptedException, RemoteException {
+        ArrayList<Selector> arrSelector = selectors.switch_account(username);
+        if(click(arrSelector.get(0), 5)){
+            Thread.sleep(1000);
+            if(click(arrSelector.get(1), 5)){
+                if(waitGone(arrSelector.get(1), 5)){
+                }else{
+                    automatorService.pressKey("back");
+                }
+                Thread.sleep(1000);
+                return true;
+            }
+        }
+        return false;
+    }
+
     public boolean click_profile() throws UiObjectNotFoundException {
         return click(selectors.profile(), 5);
     }
@@ -79,24 +95,25 @@ public class Actions {
             }
             if (click(listSelectorLinkVideoSaved.get(2), 5)) { // Show dialog
                 if (click(listSelectorLinkVideoSaved.get(3), 5)) { // 1.Copy link
-                    Thread.sleep(2000);
-                    if (click(listSelectorLinkVideoSaved.get(4), 5)) { // Again Select video
-                        if (click(listSelectorLinkVideoSaved.get(2), 5)) { // Show dialog
-                            if (click(listSelectorLinkVideoSaved.get(5), 5)) { // 2.Remove video
-                                Thread.sleep(1000);
-//                                if (click(listSelectorLinkVideoSaved.get(4), 5)) { // Again Select video
-//                                    if (click(listSelectorLinkVideoSaved.get(6), 5)) { // Back 1
-//                                        return click(listSelectorLinkVideoSaved.get(7), 5); // Back 2
-//                                    } else {
-//                                        if (click(listSelectorLinkVideoSaved.get(7), 5)) { // Back 2
-//                                            return click(listSelectorLinkVideoSaved.get(7), 5); // Back 2
-//                                        }
-//                                    }
-//                                }
-                                return click(listSelectorLinkVideoSaved.get(4), 5);
-                            }
-                        }
-                    }
+                    Thread.sleep(1000);
+                    return true;
+//                    if (click(listSelectorLinkVideoSaved.get(4), 5)) { // Again Select video
+//                        if (click(listSelectorLinkVideoSaved.get(2), 5)) { // Show dialog
+//                            if (click(listSelectorLinkVideoSaved.get(5), 5)) { // 2.Remove video
+//                                Thread.sleep(1000);
+////                                if (click(listSelectorLinkVideoSaved.get(4), 5)) { // Again Select video
+////                                    if (click(listSelectorLinkVideoSaved.get(6), 5)) { // Back 1
+////                                        return click(listSelectorLinkVideoSaved.get(7), 5); // Back 2
+////                                    } else {
+////                                        if (click(listSelectorLinkVideoSaved.get(7), 5)) { // Back 2
+////                                            return click(listSelectorLinkVideoSaved.get(7), 5); // Back 2
+////                                        }
+////                                    }
+////                                }
+//                                return click(listSelectorLinkVideoSaved.get(4), 5);
+//                            }
+//                        }
+//                    }
                 }
             }
         }
