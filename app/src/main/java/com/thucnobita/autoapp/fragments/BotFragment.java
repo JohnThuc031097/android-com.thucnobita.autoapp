@@ -198,7 +198,7 @@ public class BotFragment extends Fragment {
                                                 setLog("=> Result Code video:" + textCodeVideo);
                                                 String linkDownload  = botIG.getLinkVideoByCode(textCodeVideo);
                                                 if(linkDownload != null){
-                                                    setLog("=> Result link download video:" + linkDownload);
+                                                    setLog("=> Result link download video:" + linkDownload.length());
                                                     File fileVideo = botIG.download_video(linkDownload, textCodeVideo, accountRun.getUsername());
                                                     if(fileVideo.exists()){
                                                         setLog("=> Video path downloaded:" + fileVideo.getPath());
@@ -224,7 +224,6 @@ public class BotFragment extends Fragment {
                                                                     content,
                                                                     footer))){
                                                                 setLog("=> Post feed Ok");
-                                                                botIG.recent_app();
                                                             }else{
                                                                 setLog("=> Post feed Failed");
                                                             }
@@ -250,6 +249,7 @@ public class BotFragment extends Fragment {
                                 setLog("=> Error:" + e);
                             }
                         }
+                        botIG.recent_app();
                     }
                 }
             }else{

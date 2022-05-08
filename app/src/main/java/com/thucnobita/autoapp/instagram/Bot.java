@@ -135,7 +135,7 @@ public class Bot {
             intentVideo.putExtra(Intent.EXTRA_STREAM, uri);
             intentVideo.setPackage(Constants.PACKAGE_NAME_INSTAGRAM);
             intentVideo.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.getApplicationContext().startActivity(intentVideo);
+            context.getApplicationContext().startActivity(Intent.createChooser(intentVideo, "Share to"));
             return true;
         }catch (Exception e){
             e.printStackTrace();

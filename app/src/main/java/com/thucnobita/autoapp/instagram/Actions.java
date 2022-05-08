@@ -24,7 +24,7 @@ public class Actions {
     }
 
     public boolean post_feed(String content) throws UiObjectNotFoundException, InterruptedException, RemoteException {
-        ArrayList<Selector> arrSelector = selectors.post_feed();
+        ArrayList<Selector> arrSelector = selectors.post_feed_type_1();
         if(click(arrSelector.get(0), 5)){
             if(click(arrSelector.get(1), 60)){
                 if(waitExist(arrSelector.get(2), 30)){
