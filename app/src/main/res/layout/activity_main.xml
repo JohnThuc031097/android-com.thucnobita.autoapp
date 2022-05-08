@@ -24,6 +24,7 @@
         android:layout_margin="10dp"
         android:text="Show Floating View"
         android:textSize="15sp"
+        android:visibility="gone"
         tools:ignore="UseSwitchCompatOrMaterialXml" />
 
     <com.google.android.material.tabs.TabLayout

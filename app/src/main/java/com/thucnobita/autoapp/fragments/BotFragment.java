@@ -48,14 +48,16 @@ public class BotFragment extends Fragment {
     private TextView txtLogBot;
 
     private File fileFolder;
+    private int totalAccLogin;
     private ArrayList<Account> arrAccLogin;
+    private int totalAccRun;
     private ArrayList<Account> arrAccRun;
 
     private ExecutorService executor;
     public boolean isRunning;
     private String linkVideo;
     private AutomatorServiceImpl automatorService;
-    private Bot botInstagram;
+    private Bot botIG;
 
     public BotFragment() {
     }
@@ -108,89 +110,27 @@ public class BotFragment extends Fragment {
             }
         });
         btnStartBot.setOnClickListener(v -> {
-            isRunning = true;
-            setLock(true);
-            // Code here
-            executor.submit(() -> {
-                initBot();
-                if(arrAccLogin.size() > 0){
-                    Account accLogin = arrAccLogin.size() > 1
-                            ? arrAccLogin.get(new Random().nextInt(arrAccLogin.size()-1))
-                            : arrAccLogin.get(0);
-                    setLog("=> Account login:" + accLogin.getUsername());
-                    boolean resultLogin = botInstagram.login(v.getContext().getApplicationContext(),
-                            accLogin.getUsername(), accLogin.getPassword());
-                    if(resultLogin){
-                        setLog("=> Login Ok");
-                        for (Account account: arrAccRun) {
-                            if(account.isActived() && isRunning){
-                                try {
-                                    setLog("=> Open app " + Constants.PACKAGE_NAME_INSTAGRAM);
-                                    Util.openApp(v.getContext(), automatorService.getInstrumentation(), Constants.PACKAGE_NAME_INSTAGRAM, 5);
-                                    setLog("=> Get account " + account.getUsername());
-                                    if(botInstagram.get_account(account.getUsername())){
-                                        botInstagram.get_link_video();
-                                        String usernameVideo = botInstagram.get_username_video();
-                                        Thread.sleep(500);
-                                        botInstagram.recent_app();
-                                        requireActivity().runOnUiThread(() -> {
-                                            btnGetClipbroad.forceLayout();
-                                        });
-                                        Thread.sleep(1000);
-                                        setLog("=> Link video:" + linkVideo);
-                                        String urlLink = linkVideo.split("\\?")[0];
-                                        String[] codeVideo = urlLink.split(Pattern.quote("/"));
-                                        String textCodeVideo = codeVideo[codeVideo.length-1];
-                                        setLog("=> Code video:" + textCodeVideo);
-                                        String linkDownload  = botInstagram.getLinkVideoByCode(textCodeVideo);
-                                        if(linkDownload != null){
-                                            File fileVideo = botInstagram.download_video(linkDownload, textCodeVideo, account.getUsername());
-                                            if(fileVideo.exists()){
-                                                botInstagram.share_video(v.getContext().getApplicationContext(), fileVideo);
-                                                setLog("=> Share video");
-                                                String[] temp = account.getHeader().split(Pattern.quote(account.getSplitHeader()));
-                                                String header = temp[temp.length > 0
-                                                        ? new Random().nextInt(temp.length-1)
-                                                        : 0];
-                                                temp = account.getContent().split(Pattern.quote(account.getSplitContent()));
-                                                String content = temp[temp.length > 0
-                                                        ? new Random().nextInt(temp.length-1)
-                                                        : 0];
-                                                temp = account.getFooter().split(Pattern.quote(account.getSplitFooter()));
-                                                String footer = temp[temp.length > 0
-                                                        ? new Random().nextInt(temp.length-1)
-                                                        : 0];
-                                                botInstagram.post_feed(String.format("%s@%s\n%s\n%s",
-                                                        header, usernameVideo,
-                                                        content,
-                                                        footer));
-                                                setLog("=> Post feed");
-                                                botInstagram.recent_app();
-                                            }
-                                        }
-                                    }
-                                }catch (Exception e){
-                                    e.printStackTrace();
-                                    setLog("=> Error:" + e);
-                                }
-                            }
-                        }
-                    }else{
-                        setLog("=> Login Failed");
+            if(!isRunning){
+                isRunning = true;
+                setLock(true);
+                executor.submit(() -> {
+                    if(initBot()){
+                        botIG(v);
                     }
-                }
-                isRunning = false;
-                setLock(false);
-            });
+                    isRunning = false;
+                    setLock(false);
+                });
+            }
         });
         btnStopBot.setOnClickListener(v -> {
-            // Code here
-            isRunning = false;
-            setLock(false);
+            if(isRunning){
+                isRunning = false;
+                setLock(false);
+            }
         });
     }
 
-    private void initBot(){
+    private boolean initBot(){
         try{
             setLog("+ [App] [Init] ");
 
@@ -205,12 +145,116 @@ public class BotFragment extends Fragment {
             automatorService = new AutomatorServiceImpl(instrumentation);
             setLog("=> UiAutomator OK");
 
-            botInstagram = new Bot(automatorService);
+            botIG = new Bot(automatorService);
             setLog("=> Bot Instagram OK");
 
+            return true;
         }catch (Exception e){
             e.printStackTrace();
             setLog("=> Error: " + e);
+        }
+        return false;
+    }
+
+    private void botIG(View v){
+        setLog("+ [App] [Bot] [Instagram]");
+        setLog("=> Total acc login:" + arrAccLogin.size());
+        if(arrAccLogin.size() > 0){
+            Account accLogin = arrAccLogin.size() > 1
+                    ? arrAccLogin.get(new Random().nextInt(arrAccLogin.size()-1))
+                    : arrAccLogin.get(0);
+            setLog("=> Login with username:" + accLogin.getUsername());
+            boolean resultLogin = botIG.login(v.getContext().getApplicationContext(),
+                    accLogin.getUsername(), accLogin.getPassword());
+            if(resultLogin){
+                setLog("=> Login Ok");
+                setLog("=> Total acc run:" + arrAccRun.size());
+                if(arrAccRun.size() > 0){
+                    for (Account accountRun: arrAccRun) {
+                        setLog("=> Begin with username:" + accountRun.getUsername());
+                        setLog("=> Actived:" + accountRun.isActived());
+                        if(accountRun.isActived() && isRunning){
+                            try {
+                                setLog("=> Open app " + Constants.PACKAGE_NAME_INSTAGRAM);
+                                Util.openApp(v.getContext(), automatorService.getInstrumentation(), Constants.PACKAGE_NAME_INSTAGRAM, 5);
+                                setLog("=> Begin remote click on app");
+                                if(botIG.click_select_account(accountRun.getUsername())){
+                                    setLog("=> Click select account Ok");
+                                    if(botIG.click_get_link_video()){
+                                        setLog("=> Click get link video Ok");
+                                        String usernameVideo = botIG.get_username_video();
+                                        if(usernameVideo != null){
+                                            setLog("=> Get username video:" + usernameVideo);
+                                            Thread.sleep(500);
+                                            if(botIG.recent_app()){
+                                                requireActivity().runOnUiThread(() -> {
+                                                    btnGetClipbroad.forceLayout();
+                                                });
+                                                Thread.sleep(1000);
+                                                setLog("=> Result link video:" + linkVideo);
+                                                String urlLink = linkVideo.split("\\?")[0];
+                                                String[] codeVideo = urlLink.split(Pattern.quote("/"));
+                                                String textCodeVideo = codeVideo[codeVideo.length-1];
+                                                setLog("=> Result Code video:" + textCodeVideo);
+                                                String linkDownload  = botIG.getLinkVideoByCode(textCodeVideo);
+                                                if(linkDownload != null){
+                                                    setLog("=> Result link download video:" + linkDownload);
+                                                    File fileVideo = botIG.download_video(linkDownload, textCodeVideo, accountRun.getUsername());
+                                                    if(fileVideo.exists()){
+                                                        setLog("=> Video path downloaded:" + fileVideo.getPath());
+                                                        if(botIG.share_video(v.getContext().getApplicationContext(), fileVideo)){
+                                                            setLog("=> Share video Ok");
+                                                            setLog("=> Random header");
+                                                            String[] temp = accountRun.getHeader().split(Pattern.quote(accountRun.getSplitHeader()));
+                                                            String header = temp[temp.length > 0
+                                                                    ? new Random().nextInt(temp.length-1)
+                                                                    : 0];
+                                                            setLog("=> Random content");
+                                                            temp = accountRun.getContent().split(Pattern.quote(accountRun.getSplitContent()));
+                                                            String content = temp[temp.length > 0
+                                                                    ? new Random().nextInt(temp.length-1)
+                                                                    : 0];
+                                                            setLog("=> Random footer");
+                                                            temp = accountRun.getFooter().split(Pattern.quote(accountRun.getSplitFooter()));
+                                                            String footer = temp[temp.length > 0
+                                                                    ? new Random().nextInt(temp.length-1)
+                                                                    : 0];
+                                                            if(botIG.post_feed(String.format("%s@%s\n%s\n%s",
+                                                                    header, usernameVideo,
+                                                                    content,
+                                                                    footer))){
+                                                                setLog("=> Post feed Ok");
+                                                                botIG.recent_app();
+                                                            }else{
+                                                                setLog("=> Post feed Failed");
+                                                            }
+                                                        }else{
+                                                            setLog("=> Share video Failed");
+                                                        }
+                                                    }else{
+                                                        setLog("=> Download video Failed");
+                                                    }
+                                                }
+                                            }
+                                        }else{
+                                            setLog("=> Get username video Failed");
+                                        }
+                                    }else{
+                                        setLog("=> Click get link videos Failed");
+                                    }
+                                }else{
+                                    setLog("=> Click select account Failed");
+                                }
+                            }catch (Exception e){
+                                e.printStackTrace();
+                                setLog("=> Error:" + e);
+                            }
+                        }
+                    }
+                }
+            }else{
+                setLog("=> Login Failed");
+            }
         }
     }
 
@@ -233,23 +277,27 @@ public class BotFragment extends Fragment {
             if(fileFolder.exists()){
                 File[] fileAccounts = fileFolder.listFiles(pathname -> pathname.getPath().endsWith(".json"));
                 if(fileAccounts != null){
+                    totalAccLogin = 0;
+                    totalAccRun = 0;
                     arrAccLogin = new ArrayList<>();
                     arrAccRun = new ArrayList<>();
                     for (File src : fileAccounts) {
                         try {
                             Account account = Util.file2Object(src, Account.class);
                             if(account.getPassword() != null){
-                                arrAccLogin.add(account);
+                                totalAccLogin++;
+                                if(account.isActived()) arrAccLogin.add(account);
                             }else{
-                                arrAccRun.add(account);
+                                totalAccRun++;
+                                if(account.isActived()) arrAccRun.add(account);
                             }
                         }catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                 }
-                btnLoginTotal.setText(String.valueOf(arrAccLogin.size()));
-                btnRunTotal.setText(String.valueOf(arrAccRun.size()));
+                btnLoginTotal.setText(String.format("%s/%s", arrAccLogin.size(), totalAccLogin));
+                btnRunTotal.setText(String.format("%s/%s", arrAccRun.size(), totalAccRun));
             }
         }
     }

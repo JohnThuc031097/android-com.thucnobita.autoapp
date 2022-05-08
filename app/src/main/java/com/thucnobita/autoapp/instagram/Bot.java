@@ -40,43 +40,63 @@ public class Bot {
         actions = new Actions(automatorService);
     }
 
-    public void recent_app() throws RemoteException, UiObjectNotFoundException {
-        boolean result = actions.click_recent_app("Auto App");
-        Log.i(TAG_NAME, "=> Click recent app => " +  result);
-    }
-
-    public boolean get_account(String username) throws InterruptedException, UiObjectNotFoundException, RemoteException {
-        boolean result;
-        result = actions.click_profile();
-        Log.i(TAG_NAME, "=> Click profile => " + (boolean) result);
-        result = actions.click_switch_account(username);
-        Log.i(TAG_NAME, "=> Click switch user => " + result);
+    public boolean recent_app() {
+        boolean result = false;
+        try{
+            result = actions.click_recent_app("Auto App");
+            Log.i(TAG_NAME, "=> Click recent app => " +  result);
+        }catch (RemoteException | UiObjectNotFoundException e){
+            e.printStackTrace();
+        }
         return result;
     }
 
-    public String get_username_video() throws UiObjectNotFoundException {
-        String username = actions.get_username_video_saved();
-        Log.i(TAG_NAME, "=> Username video:" + username);
+    public boolean click_select_account(String username){
+        boolean result = false;
+        try{
+            result = actions.click_profile();
+            Log.i(TAG_NAME, "=> Click profile => " + result);
+            result = actions.click_switch_account(username);
+            Log.i(TAG_NAME, "=> Click switch user => " + result);
+        }catch (InterruptedException | UiObjectNotFoundException | RemoteException e){
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public String get_username_video() {
+        String username = null;
+        try{
+            username = actions.get_username_video_saved();
+            Log.i(TAG_NAME, "=> Username video:" + username);
+        }catch (UiObjectNotFoundException e){
+            e.printStackTrace();
+        }
         return username;
     }
 
-    public void get_link_video() throws UiObjectNotFoundException, InterruptedException {
-        Object result;
-        Thread.sleep(1000);
-        result = actions.click_options();
-        Log.i(TAG_NAME, "=> Click options => " + (boolean) result);
-        Thread.sleep(1000);
-        result = actions.click_saved();
-        Log.i(TAG_NAME, "=> Click saved => " + (boolean) result);
-        Thread.sleep(1000);
-        result = actions.click_video_saved();
-        Log.i(TAG_NAME, "=> Click video => " + (boolean) result);
-        Thread.sleep(1000);
-        result = actions.click_copy_link_video_saved();
-        Log.i(TAG_NAME, "=> Click get link video => " + (boolean) result);
+    public boolean click_get_link_video() {
+        boolean result = false;
+        try{
+            Thread.sleep(1000);
+            result = actions.click_options();
+            Log.i(TAG_NAME, "=> Click options => " + result);
+            Thread.sleep(1000);
+            result = actions.click_saved();
+            Log.i(TAG_NAME, "=> Click saved => " + result);
+            Thread.sleep(1000);
+            result = actions.click_video_saved();
+            Log.i(TAG_NAME, "=> Click video => " + result);
+            Thread.sleep(1000);
+            result = actions.click_copy_link_video_saved();
+            Log.i(TAG_NAME, "=> Click get link video => " + result);
+        }catch (UiObjectNotFoundException | InterruptedException e){
+            e.printStackTrace();
+        }
+        return result;
     }
 
-    public File download_video(String link, String nameFile, String username) throws IOException {
+    public File download_video(String link, String nameFile, String username) {
         String pathFolder = String.format("%s/%s/%s/%s",
                 Constants.FOLDER_ROOT,
                 Constants.FOLDER_NAME_APP,
@@ -86,40 +106,53 @@ public class Bot {
             new File(pathFolder).mkdirs();
         }
         File pathFile = new File(pathFolder, nameFile + ".mp4");
-        if(pathFile.exists()) return pathFile;
-        InputStream input = new URL(link).openStream();
-        FileOutputStream output = new FileOutputStream(pathFile);
-        byte[] buffer = new byte[4096];
-        int n = 0;
-        while (-1 != (n = input.read(buffer))) {
-            output.write(buffer, 0, n);
+        try{
+            if(pathFile.exists()) return pathFile;
+            InputStream input = new URL(link).openStream();
+            FileOutputStream output = new FileOutputStream(pathFile);
+            byte[] buffer = new byte[4096];
+            int n = 0;
+            while (-1 != (n = input.read(buffer))) {
+                output.write(buffer, 0, n);
+            }
+            input.close();
+            output.close();
+        }catch (IOException e){
+            e.printStackTrace();
         }
-        input.close();
-        output.close();
         return pathFile;
     }
 
-    public void share_video(Context context, File pathFile){
+    public boolean share_video(Context context, File pathFile){
 //        StrictMode.VmPolicy.Builder builder = new StrictMode.VmPolicy.Builder();
 //        StrictMode.setVmPolicy(builder.build());
-
 //        Uri uri = Uri.fromFile(pathFile); // SDK < 24
-        Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", pathFile);
-
-        Intent intentVideo = new Intent();
-        intentVideo.setAction(Intent.ACTION_SEND);
-        intentVideo.setType("video/*"); // image/* or video/* or text/plain
-        intentVideo.putExtra(Intent.EXTRA_STREAM, uri);
-        intentVideo.setPackage(Constants.PACKAGE_NAME_INSTAGRAM);
-        intentVideo.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
-        context.getApplicationContext().startActivity(intentVideo);
+        try{
+            Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", pathFile);
+            Intent intentVideo = new Intent();
+            intentVideo.setAction(Intent.ACTION_SEND);
+            intentVideo.setType("video/*"); // image/* or video/* or text/plain
+            intentVideo.putExtra(Intent.EXTRA_STREAM, uri);
+            intentVideo.setPackage(Constants.PACKAGE_NAME_INSTAGRAM);
+            intentVideo.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.getApplicationContext().startActivity(intentVideo);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
     }
 
-    public void post_feed(String content) throws UiObjectNotFoundException, InterruptedException, RemoteException {
-        Object result;
-        result = actions.post_feed(content);
-        Log.i(TAG_NAME, "=> Post feed => " + result);
-        Thread.sleep(1000);
+    public boolean post_feed(String content) {
+        boolean result = false;
+        try{
+            result = actions.post_feed(content);
+            Log.i(TAG_NAME, "=> Post feed => " + result);
+            Thread.sleep(1000);
+        }catch (UiObjectNotFoundException | InterruptedException | RemoteException e){
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public boolean login(Context context, String username, String password) {

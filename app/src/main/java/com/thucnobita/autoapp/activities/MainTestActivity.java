@@ -127,7 +127,7 @@ public class MainTestActivity extends AppCompatActivity {
                     clsDeviceApp.getDeclaredMethod("launchPackage", String.class, long.class)
                             .invoke(objDeviceApp, Constants.PACKAGE_NAME_INSTAGRAM, 5);
                     setText("=> Open app Ok", true);
-                    botInstagram.get_link_video();
+                    botInstagram.click_get_link_video();
                     setText("=> Copy link video Ok", true);
                     txtLabelClipboard.forceLayout();
                 }
@@ -135,12 +135,7 @@ public class MainTestActivity extends AppCompatActivity {
                 e.printStackTrace();
                 setText("=> Error: " + e, true);
             }
-            try {
-                botInstagram.recent_app();
-            }catch (RemoteException | UiObjectNotFoundException re){
-                re.printStackTrace();
-                setText("=> Error: " + re, true);
-            }
+            botInstagram.recent_app();
         });
     }
 
@@ -263,12 +258,7 @@ public class MainTestActivity extends AppCompatActivity {
                e.printStackTrace();
                setText("[Bot] [Instagram] [UploadVideo] " + e, true);
            }
-            try {
-                botInstagram.recent_app();
-            }catch (RemoteException | UiObjectNotFoundException re){
-                re.printStackTrace();
-                setText("=> Error: " + re, true);
-            }
+            botInstagram.recent_app();
         });
     }
 
