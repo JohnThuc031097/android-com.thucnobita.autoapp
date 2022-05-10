@@ -24,7 +24,7 @@ public class Actions {
     }
 
     public boolean post_feed(String content) throws UiObjectNotFoundException, InterruptedException, RemoteException {
-        ArrayList<Selector> arrSelector = selectors.post_feed_type_1();
+        ArrayList<Selector> arrSelector = selectors.post_feed();
         if(click(arrSelector.get(0), 5)){
             if(click(arrSelector.get(1), 60)){
                 if(waitExist(arrSelector.get(2), 30)){
@@ -100,24 +100,26 @@ public class Actions {
             if (click(listSelectorLinkVideoSaved.get(2), 5)) { // Show dialog
                 if (click(listSelectorLinkVideoSaved.get(3), 5)) { // 1.Copy link
                     Thread.sleep(1000);
-                    return true;
-//                    if (click(listSelectorLinkVideoSaved.get(4), 5)) { // Again Select video
+                    if (click(listSelectorLinkVideoSaved.get(4), 5)) { // Again Select video
 //                        if (click(listSelectorLinkVideoSaved.get(2), 5)) { // Show dialog
 //                            if (click(listSelectorLinkVideoSaved.get(5), 5)) { // 2.Remove video
-//                                Thread.sleep(1000);
-////                                if (click(listSelectorLinkVideoSaved.get(4), 5)) { // Again Select video
-////                                    if (click(listSelectorLinkVideoSaved.get(6), 5)) { // Back 1
-////                                        return click(listSelectorLinkVideoSaved.get(7), 5); // Back 2
-////                                    } else {
-////                                        if (click(listSelectorLinkVideoSaved.get(7), 5)) { // Back 2
-////                                            return click(listSelectorLinkVideoSaved.get(7), 5); // Back 2
-////                                        }
-////                                    }
-////                                }
-//                                return click(listSelectorLinkVideoSaved.get(4), 5);
+                                Thread.sleep(1000);
+                                if (click(listSelectorLinkVideoSaved.get(4), 5)) { // Again Select video
+                                    if (click(listSelectorLinkVideoSaved.get(6), 5)) { // Back 1
+                                        if(click(listSelectorLinkVideoSaved.get(7), 5)){ // Back 2
+                                            return click_profile();
+                                        }
+                                    } else {
+                                        if (click(listSelectorLinkVideoSaved.get(7), 5)) { // Back 2
+                                            if(click(listSelectorLinkVideoSaved.get(7), 5)){// Back 2
+                                                return click_profile();
+                                            }
+                                        }
+                                    }
+                                }
 //                            }
 //                        }
-//                    }
+                    }
                 }
             }
         }

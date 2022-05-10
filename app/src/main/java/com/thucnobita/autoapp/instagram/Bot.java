@@ -130,12 +130,13 @@ public class Bot {
         try{
             Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", pathFile);
             Intent intentVideo = new Intent();
-            intentVideo.setAction(Intent.ACTION_SEND);
+//            intentVideo.setAction(Intent.ACTION_SEND);
+            intentVideo.setAction("com.instagram.share.ADD_TO_STORY");
             intentVideo.setType("video/*"); // image/* or video/* or text/plain
             intentVideo.putExtra(Intent.EXTRA_STREAM, uri);
             intentVideo.setPackage(Constants.PACKAGE_NAME_INSTAGRAM);
             intentVideo.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
-            context.getApplicationContext().startActivity(Intent.createChooser(intentVideo, "Share to"));
+            context.getApplicationContext().startActivity(intentVideo);
             return true;
         }catch (Exception e){
             e.printStackTrace();
@@ -151,6 +152,16 @@ public class Bot {
             Thread.sleep(1000);
         }catch (UiObjectNotFoundException | InterruptedException | RemoteException e){
             e.printStackTrace();
+        }
+        return result;
+    }
+
+    public boolean share_video_to_reel(String data){
+        boolean result = false;
+        try{
+
+        }catch (){
+
         }
         return result;
     }
