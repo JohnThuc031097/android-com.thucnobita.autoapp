@@ -158,7 +158,7 @@ public class Bot {
             Log.i(TAG_NAME, "=> Click profile => " + result);
             result = actions.post_reel(content, noShareToFeed);
             Log.i(TAG_NAME, "=> Post reel => " + result);
-        } catch (UiObjectNotFoundException e) {
+        } catch (UiObjectNotFoundException | InterruptedException | RemoteException e) {
             e.printStackTrace();
         }
         return result;

@@ -198,14 +198,14 @@ public class BotFragment extends Fragment {
                                                 setLog("=> Result Code video:" + textCodeVideo);
                                                 String linkDownload  = botIG.getLinkVideoByCode(textCodeVideo);
                                                 if(linkDownload != null){
-                                                    setLog("=> Result link download video:" + linkDownload.length());
+                                                    setLog("=> Result Size video:" + linkDownload.length());
                                                     String pathFolder = String.format("%s/%s/%s",
                                                             Constants.FOLDER_ROOT,
                                                             "Movies",
                                                             "Instagram");
                                                     File fileVideo = botIG.download_video(
                                                             linkDownload,
-                                                            "VID_" + textCodeVideo,
+                                                            "VID_" + textCodeVideo + ".mp4",
                                                             pathFolder);
                                                     if(fileVideo.exists()){
                                                         setLog("=> Video path downloaded:" + fileVideo.getPath());
@@ -232,7 +232,8 @@ public class BotFragment extends Fragment {
                                                             String footer = temp[temp.length > 0
                                                                     ? new Random().nextInt(temp.length-1)
                                                                     : 0];
-                                                            if(botIG.post_reel(String.format("%s@%s\n%s\n%s",
+                                                            String testLine = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
+                                                            if(botIG.post_reel(String.format("%s@%s\n%s\n%s" + testLine,
                                                                     header, usernameVideo,
                                                                     content,
                                                                     footer), false)){

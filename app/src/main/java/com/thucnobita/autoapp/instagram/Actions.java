@@ -4,6 +4,7 @@ import android.os.RemoteException;
 
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
+import com.thucnobita.autoapp.utils.Constants;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 import com.thucnobita.uiautomator.Selector;
 
@@ -41,7 +42,7 @@ public class Actions {
         return false;
     }
 
-    public boolean post_reel(String content, boolean noShareToFeed) throws UiObjectNotFoundException {
+    public boolean post_reel(String content, boolean noShareToFeed) throws UiObjectNotFoundException, InterruptedException, RemoteException {
         ArrayList<Selector> arrSelect = selectors.post_reel();
         if(noShareToFeed){
             click(arrSelect.get(0), 5);
@@ -49,7 +50,16 @@ public class Actions {
         if(content != null){
             automatorService.setText(arrSelect.get(1), content);
         }
+        Thread.sleep(5000);
+        automatorService.pressKey("back"); // Hide keybroad
+        Selector selector = new Selector(automatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/tabs_viewpager");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        automatorService.swipe(selector, "u", 1000);
+        Thread.sleep(1000);
         if(click(arrSelect.get(2), 5)){ // Click "Next" to begin post
+            Thread.sleep(1000);
             return waitGone(arrSelect.get(3), 60*5); // Wait for process done (time wait default: 5 min)
         }
         return false;
@@ -88,14 +98,12 @@ public class Actions {
     public boolean click_switch_account(String username) throws UiObjectNotFoundException, InterruptedException, RemoteException {
         ArrayList<Selector> arrSelector = selectors.switch_account(username);
         if(click(arrSelector.get(0), 5)){
-            Thread.sleep(500);
+            Thread.sleep(1000);
             if(click(arrSelector.get(1), 5)){
-                Thread.sleep(2000);
-                if(automatorService.exist(arrSelector.get(1))){
-                    automatorService.pressKey("back");
+                if(waitGone(arrSelector.get(1), 5)){
                     return true;
                 }else{
-                    return waitGone(arrSelector.get(1), 5);
+                    return automatorService.pressKey("back");
                 }
             }
         }
