@@ -238,7 +238,7 @@ public class MainTestActivity extends AppCompatActivity {
     public void handleOnClickBtnDownload(View v){
         executor.submit(() -> {
             try {
-                fileVideo = botInstagram.download_video(textLinkVideo, textCodeVideo, textUsername);
+                fileVideo = botInstagram.download_video(textLinkVideo, textCodeVideo, null);
                 setText("[Bot] [Instagram] [DonwloadVideo] " + fileVideo.getAbsolutePath(), true);
             }catch (Exception e){
                 setText("[Bot] [Instagram] [DonwloadVideo] " + e, true);

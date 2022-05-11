@@ -199,10 +199,23 @@ public class BotFragment extends Fragment {
                                                 String linkDownload  = botIG.getLinkVideoByCode(textCodeVideo);
                                                 if(linkDownload != null){
                                                     setLog("=> Result link download video:" + linkDownload.length());
-                                                    File fileVideo = botIG.download_video(linkDownload, textCodeVideo, accountRun.getUsername());
+                                                    String pathFolder = String.format("%s/%s/%s",
+                                                            Constants.FOLDER_ROOT,
+                                                            "Movies",
+                                                            "Instagram");
+                                                    File fileVideo = botIG.download_video(
+                                                            linkDownload,
+                                                            "VID_" + textCodeVideo,
+                                                            pathFolder);
                                                     if(fileVideo.exists()){
                                                         setLog("=> Video path downloaded:" + fileVideo.getPath());
-                                                        if(botIG.share_video(v.getContext().getApplicationContext(), fileVideo)){
+//                                                        if(botIG.share_video(v.getContext().getApplicationContext(), fileVideo)){
+                                                        Util.openApp(
+                                                                v.getContext(),
+                                                                automatorService.getInstrumentation(),
+                                                                Constants.PACKAGE_NAME_INSTAGRAM,
+                                                                5);
+                                                        if(botIG.share_video_to_reel(null)){
                                                             setLog("=> Share video Ok");
                                                             setLog("=> Random header");
                                                             String[] temp = accountRun.getHeader().split(Pattern.quote(accountRun.getSplitHeader()));
@@ -219,10 +232,10 @@ public class BotFragment extends Fragment {
                                                             String footer = temp[temp.length > 0
                                                                     ? new Random().nextInt(temp.length-1)
                                                                     : 0];
-                                                            if(botIG.post_feed(String.format("%s@%s\n%s\n%s",
+                                                            if(botIG.post_reel(String.format("%s@%s\n%s\n%s",
                                                                     header, usernameVideo,
                                                                     content,
-                                                                    footer))){
+                                                                    footer), false)){
                                                                 setLog("=> Post feed Ok");
                                                             }else{
                                                                 setLog("=> Post feed Failed");

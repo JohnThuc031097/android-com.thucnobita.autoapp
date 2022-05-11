@@ -41,17 +41,62 @@ public class Actions {
         return false;
     }
 
+    public boolean post_reel(String content, boolean noShareToFeed) throws UiObjectNotFoundException {
+        ArrayList<Selector> arrSelect = selectors.post_reel();
+        if(noShareToFeed){
+            click(arrSelect.get(0), 5);
+        }
+        if(content != null){
+            automatorService.setText(arrSelect.get(1), content);
+        }
+        if(click(arrSelect.get(2), 5)){ // Click "Next" to begin post
+            return waitGone(arrSelect.get(3), 60*5); // Wait for process done (time wait default: 5 min)
+        }
+        return false;
+    }
+
+    public boolean share_video_to_reel(String folderVideo) throws UiObjectNotFoundException, InterruptedException {
+        ArrayList<Selector> arrSelector = selectors.share_video_to_reel(folderVideo);
+        if(click_profile()){
+            Thread.sleep(500);
+            if(click(arrSelector.get(0), 5)){
+                Thread.sleep(500);
+                if(click(arrSelector.get(1), 5)){
+                    Thread.sleep(500);
+                    if(click(arrSelector.get(2), 5)){
+                        if(click(arrSelector.get(3), 5)){
+                            if(click(arrSelector.get(4), 5)){ // Select folder "Instagram"
+                                if(click(arrSelector.get(5), 5)){ // Select video index "0" (default)
+                                    Thread.sleep(500);
+                                    if(click(arrSelector.get(6), 5)){ // Click "Add"
+                                        Thread.sleep(500);
+                                        if(click(arrSelector.get(7), 5)){ // Click "Preview"
+                                            Thread.sleep(500);
+                                            return click(arrSelector.get(8), 5); // Click "Next" to the end share video
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public boolean click_switch_account(String username) throws UiObjectNotFoundException, InterruptedException, RemoteException {
         ArrayList<Selector> arrSelector = selectors.switch_account(username);
         if(click(arrSelector.get(0), 5)){
-            Thread.sleep(1000);
+            Thread.sleep(500);
             if(click(arrSelector.get(1), 5)){
-                if(waitGone(arrSelector.get(1), 5)){
-                }else{
+                Thread.sleep(2000);
+                if(automatorService.exist(arrSelector.get(1))){
                     automatorService.pressKey("back");
+                    return true;
+                }else{
+                    return waitGone(arrSelector.get(1), 5);
                 }
-                Thread.sleep(1000);
-                return true;
             }
         }
         return false;
@@ -90,37 +135,47 @@ public class Actions {
     }
 
     public boolean click_copy_link_video_saved() throws UiObjectNotFoundException, InterruptedException {
-        ArrayList<Selector> listSelectorLinkVideoSaved = selectors.copy_remove_link_video_saved();
-        if (click(listSelectorLinkVideoSaved.get(0), 5)) { // Select video
+        ArrayList<Selector> arrSelector = selectors.copy_remove_link_video_saved();
+        if (click(arrSelector.get(0), 5)) { // Select video
             Thread.sleep(1000);
-            if (automatorService.exist(listSelectorLinkVideoSaved.get(1))) {
-                click(listSelectorLinkVideoSaved.get(1), 5);
+            if (automatorService.exist(arrSelector.get(1))) { // "Pause" video if video not type reel
+                click(arrSelector.get(1), 5);
                 Thread.sleep(1500);
             }
-            if (click(listSelectorLinkVideoSaved.get(2), 5)) { // Show dialog
-                if (click(listSelectorLinkVideoSaved.get(3), 5)) { // 1.Copy link
-                    Thread.sleep(1000);
-                    if (click(listSelectorLinkVideoSaved.get(4), 5)) { // Again Select video
-//                        if (click(listSelectorLinkVideoSaved.get(2), 5)) { // Show dialog
-//                            if (click(listSelectorLinkVideoSaved.get(5), 5)) { // 2.Remove video
-                                Thread.sleep(1000);
-                                if (click(listSelectorLinkVideoSaved.get(4), 5)) { // Again Select video
-                                    if (click(listSelectorLinkVideoSaved.get(6), 5)) { // Back 1
-                                        if(click(listSelectorLinkVideoSaved.get(7), 5)){ // Back 2
-                                            return click_profile();
-                                        }
-                                    } else {
-                                        if (click(listSelectorLinkVideoSaved.get(7), 5)) { // Back 2
-                                            if(click(listSelectorLinkVideoSaved.get(7), 5)){// Back 2
-                                                return click_profile();
-                                            }
-                                        }
-                                    }
-                                }
-//                            }
-//                        }
+            if (click(arrSelector.get(2), 5)) { // Show dialog
+                Thread.sleep(500);
+                if(click(arrSelector.get(3), 5)){ // Copy link
+                    Thread.sleep(500);
+                    if (click(arrSelector.get(6), 5)) { // Back 1
+                        return true;
+                    } else {
+                        return click(arrSelector.get(7), 5); // Back 2
                     }
                 }
+//                if (click(arrSelector.get(3), 5)) { // 1.Copy link
+//                    Thread.sleep(500);
+//                    if (click(arrSelector.get(4), 5)) { // Again Select video
+////                        if (click(listSelectorLinkVideoSaved.get(2), 5)) { // Show dialog
+////                            if (click(listSelectorLinkVideoSaved.get(5), 5)) { // 2.Remove video
+////                                Thread.sleep(1000);
+////                                if (click(arrSelector.get(4), 5)) { // Again Select video
+//                                    Thread.sleep(500);
+//                                    if (click(arrSelector.get(6), 5)) { // Back 1
+//                                        if(click(arrSelector.get(7), 5)){ // Back 2
+//                                            return click_profile();
+//                                        }
+//                                    } else {
+//                                        if (click(arrSelector.get(7), 5)) { // Back 2
+//                                            if(click(arrSelector.get(7), 5)){// Back 2
+//                                                return click_profile();
+//                                            }
+//                                        }
+//                                    }
+////                                }
+////                            }
+////                        }
+//                    }
+//                }
             }
         }
         return false;

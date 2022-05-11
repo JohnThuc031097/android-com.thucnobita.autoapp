@@ -101,7 +101,7 @@ class Data {
         return selectors;
     }
 
-    public ArrayList<Selector> share_to_reel(){
+    public ArrayList<Selector> share_video_to_reel(String folderVideo){
         ArrayList<Selector> selectors = new ArrayList<>();
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
@@ -133,7 +133,7 @@ class Data {
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
         selector.setClassName("android.widget.TextView");
-        selector.setText("Instagram");
+        selector.setText(folderVideo != null ? folderVideo : "Instagram");
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/folder_picker_text_view");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
         selectors.add(selector);
@@ -170,9 +170,8 @@ class Data {
     public Selector username_video_saved(){
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setClassName("android.widget.Button");
-        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/username");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/row_feed_photo_profile_name");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
         return selector;
     }
 
@@ -189,23 +188,19 @@ class Data {
         selectors.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setClassName("android.widget.ImageView");
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/play_pause_button");
-        selector.setDescription("Play or pause");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID | Selector.MASK_DESCRIPTION);
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
         selectors.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setClassName("android.widget.ImageView");
-        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/more_button");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID);
+        selector.setDescription("More");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION);
         selectors.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setClassName("android.widget.Button");
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/action_sheet_row_text_view");
-        selector.setText("Copy Link");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID | Selector.MASK_TEXT);
+        selector.setText("Copy link");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID | Selector.MASK_TEXT);
         selectors.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
@@ -215,10 +210,9 @@ class Data {
         selectors.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setClassName("android.widget.Button");
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/action_sheet_row_text_view");
         selector.setText("Remove from saved");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID | Selector.MASK_TEXT);
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID | Selector.MASK_TEXT);
         selectors.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);

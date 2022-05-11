@@ -96,16 +96,11 @@ public class Bot {
         return result;
     }
 
-    public File download_video(String link, String nameFile, String username) {
-        String pathFolder = String.format("%s/%s/%s/%s",
-                Constants.FOLDER_ROOT,
-                Constants.FOLDER_NAME_APP,
-                Constants.FOLDER_NAME_VIDEO,
-                username);
+    public File download_video(String link, String nameFile,String pathFolder) {
+        File pathFile = new File(pathFolder, nameFile);
         if (!new File(pathFolder).exists()) {
             new File(pathFolder).mkdirs();
         }
-        File pathFile = new File(pathFolder, nameFile + ".mp4");
         try{
             if(pathFile.exists()) return pathFile;
             InputStream input = new URL(link).openStream();
@@ -156,12 +151,26 @@ public class Bot {
         return result;
     }
 
-    public boolean share_video_to_reel(String data){
+    public boolean post_reel(String content, boolean noShareToFeed){
         boolean result = false;
         try{
+            result = actions.click_profile();
+            Log.i(TAG_NAME, "=> Click profile => " + result);
+            result = actions.post_reel(content, noShareToFeed);
+            Log.i(TAG_NAME, "=> Post reel => " + result);
+        } catch (UiObjectNotFoundException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
 
-        }catch (){
-
+    public boolean share_video_to_reel(String folderVideo){
+        boolean result = false;
+        try{
+            result = actions.share_video_to_reel(folderVideo);
+            Log.i(TAG_NAME, "=> Click share video to reel => " + result);
+        } catch (InterruptedException | UiObjectNotFoundException e) {
+            e.printStackTrace();
         }
         return result;
     }
