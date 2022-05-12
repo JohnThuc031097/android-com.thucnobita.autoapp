@@ -232,12 +232,16 @@ public class BotFragment extends Fragment {
                                                             String footer = temp[temp.length > 0
                                                                     ? new Random().nextInt(temp.length-1)
                                                                     : 0];
-                                                            String testLine = "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n";
-                                                            if(botIG.post_reel(String.format("%s@%s\n%s\n%s" + testLine,
+                                                            if(botIG.post_reel(String.format("%s @%s\n%s\n%s",
                                                                     header, usernameVideo,
                                                                     content,
                                                                     footer), false)){
                                                                 setLog("=> Post feed Ok");
+                                                                if(fileVideo.delete()){
+                                                                    setLog("=> Delete file video Ok");
+                                                                }else{
+                                                                    setLog("=> Delete file video Failed");
+                                                                }
                                                             }else{
                                                                 setLog("=> Post feed Failed");
                                                             }

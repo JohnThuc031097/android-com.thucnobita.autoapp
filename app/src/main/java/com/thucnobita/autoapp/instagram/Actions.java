@@ -11,6 +11,8 @@ import com.thucnobita.uiautomator.Selector;
 import java.util.ArrayList;
 import java.util.Random;
 
+import kotlin.concurrent.ThreadsKt;
+
 public class Actions {
     private AutomatorServiceImpl automatorService;
     private Data selectors;
@@ -56,7 +58,7 @@ public class Actions {
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/tabs_viewpager");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
-        automatorService.swipe(selector, "u", 1000);
+        automatorService.swipe(selector, "u", 500);
         Thread.sleep(1000);
         if(click(arrSelect.get(2), 5)){ // Click "Next" to begin post
             Thread.sleep(1000);
@@ -74,14 +76,17 @@ public class Actions {
                 if(click(arrSelector.get(1), 5)){
                     Thread.sleep(500);
                     if(click(arrSelector.get(2), 5)){
+                        Thread.sleep(500);
                         if(click(arrSelector.get(3), 5)){
+                            Thread.sleep(500);
                             if(click(arrSelector.get(4), 5)){ // Select folder "Instagram"
+                                Thread.sleep(1000);
                                 if(click(arrSelector.get(5), 5)){ // Select video index "0" (default)
-                                    Thread.sleep(500);
+                                    Thread.sleep(1000);
                                     if(click(arrSelector.get(6), 5)){ // Click "Add"
-                                        Thread.sleep(500);
+                                        Thread.sleep(1000);
                                         if(click(arrSelector.get(7), 5)){ // Click "Preview"
-                                            Thread.sleep(500);
+                                            Thread.sleep(1000);
                                             return click(arrSelector.get(8), 5); // Click "Next" to the end share video
                                         }
                                     }
@@ -142,7 +147,7 @@ public class Actions {
         return automatorService.getText(selectors.username_video_saved());
     }
 
-    public boolean click_copy_link_video_saved() throws UiObjectNotFoundException, InterruptedException {
+    public boolean click_copy_link_video_saved() throws UiObjectNotFoundException, InterruptedException, RemoteException {
         ArrayList<Selector> arrSelector = selectors.copy_remove_link_video_saved();
         if (click(arrSelector.get(0), 5)) { // Select video
             Thread.sleep(1000);
@@ -150,40 +155,21 @@ public class Actions {
                 click(arrSelector.get(1), 5);
                 Thread.sleep(1500);
             }
-            if (click(arrSelector.get(2), 5)) { // Show dialog
+            if(click(arrSelector.get(2), 5)){ // Show More
                 Thread.sleep(500);
-                if(click(arrSelector.get(3), 5)){ // Copy link
+                if (click(arrSelector.get(3), 5)) { // 1.Copy link
                     Thread.sleep(500);
-                    if (click(arrSelector.get(6), 5)) { // Back 1
-                        return true;
-                    } else {
-                        return click(arrSelector.get(7), 5); // Back 2
+//                    return automatorService.pressKey("back");
+                    if (click(arrSelector.get(4), 5)) { // Again Select video
+                        if (click(arrSelector.get(2), 5)) { // Show More
+                            Thread.sleep(500);
+                            if (click(arrSelector.get(5), 5)) { // 2.Remove video
+                                Thread.sleep(500);
+                                return automatorService.pressKey("back");
+                            }
+                        }
                     }
                 }
-//                if (click(arrSelector.get(3), 5)) { // 1.Copy link
-//                    Thread.sleep(500);
-//                    if (click(arrSelector.get(4), 5)) { // Again Select video
-////                        if (click(listSelectorLinkVideoSaved.get(2), 5)) { // Show dialog
-////                            if (click(listSelectorLinkVideoSaved.get(5), 5)) { // 2.Remove video
-////                                Thread.sleep(1000);
-////                                if (click(arrSelector.get(4), 5)) { // Again Select video
-//                                    Thread.sleep(500);
-//                                    if (click(arrSelector.get(6), 5)) { // Back 1
-//                                        if(click(arrSelector.get(7), 5)){ // Back 2
-//                                            return click_profile();
-//                                        }
-//                                    } else {
-//                                        if (click(arrSelector.get(7), 5)) { // Back 2
-//                                            if(click(arrSelector.get(7), 5)){// Back 2
-//                                                return click_profile();
-//                                            }
-//                                        }
-//                                    }
-////                                }
-////                            }
-////                        }
-//                    }
-//                }
             }
         }
         return false;

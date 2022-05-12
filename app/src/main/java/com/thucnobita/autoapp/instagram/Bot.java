@@ -90,7 +90,7 @@ public class Bot {
             Thread.sleep(1000);
             result = actions.click_copy_link_video_saved();
             Log.i(TAG_NAME, "=> Click get link video => " + result);
-        }catch (UiObjectNotFoundException | InterruptedException e){
+        }catch (UiObjectNotFoundException | InterruptedException | RemoteException e){
             e.printStackTrace();
         }
         return result;

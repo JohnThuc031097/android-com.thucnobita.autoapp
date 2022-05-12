@@ -1,0 +1,1 @@
+./gradlew app:assembleAndroidTest assembleDebug app:installAndroidTest installDebug
