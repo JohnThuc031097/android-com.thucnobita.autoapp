@@ -114,6 +114,7 @@ public class BotFragment extends Fragment {
                 isRunning = true;
                 setLock(true);
                 executor.submit(() -> {
+                    txtLogBot.setText(null);
                     if(initBot()){
                         botIG(v);
                     }

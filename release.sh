@@ -1,0 +1,1 @@
+./gradlew app:assembleAndroidTest assembleRelease app:installAndroidTest installRelease
