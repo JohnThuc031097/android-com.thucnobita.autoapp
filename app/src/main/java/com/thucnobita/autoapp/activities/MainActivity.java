@@ -18,8 +18,6 @@ public class MainActivity extends AppCompatActivity   {
     private ViewPager2 viewPager;
     private ViewPagerAdapter viewPagerAdapter;
 
-    private static final String TAG_NAME_FLOATING_VIEW = "FloatingView";
-    private boolean canClick = true;
     private boolean isFirstUpdateFragment = true;
 
     @Override
