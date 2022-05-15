@@ -187,7 +187,12 @@ public class BotFragment extends Fragment {
                                         if(usernameVideo != null){
                                             setLog("=> Get username video:" + usernameVideo);
                                             Thread.sleep(500);
-                                            if(botIG.recent_app()){
+//                                            if(botIG.recent_app()){
+                                            if(Util.recentApp(
+                                                    v.getContext(),
+                                                    automatorService.getInstrumentation(),
+                                                    "com.thucnobita.autoapp",
+                                                    5)){
                                                 requireActivity().runOnUiThread(() -> {
                                                     btnGetClipbroad.forceLayout();
                                                 });
@@ -268,7 +273,12 @@ public class BotFragment extends Fragment {
                                 setLog("=> Error:" + e);
                             }
                         }
-                        botIG.recent_app();
+//                        botIG.recent_app();
+                        Util.recentApp(
+                                v.getContext(),
+                                automatorService.getInstrumentation(),
+                                "com.thucnobita.autoapp",
+                                5);
                     }
                 }
             }else{

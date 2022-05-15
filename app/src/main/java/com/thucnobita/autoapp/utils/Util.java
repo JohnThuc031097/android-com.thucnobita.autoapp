@@ -40,7 +40,7 @@ public class Util {
 
     public static void openApp(Context context, Instrumentation instrumentation, String packageName, long timeWait) {
         UiDevice device = UiDevice.getInstance(instrumentation);
-        final Intent intent = context.getPackageManager().getLaunchIntentForPackage(packageName);
+        Intent intent = context.getPackageManager().getLaunchIntentForPackage(packageName);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK |
                 Intent.FLAG_ACTIVITY_NEW_TASK |
                 Intent.FLAG_ACTIVITY_NO_ANIMATION |
@@ -48,6 +48,16 @@ public class Util {
         intent.setPackage(packageName);
         context.startActivity(intent);
         device.wait(Until.hasObject(By.pkg(packageName).depth(0)), timeWait * 1000L);
+    }
+
+    public static boolean recentApp(Context context, Instrumentation instrumentation, String packageName, long timeWait) {
+        UiDevice device = UiDevice.getInstance(instrumentation);
+        Intent intent = context.getPackageManager().getLaunchIntentForPackage(packageName);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        intent.setPackage(packageName);
+        context.startActivity(intent);
+        device.wait(Until.hasObject(By.pkg(packageName).depth(0)), timeWait * 1000L);
+        return true;
     }
 
 }
