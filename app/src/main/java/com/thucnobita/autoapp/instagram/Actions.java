@@ -85,9 +85,13 @@ public class Actions {
                                     Thread.sleep(1000);
                                     if(click(arrSelector.get(6), 5)){ // Click "Add"
                                         Thread.sleep(1000);
-                                        if(click(arrSelector.get(7), 5)){ // Click "Preview"
-                                            Thread.sleep(1000);
-                                            return click(arrSelector.get(8), 5); // Click "Next" to the end share video
+                                        if(waitGone(arrSelector.get(6), 60)){
+                                            if(click(arrSelector.get(7), 5)){ // Click "Preview"
+                                                Thread.sleep(1000);
+                                                if(waitGone(arrSelector.get(7), 60)){
+                                                    return click(arrSelector.get(8), 5); // Click "Next" to the end share video
+                                                }
+                                            }
                                         }
                                     }
                                 }
@@ -126,9 +130,9 @@ public class Actions {
     public boolean click_saved() throws UiObjectNotFoundException, InterruptedException {
         ArrayList<Selector> arrSelector = selectors.saved();
         if (click(arrSelector.get(0), 5)) {
-            Thread.sleep(1000);
-            if (click(arrSelector.get(1), 2)) {
-                return waitGone(arrSelector.get(2), 10);
+            Thread.sleep(2000);
+            if (click(arrSelector.get(1), 5)) {
+                return waitGone(arrSelector.get(2), 60);
             }
         }
         return false;

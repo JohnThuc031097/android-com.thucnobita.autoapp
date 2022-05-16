@@ -1,5 +1,6 @@
 package com.thucnobita.autoapp.activities;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.viewpager2.widget.ViewPager2;
@@ -74,19 +75,19 @@ public class MainActivity extends AppCompatActivity   {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.R)
     private void askPermissions() {
-        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.Q){
-            if(!Environment.isExternalStorageManager()){
-                Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
-                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri);
-                startActivity(intent);
-            }
+        if(!Environment.isExternalStorageManager()){
+            Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
+            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri);
+            startActivity(intent);
+        }else{
+            String[] permissions = {
+                    "android.permission.READ_EXTERNAL_STORAGE",
+                    "android.permission.WRITE_EXTERNAL_STORAGE",
+            };
+            int requestCode = 200;
+            requestPermissions(permissions, requestCode);
         }
-        String[] permissions = {
-                "android.permission.READ_EXTERNAL_STORAGE",
-                "android.permission.WRITE_EXTERNAL_STORAGE",
-        };
-        int requestCode = 200;
-        requestPermissions(permissions, requestCode);
     }
 }

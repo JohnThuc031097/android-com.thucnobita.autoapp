@@ -1,5 +1,6 @@
 package com.thucnobita.autoapp.instagram;
 
+import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
@@ -96,7 +97,8 @@ public class Bot {
         return result;
     }
 
-    public File download_video(String link, String nameFile,String pathFolder) {
+    @SuppressLint("SetWorldReadable")
+    public File download_video(String link, String nameFile, String pathFolder) {
         File pathFile = new File(pathFolder, nameFile);
         if (!new File(pathFolder).exists()) {
             new File(pathFolder).mkdirs();

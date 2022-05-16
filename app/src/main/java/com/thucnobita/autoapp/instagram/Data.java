@@ -165,9 +165,8 @@ class Data {
         ArrayList<Selector> selectors = new ArrayList<>();
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setClassName("android.widget.FrameLayout");
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/zoomable_view_container");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID);
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
         if(!mAutomatorService.exist(selector)) {
             selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/media_content_location");
         }
@@ -187,6 +186,9 @@ class Data {
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/action_sheet_row_text_view");
         selector.setText("Copy link");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID | Selector.MASK_TEXT);
+        if(!mAutomatorService.exist(selector)){
+            selector.setText("Copy Link");
+        }
         selectors.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
@@ -199,6 +201,9 @@ class Data {
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/action_sheet_row_text_view");
         selector.setText("Remove from saved");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID | Selector.MASK_TEXT);
+        if(!mAutomatorService.exist(selector)){
+            selector.setText("Remove from Saved");
+        }
         selectors.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
@@ -248,16 +253,14 @@ class Data {
         ArrayList<Selector> selectors = new ArrayList<>();
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setClassName("android.widget.TextView");
         selector.setText("Saved");
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/menu_option_text");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
         selectors.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setClassName("android.widget.FrameLayout");
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/saved_collection_thumbnail");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID);
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
         selectors.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
@@ -291,16 +294,16 @@ class Data {
         ArrayList<Selector> selectors = new ArrayList<>();
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setClassName("android.widget.LinearLayout");
-        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/action_bar_little_icon_container");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID);
+        selector.setClassName("android.widget.Button");
+        selector.setText(username);
+        selector.setDescription(username);
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_TEXT | Selector.MASK_DESCRIPTION);
         selectors.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setClassName("android.widget.TextView");
         selector.setText(username);
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/row_user_textview");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
         selectors.add(selector);
         return selectors;
     }
