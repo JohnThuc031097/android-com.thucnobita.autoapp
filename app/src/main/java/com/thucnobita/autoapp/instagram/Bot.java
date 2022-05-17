@@ -97,9 +97,8 @@ public class Bot {
         return result;
     }
 
-    @SuppressLint("SetWorldReadable")
     public File download_video(String link, String nameFile, String pathFolder) {
-        File pathFile = new File(pathFolder, nameFile);
+        File pathFile = new File(pathFolder, "VID_" + nameFile + ".mp4");
         if (!new File(pathFolder).exists()) {
             new File(pathFolder).mkdirs();
         }

@@ -28,6 +28,7 @@ public class MainActivity extends AppCompatActivity   {
 
     private boolean isFirstUpdateFragment = true;
 
+    @RequiresApi(api = Build.VERSION_CODES.R)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

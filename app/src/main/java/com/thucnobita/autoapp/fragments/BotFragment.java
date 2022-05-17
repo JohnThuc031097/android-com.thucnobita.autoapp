@@ -211,7 +211,7 @@ public class BotFragment extends Fragment {
                                                             "Instagram");
                                                     File fileVideo = botIG.download_video(
                                                             linkDownload,
-                                                            "VID_" + textCodeVideo + ".mp4",
+                                                            textCodeVideo,
                                                             pathFolder);
                                                     if(fileVideo.exists()){
                                                         setLog("=> Video path downloaded:" + fileVideo.getPath());
