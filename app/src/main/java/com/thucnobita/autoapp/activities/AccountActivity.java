@@ -15,6 +15,7 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.CheckBox;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -131,21 +132,27 @@ public class AccountActivity extends AppCompatActivity {
                 binding.grpContent.setVisibility(View.GONE);
                 binding.grpFooter.setVisibility(View.GONE);
                 binding.txtStrDataHeader.setVisibility(View.VISIBLE);
+                binding.btnSaveAccount.setVisibility(View.GONE);
+                binding.btnCancelAccount.setVisibility(View.GONE);
             }else{
-                CharSequence strData = binding.txtStrDataHeader.getText();
-                CharSequence charSplit = binding.txtStrSplitHeader.getText();
-                if(strData != null && charSplit != null){
+                String strData = binding.txtStrDataHeader.getText().toString();
+                String charSplit = binding.txtStrSplitHeader.getText().toString();
+                if(!strData.isEmpty() && !charSplit.isEmpty()){
                     try {
-                        String[] data = strData.toString().split(Pattern.quote(String.valueOf(charSplit.charAt(0))));
+                        String[] data = strData.split(Pattern.quote(String.valueOf(charSplit.charAt(0))));
                         binding.txtTotalHeader.setText(String.valueOf(data.length));
                     }catch (Exception e){
                         e.printStackTrace();
                     }
+                }else{
+                    binding.txtTotalHeader.setText("0");
                 }
                 binding.btnShowHideDataHeader.setText("Expand");
                 binding.grpContent.setVisibility(View.VISIBLE);
                 binding.grpFooter.setVisibility(View.VISIBLE);
                 binding.txtStrDataHeader.setVisibility(View.GONE);
+                binding.btnSaveAccount.setVisibility(View.VISIBLE);
+                binding.btnCancelAccount.setVisibility(View.VISIBLE);
             }
         });
 //        binding.txtStrDataHeader.setOnEditorActionListener((v, actionId, event) -> {
@@ -169,21 +176,27 @@ public class AccountActivity extends AppCompatActivity {
                 binding.grpHeader.setVisibility(View.GONE);
                 binding.grpFooter.setVisibility(View.GONE);
                 binding.txtStrDataContent.setVisibility(View.VISIBLE);
+                binding.btnSaveAccount.setVisibility(View.GONE);
+                binding.btnCancelAccount.setVisibility(View.GONE);
             }else{
-                CharSequence strData = binding.txtStrDataContent.getText();
-                CharSequence charSplit = binding.txtStrSplitContent.getText();
-                if(strData != null && charSplit != null){
+                String strData = binding.txtStrDataContent.getText().toString();
+                String charSplit = binding.txtStrSplitContent.getText().toString();
+                if(!strData.isEmpty() && !charSplit.isEmpty()){
                     try {
-                        String[] data = strData.toString().split(Pattern.quote(String.valueOf(charSplit.charAt(0))));
+                        String[] data = strData.split(Pattern.quote(String.valueOf(charSplit.charAt(0))));
                         binding.txtTotalContent.setText(String.valueOf(data.length));
                     }catch (Exception e){
                         e.printStackTrace();
                     }
+                }else{
+                    binding.txtTotalContent.setText("0");
                 }
                 binding.btnShowHideDataContent.setText("Expand");
                 binding.grpHeader.setVisibility(View.VISIBLE);
                 binding.grpFooter.setVisibility(View.VISIBLE);
                 binding.txtStrDataContent.setVisibility(View.GONE);
+                binding.btnSaveAccount.setVisibility(View.VISIBLE);
+                binding.btnCancelAccount.setVisibility(View.VISIBLE);
             }
         });
 //        binding.txtStrDataContent.setOnEditorActionListener((v, actionId, event) -> {
@@ -207,21 +220,27 @@ public class AccountActivity extends AppCompatActivity {
                 binding.grpHeader.setVisibility(View.GONE);
                 binding.grpContent.setVisibility(View.GONE);
                 binding.txtStrDataFooter.setVisibility(View.VISIBLE);
+                binding.btnSaveAccount.setVisibility(View.GONE);
+                binding.btnCancelAccount.setVisibility(View.GONE);
             }else{
-                CharSequence strData = binding.txtStrDataFooter.getText();
-                CharSequence charSplit = binding.txtStrSplitFooter.getText();
-                if(strData != null && charSplit != null){
+                String strData = binding.txtStrDataFooter.getText().toString();
+                String charSplit = binding.txtStrSplitFooter.getText().toString();
+                if(!strData.isEmpty() && !charSplit.isEmpty()){
                     try {
-                        String[] data = strData.toString().split(Pattern.quote(String.valueOf(charSplit.charAt(0))));
+                        String[] data = strData.split(Pattern.quote(String.valueOf(charSplit.charAt(0))));
                         binding.txtTotalFooter.setText(String.valueOf(data.length));
                     }catch (Exception e){
                         e.printStackTrace();
                     }
+                }else{
+                    binding.txtTotalFooter.setText("0");
                 }
                 binding.btnShowHideDataFooter.setText("Expand");
                 binding.grpHeader.setVisibility(View.VISIBLE);
                 binding.grpContent.setVisibility(View.VISIBLE);
                 binding.txtStrDataFooter.setVisibility(View.GONE);
+                binding.btnSaveAccount.setVisibility(View.VISIBLE);
+                binding.btnCancelAccount.setVisibility(View.VISIBLE);
             }
         });
 //        binding.txtStrDataFooter.setOnEditorActionListener((v, actionId, event) -> {
@@ -265,6 +284,7 @@ public class AccountActivity extends AppCompatActivity {
                             Intent intent = new Intent(this, MainActivity.class);
                             startActivity(intent);
                         }else{
+                            Toast.makeText(v.getContext(), "Password is required", Toast.LENGTH_SHORT).show();
                             binding.txtPassword.forceLayout();
                         }
                     }else{
@@ -274,10 +294,25 @@ public class AccountActivity extends AppCompatActivity {
                         String dataHeader = binding.txtStrDataHeader.getText().toString();
                         String dataContent = binding.txtStrDataContent.getText().toString();
                         String dataFooter = binding.txtStrDataFooter.getText().toString();
-                        if(splitHeader.length() > 0 && dataHeader.length() > 0 &&
-                                splitContent.length() > 0 && dataContent.length() > 0 &&
-                                splitFooter.length() > 0 && dataFooter.length() > 0
-                        ){
+                        if(splitHeader.isEmpty()){
+                            Toast.makeText(v.getContext(), "Split header is required", Toast.LENGTH_SHORT).show();
+                            binding.txtStrSplitHeader.forceLayout();
+                        }else if(dataHeader.isEmpty()){
+                            Toast.makeText(v.getContext(), "Data header is required", Toast.LENGTH_SHORT).show();
+                            binding.txtStrDataHeader.forceLayout();
+                        }else if(splitContent.isEmpty()){
+                            Toast.makeText(v.getContext(), "Split content is required", Toast.LENGTH_SHORT).show();
+                            binding.txtStrSplitContent.forceLayout();
+                        }else if(dataContent.isEmpty()){
+                            Toast.makeText(v.getContext(), "Data content is required", Toast.LENGTH_SHORT).show();
+                            binding.txtStrDataContent.forceLayout();
+                        }else if(splitFooter.isEmpty()){
+                            Toast.makeText(v.getContext(), "Split footer is required", Toast.LENGTH_SHORT).show();
+                            binding.txtStrSplitFooter.forceLayout();
+                        }else if(dataFooter.isEmpty()){
+                            Toast.makeText(v.getContext(), "Data footer is required", Toast.LENGTH_SHORT).show();
+                            binding.txtStrDataFooter.forceLayout();
+                        }else{
                             binding.getAccount().setSplitHeader(splitHeader);
                             binding.getAccount().setSplitContent(splitContent);
                             binding.getAccount().setSplitFooter(splitFooter);
