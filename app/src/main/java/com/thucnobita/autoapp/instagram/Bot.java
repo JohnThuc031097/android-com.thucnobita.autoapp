@@ -195,7 +195,6 @@ public class Bot {
                             .setPositiveButton(android.R.string.yes, (dialog, which) -> {
                                 if(input.length() > 3){
                                     accept.set(true);
-                                    dialog.dismiss();
                                 }
                             })
                             .setCancelable(false)
@@ -216,7 +215,6 @@ public class Bot {
                             .setPositiveButton(android.R.string.yes, (dialog, which) -> {
                                 if(input.length() > 3){
                                     accept.set(true);
-                                    dialog.dismiss();
                                 }
                             })
                             .setCancelable(false)
@@ -241,6 +239,36 @@ public class Bot {
                 }
             }
         }
+        return true;
+    }
+
+    public boolean loginWithCallback(String username, String password, Callback.Login callback) {
+        if(client == null){
+            client = loadClientCookie(username);
+            // Try Again
+            if(client == null){
+                client = loadClientCookie(username);
+            }
+            // If error then New login
+            if(client == null) {
+                IGClient.Builder.LoginHandler twoFactorHandler = (client, response) -> IGChallengeUtils.resolveTwoFactor(client, response, callback.getCode());
+                IGClient.Builder.LoginHandler challengeHandler = (client, response) -> IGChallengeUtils.resolveChallenge(client, response, callback.getCode());
+                try {
+                    client = IGClient.builder()
+                            .username(username)
+                            .password(password)
+                            .onTwoFactor(twoFactorHandler)
+                            .onChallenge(challengeHandler)
+                            .login();
+                    saveClientCookie(client, username, callback);
+                } catch (IGLoginException igLoginException) {
+                    igLoginException.printStackTrace();
+                    callback.fail("=> Login failed:" + igLoginException.getLoginResponse().getMessage());
+                    return false;
+                }
+            }
+        }
+        callback.success("=> Login ok");
         return true;
     }
 

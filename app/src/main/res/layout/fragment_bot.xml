@@ -96,7 +96,8 @@
             android:background="@color/black"
             android:text="Start"
             android:textColor="@android:color/holo_orange_light"
-            android:textSize="18sp" />
+            android:textSize="18sp"
+            android:visibility="visible" />
 
         <Button
             android:id="@+id/btnStopBot"
@@ -127,11 +128,48 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
-        android:text="Log"
+        android:text="Code Login"
         android:textColor="@color/black"
         android:textSize="25dp"
         android:textStyle="bold" />
 
+    <LinearLayout
+        android:id="@+id/grpCodeLogin"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/txtCodeLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:ems="10"
+            android:gravity="center"
+            android:inputType="number"
+            android:text="00000"
+            android:textColor="@color/design_default_color_error"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/btnConfirmCodeLogin"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_weight="1"
+            android:background="@color/black"
+            android:text="Confirm"
+            android:textColor="@android:color/holo_orange_light" />
+    </LinearLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:text="Log"
+        android:textColor="@color/black"
+        android:textSize="25dp"
+        android:textStyle="bold" />
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"

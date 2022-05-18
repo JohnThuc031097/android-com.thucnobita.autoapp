@@ -2,6 +2,9 @@ package com.thucnobita.autoapp.fragments;
 
 import android.app.Instrumentation;
 import android.content.Context;
+import android.content.Intent;
+import android.net.wifi.WifiManager;
+import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,13 +13,17 @@ import androidx.fragment.app.Fragment;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import android.os.RemoteException;
+import android.provider.Settings;
 import android.text.PrecomputedText;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.fasterxml.jackson.databind.deser.impl.CreatorCandidate;
 import com.thucnobita.autoapp.R;
@@ -44,6 +51,9 @@ public class BotFragment extends Fragment {
     private Button btnRunTotal;
     private Button btnStartBot;
     private Button btnStopBot;
+    private LinearLayout grpCodeLogin;
+    private EditText txtCodeLogin;
+    private Button btnConfirmCodeLogin;
     private Button btnGetClipbroad;
     private TextView txtLogBot;
 
@@ -56,6 +66,8 @@ public class BotFragment extends Fragment {
     private ExecutorService executor;
     public boolean isRunning;
     private String linkVideo;
+    private boolean isConfirmCodeLogin = false;
+
     private AutomatorServiceImpl automatorService;
     private Bot botIG;
 
@@ -69,7 +81,7 @@ public class BotFragment extends Fragment {
                 Constants.FOLDER_ROOT,
                 Constants.FOLDER_NAME_APP,
                 Constants.FOLDER_NAME_ACCOUNT));
-        executor = Executors.newFixedThreadPool(2);
+        executor = Executors.newFixedThreadPool(3);
         isRunning = false;
     }
 
@@ -82,8 +94,11 @@ public class BotFragment extends Fragment {
         btnRunTotal = view.findViewById(R.id.btnTotalAccRun);
         btnStartBot = view.findViewById(R.id.btnStartBot);
         btnStopBot = view.findViewById(R.id.btnStopBot);
-        btnGetClipbroad = view.findViewById(R.id.btnGetClipbroad);
+        txtCodeLogin = view.findViewById(R.id.txtCodeLogin);
         txtLogBot = view.findViewById(R.id.txtLogBot);
+        btnConfirmCodeLogin = view.findViewById(R.id.btnConfirmCodeLogin);
+        btnGetClipbroad = view.findViewById(R.id.btnGetClipbroad);
+        grpCodeLogin = view.findViewById(R.id.grpCodeLogin);
 
         return view;
     }
@@ -97,9 +112,12 @@ public class BotFragment extends Fragment {
     }
 
     private void addValueDefault(){
-        btnLoginTotal.setText("0");
-        btnRunTotal.setText("0");
-        txtLogBot.setText(null);
+        requireActivity().runOnUiThread(() -> {
+            btnLoginTotal.setText("0");
+            btnRunTotal.setText("0");
+            grpCodeLogin.setVisibility(View.GONE);
+            txtLogBot.setText(null);
+        });
         setLock(false);
     }
 
@@ -127,6 +145,12 @@ public class BotFragment extends Fragment {
             if(isRunning){
                 isRunning = false;
                 setLock(false);
+            }
+        });
+        btnConfirmCodeLogin.setOnClickListener(v -> {
+            if(txtCodeLogin.length() >= 3){
+                setLog("=> Try Login with code:" + txtCodeLogin.getText().toString().trim());
+                isConfirmCodeLogin = true;
             }
         });
     }
@@ -165,16 +189,18 @@ public class BotFragment extends Fragment {
                     ? arrAccLogin.get(new Random().nextInt(arrAccLogin.size()-1))
                     : arrAccLogin.get(0);
             setLog("=> Login with username:" + accLogin.getUsername());
-            boolean resultLogin = botIG.login(v.getContext().getApplicationContext(),
-                    accLogin.getUsername(), accLogin.getPassword());
+//            boolean resultLogin = botIG.login(v.getContext().getApplicationContext(),
+//                    accLogin.getUsername(), accLogin.getPassword());
+            boolean resultLogin = loginIG(accLogin.getUsername(), accLogin.getPassword());
             if(resultLogin){
-                setLog("=> Login Ok");
+//                setLog("=> Login Ok");
                 setLog("=> Total acc run:" + arrAccRun.size());
                 if(arrAccRun.size() > 0){
                     for (Account accountRun: arrAccRun) {
                         setLog("=> Begin with username:" + accountRun.getUsername());
                         setLog("=> Actived:" + accountRun.isActived());
-                        if(accountRun.isActived() && isRunning){
+                        if(!isRunning) break;
+                        if(accountRun.isActived()){
                             try {
                                 setLog("=> Open app " + Constants.PACKAGE_NAME_INSTAGRAM);
                                 Util.openApp(v.getContext(), automatorService.getInstrumentation(), Constants.PACKAGE_NAME_INSTAGRAM, 5);
@@ -247,44 +273,92 @@ public class BotFragment extends Fragment {
                                                                     setLog("=> Delete file video Ok");
                                                                 }else{
                                                                     setLog("=> Delete file video Failed");
+                                                                    isRunning = false;
                                                                 }
                                                             }else{
                                                                 setLog("=> Post feed Failed");
+                                                                isRunning = false;
                                                             }
                                                         }else{
                                                             setLog("=> Share video Failed");
+                                                            isRunning = false;
                                                         }
                                                     }else{
                                                         setLog("=> Download video Failed");
+                                                        isRunning = false;
                                                     }
                                                 }
                                             }
                                         }else{
                                             setLog("=> Get username video Failed");
+                                            isRunning = false;
                                         }
                                     }else{
                                         setLog("=> Click get link videos Failed");
+                                        isRunning = false;
                                     }
                                 }else{
                                     setLog("=> Click select account Failed");
+                                    isRunning = false;
                                 }
                             }catch (Exception e){
                                 e.printStackTrace();
                                 setLog("=> Error:" + e);
+                                isRunning = false;
                             }
                         }
 //                        botIG.recent_app();
-                        Util.recentApp(
-                                v.getContext(),
-                                automatorService.getInstrumentation(),
-                                "com.thucnobita.autoapp",
-                                5);
+//                        Util.recentApp(
+//                                v.getContext(),
+//                                automatorService.getInstrumentation(),
+//                                "com.thucnobita.autoapp",
+//                                5);
                     }
                 }
-            }else{
-                setLog("=> Login Failed");
+                Util.recentApp(
+                        v.getContext(),
+                        automatorService.getInstrumentation(),
+                        "com.thucnobita.autoapp",
+                        5);
             }
         }
+    }
+
+    private boolean loginIG(String username, String password){
+        return botIG.loginWithCallback(username, password, new Callback.Login() {
+            @Override
+            public Callable<String> getCode() {
+                return () -> {
+                    String codeLogin = null;
+                    requireActivity().runOnUiThread(() -> {
+                        grpCodeLogin.setVisibility(View.VISIBLE);
+                    });
+                    while (!isConfirmCodeLogin){
+                        try {
+                            Thread.sleep(1000);
+                        }catch (InterruptedException e){
+                            e.printStackTrace();
+                        }
+                    }
+                    codeLogin = txtCodeLogin.getText().toString().trim();
+                    requireActivity().runOnUiThread(() -> {
+                        txtCodeLogin.setText(null);
+                        grpCodeLogin.setVisibility(View.GONE);
+                    });
+                    return codeLogin;
+                };
+            }
+
+            @Override
+            public void success(String message) {
+                setLog(message);
+            }
+
+            @Override
+            public void fail(String message) {
+                setLog(message);
+            }
+        });
     }
 
     private void setLog(String text){

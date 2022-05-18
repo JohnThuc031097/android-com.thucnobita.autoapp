@@ -160,13 +160,13 @@ public class Actions {
                 Thread.sleep(1500);
             }
             if(click(arrSelector.get(2), 5)){ // Show More
-                Thread.sleep(500);
+                Thread.sleep(1000);
                 if (click(arrSelector.get(3), 5)) { // 1.Copy link
-                    Thread.sleep(500);
-//                    return automatorService.pressKey("back");
+                    Thread.sleep(1000);
                     if (click(arrSelector.get(4), 5)) { // Again Select video
+                        Thread.sleep(500);
                         if (click(arrSelector.get(2), 5)) { // Show More
-                            Thread.sleep(500);
+                            Thread.sleep(1000);
                             if (click(arrSelector.get(5), 5)) { // 2.Remove video
                                 Thread.sleep(500);
                                 return automatorService.pressKey("back");
