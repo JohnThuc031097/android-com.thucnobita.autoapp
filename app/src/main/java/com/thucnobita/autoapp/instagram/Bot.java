@@ -4,9 +4,15 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.media.MediaScannerConnection;
+import android.media.ThumbnailUtils;
 import android.net.Uri;
+import android.os.Build;
 import android.os.RemoteException;
+import android.provider.MediaStore;
 import android.util.Log;
+import android.util.Size;
 import android.widget.EditText;
 
 import androidx.core.content.FileProvider;
@@ -98,7 +104,7 @@ public class Bot {
     }
 
     public File download_video(String link, String nameFile, String pathFolder) {
-        File pathFile = new File(pathFolder, "VID_" + nameFile + ".mp4");
+        File pathFile = new File(pathFolder, "AutoApp_" + nameFile + ".mp4");
         if (!new File(pathFolder).exists()) {
             new File(pathFolder).mkdirs();
         }
@@ -113,10 +119,11 @@ public class Bot {
             }
             input.close();
             output.close();
+            return pathFile;
         }catch (IOException e){
             e.printStackTrace();
         }
-        return pathFile;
+        return null;
     }
 
     public boolean share_video(Context context, File pathFile){
@@ -243,29 +250,23 @@ public class Bot {
     }
 
     public boolean loginWithCallback(String username, String password, Callback.Login callback) {
-        if(client == null){
-            client = loadClientCookie(username);
-            // Try Again
-            if(client == null){
-                client = loadClientCookie(username);
-            }
-            // If error then New login
-            if(client == null) {
-                IGClient.Builder.LoginHandler twoFactorHandler = (client, response) -> IGChallengeUtils.resolveTwoFactor(client, response, callback.getCode());
-                IGClient.Builder.LoginHandler challengeHandler = (client, response) -> IGChallengeUtils.resolveChallenge(client, response, callback.getCode());
-                try {
-                    client = IGClient.builder()
-                            .username(username)
-                            .password(password)
-                            .onTwoFactor(twoFactorHandler)
-                            .onChallenge(challengeHandler)
-                            .login();
-                    saveClientCookie(client, username, callback);
-                } catch (IGLoginException igLoginException) {
-                    igLoginException.printStackTrace();
-                    callback.fail("=> Login failed:" + igLoginException.getLoginResponse().getMessage());
-                    return false;
-                }
+        client = loadClientCookie(username);
+        // If error then New login
+        if(client == null) {
+            IGClient.Builder.LoginHandler twoFactorHandler = (client, response) -> IGChallengeUtils.resolveTwoFactor(client, response, callback.getCode());
+            IGClient.Builder.LoginHandler challengeHandler = (client, response) -> IGChallengeUtils.resolveChallenge(client, response, callback.getCode());
+            try {
+                client = IGClient.builder()
+                        .username(username)
+                        .password(password)
+                        .onTwoFactor(twoFactorHandler)
+                        .onChallenge(challengeHandler)
+                        .login();
+                saveClientCookie(client, username, callback);
+            } catch (IGLoginException igLoginException) {
+                igLoginException.printStackTrace();
+                callback.fail("=> Login failed:" + igLoginException.getLoginResponse().getMessage());
+                return false;
             }
         }
         callback.success("=> Login ok");
@@ -355,6 +356,7 @@ public class Bot {
                     return IGClient.deserialize(clientFile, cookieFile);
                 }catch (IOException | ClassNotFoundException e){
                     e.printStackTrace();
+                    new File(pathFolder).delete();
                 }
             }
         }

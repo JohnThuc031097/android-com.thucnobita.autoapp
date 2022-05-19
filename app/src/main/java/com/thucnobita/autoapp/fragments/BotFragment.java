@@ -3,6 +3,7 @@ package com.thucnobita.autoapp.fragments;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.content.Intent;
+import android.media.MediaScannerConnection;
 import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
@@ -24,6 +25,7 @@ import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -53,11 +55,13 @@ public class BotFragment extends Fragment {
     private Button btnRunTotal;
     private Button btnStartBot;
     private Button btnStopBot;
-    private LinearLayout grpCodeLogin;
-    private EditText txtCodeLogin;
     private Button btnConfirmCodeLogin;
     private Button btnGetClipbroad;
+    private LinearLayout grpCodeLogin;
+    private EditText txtCodeLogin;
     private TextView txtLogBot;
+    private TextView txtLabelCodeLogin;
+    private ScrollView scrollViewLog;
 
     private File fileFolder;
     private int totalAccLogin;
@@ -98,9 +102,11 @@ public class BotFragment extends Fragment {
         btnStopBot = view.findViewById(R.id.btnStopBot);
         txtCodeLogin = view.findViewById(R.id.txtCodeLogin);
         txtLogBot = view.findViewById(R.id.txtLogBot);
+        txtLabelCodeLogin = view.findViewById(R.id.txtLabelCodeLogin);
         btnConfirmCodeLogin = view.findViewById(R.id.btnConfirmCodeLogin);
         btnGetClipbroad = view.findViewById(R.id.btnGetClipbroad);
         grpCodeLogin = view.findViewById(R.id.grpCodeLogin);
+        scrollViewLog = view.findViewById(R.id.scrollViewLog);
 
         return view;
     }
@@ -117,6 +123,7 @@ public class BotFragment extends Fragment {
         requireActivity().runOnUiThread(() -> {
             btnLoginTotal.setText("0");
             btnRunTotal.setText("0");
+            txtLabelCodeLogin.setVisibility(View.GONE);
             grpCodeLogin.setVisibility(View.GONE);
             txtLogBot.setText(null);
         });
@@ -143,6 +150,11 @@ public class BotFragment extends Fragment {
                     if(initBot()){
                         botIG(v);
                     }
+                    requireActivity().runOnUiThread(() -> {
+                        scrollViewLog.post(() -> {
+                            scrollViewLog.fullScroll(View.FOCUS_DOWN);
+                        });
+                    });
                     isRunning = false;
                     setLock(false);
                 });
@@ -204,9 +216,9 @@ public class BotFragment extends Fragment {
                 setLog("=> Total acc run:" + arrAccRun.size());
                 if(arrAccRun.size() > 0){
                     for (Account accountRun: arrAccRun) {
+                        if(!isRunning) break;
                         setLog("=> Begin with username:" + accountRun.getUsername());
                         setLog("=> Actived:" + accountRun.isActived());
-                        if(!isRunning) break;
                         if(accountRun.isActived()){
                             try {
                                 setLog("=> Open app " + Constants.PACKAGE_NAME_INSTAGRAM);
@@ -238,15 +250,19 @@ public class BotFragment extends Fragment {
                                                 String linkDownload  = botIG.getLinkVideoByCode(textCodeVideo);
                                                 if(linkDownload != null){
                                                     setLog("=> Result Size video:" + linkDownload.length());
-                                                    String pathFolder = String.format("%s/%s/%s",
+                                                    String pathFolder = String.format("%s/%s",
                                                             Constants.FOLDER_ROOT,
-                                                            "Movies",
-                                                            "Instagram");
+                                                            "Download");
                                                     File fileVideo = botIG.download_video(
                                                             linkDownload,
                                                             textCodeVideo,
                                                             pathFolder);
                                                     if(fileVideo.exists()){
+                                                        // Update file on system
+                                                        MediaScannerConnection.scanFile(v.getContext(),
+                                                                new String[] { fileVideo.getAbsolutePath() },
+                                                                new String[] { "video/*" },
+                                                                null);
                                                         setLog("=> Video path downloaded:" + fileVideo.getPath());
 //                                                        if(botIG.share_video(v.getContext().getApplicationContext(), fileVideo)){
                                                         Util.openApp(
@@ -254,7 +270,7 @@ public class BotFragment extends Fragment {
                                                                 automatorService.getInstrumentation(),
                                                                 Constants.PACKAGE_NAME_INSTAGRAM,
                                                                 5);
-                                                        if(botIG.share_video_to_reel(null)){
+                                                        if(botIG.share_video_to_reel("Download")){
                                                             setLog("=> Share video Ok");
                                                             setLog("=> Random header");
                                                             String[] temp = accountRun.getHeader().split(Pattern.quote(accountRun.getSplitHeader()));
@@ -275,7 +291,7 @@ public class BotFragment extends Fragment {
                                                                     header, usernameVideo,
                                                                     content,
                                                                     footer), false)){
-                                                                setLog("=> Post feed Ok");
+                                                                setLog("=> Post reel Ok");
                                                                 if(fileVideo.delete()){
                                                                     setLog("=> Delete file video Ok");
                                                                 }else{
@@ -338,11 +354,12 @@ public class BotFragment extends Fragment {
                 return () -> {
                     String codeLogin = null;
                     requireActivity().runOnUiThread(() -> {
+                        txtLabelCodeLogin.setVisibility(View.VISIBLE);
                         grpCodeLogin.setVisibility(View.VISIBLE);
                     });
                     while (!isConfirmCodeLogin){
                         try {
-                            Thread.sleep(1000);
+                            Thread.sleep(500);
                         }catch (InterruptedException e){
                             e.printStackTrace();
                         }
@@ -350,6 +367,7 @@ public class BotFragment extends Fragment {
                     codeLogin = txtCodeLogin.getText().toString().trim();
                     requireActivity().runOnUiThread(() -> {
                         txtCodeLogin.setText(null);
+                        txtLabelCodeLogin.setVisibility(View.GONE);
                         grpCodeLogin.setVisibility(View.GONE);
                     });
                     return codeLogin;
@@ -371,6 +389,9 @@ public class BotFragment extends Fragment {
     private void setLog(String text){
         requireActivity().runOnUiThread(() -> {
             txtLogBot.setText(String.format("%s\n%s", txtLogBot.getText(), text));
+            scrollViewLog.post(() -> {
+               scrollViewLog.fullScroll(View.FOCUS_DOWN);
+            });
         });
     }
 

@@ -8,6 +8,5 @@ public interface Constants {
     String FOLDER_ROOT = Environment.getExternalStorageDirectory().getPath();
     String FOLDER_NAME_APP = "auto-app";
     String FOLDER_NAME_SESSION = "sessions";
-    String FOLDER_NAME_VIDEO = "videos";
     String FOLDER_NAME_ACCOUNT = "accounts";
 }

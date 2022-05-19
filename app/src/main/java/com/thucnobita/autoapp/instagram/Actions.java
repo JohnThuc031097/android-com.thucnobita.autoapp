@@ -52,17 +52,24 @@ public class Actions {
         if(content != null){
             automatorService.setText(arrSelect.get(1), content);
         }
-        Thread.sleep(5000);
+        Thread.sleep(2500);
         automatorService.pressKey("back"); // Hide keybroad
         Selector selector = new Selector(automatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/tabs_viewpager");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        Thread.sleep(1000);
         automatorService.swipe(selector, "u", 500);
         Thread.sleep(1000);
-        if(click(arrSelect.get(2), 5)){ // Click "Next" to begin post
-            Thread.sleep(1000);
-            return waitGone(arrSelect.get(3), 60*5); // Wait for process done (time wait default: 5 min)
+        if(click(arrSelect.get(2), 5)){ // Click "Share" to begin post
+            Thread.sleep(500);
+//            return waitGone(arrSelect.get(3), 60*5); // Wait for process done (time wait default: 5 min)
+            if(click(arrSelect.get(3), 5)){ // Click return Home
+                if(waitGone(arrSelect.get(4), 60 * 5)){ // Wait for process done (time wait default: 5 min)
+                    Thread.sleep(500);
+                    return waitGone(arrSelect.get(5), 60);
+                }
+            }
         }
         return false;
     }
@@ -160,9 +167,9 @@ public class Actions {
         if (click(selectorSelectVideo, 5)) { // Select video
             Thread.sleep(1000);
             click(arrSelector.get(2), 5); // "Pause" video if video not type reel
-            Thread.sleep(1000);
+            Thread.sleep(500);
             if(click(arrSelector.get(3), 5)){ // Show More
-                Thread.sleep(1500);
+                Thread.sleep(1000);
                 Selector selectorCopyLink = automatorService.exist(arrSelector.get(4))
                         ? arrSelector.get(4)
                         : arrSelector.get(5);
@@ -176,7 +183,7 @@ public class Actions {
                                     ? arrSelector.get(7)
                                     : arrSelector.get(8);
                             if (click(selectorRemoveSaved, 5)) { // 2.Remove video
-                                Thread.sleep(500);
+                                Thread.sleep(1000);
                                 return automatorService.pressKey("back");
                             }
                         }
