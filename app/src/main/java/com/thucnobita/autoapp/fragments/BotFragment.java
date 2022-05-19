@@ -3,12 +3,14 @@ package com.thucnobita.autoapp.fragments;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.net.wifi.WifiManager;
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
@@ -133,6 +135,11 @@ public class BotFragment extends Fragment {
                 setLock(true);
                 executor.submit(() -> {
                     txtLogBot.setText(null);
+//                    String pathFolder = String.format("%s/%s/%s",
+//                            Constants.FOLDER_ROOT,
+//                            "Movies",
+//                            "Instagram");
+//                    File file = new File(pathFolder, "test.mp4");
                     if(initBot()){
                         botIG(v);
                     }
