@@ -29,7 +29,9 @@ import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.impl.CreatorCandidate;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.thucnobita.autoapp.R;
 import com.thucnobita.autoapp.activities.MainActivity;
 import com.thucnobita.autoapp.instagram.Bot;
@@ -53,6 +55,7 @@ import java.util.regex.Pattern;
 public class BotFragment extends Fragment {
     private Button btnLoginTotal;
     private Button btnRunTotal;
+    private Button btnTotalAccLink;
     private Button btnStartBot;
     private Button btnStopBot;
     private Button btnConfirmCodeLogin;
@@ -68,6 +71,8 @@ public class BotFragment extends Fragment {
     private ArrayList<Account> arrAccLogin;
     private int totalAccRun;
     private ArrayList<Account> arrAccRun;
+    private int totalAccLink;
+    private ArrayList<Account> arrAccLink;
 
     private ExecutorService executor;
     public boolean isRunning;
@@ -98,6 +103,7 @@ public class BotFragment extends Fragment {
 
         btnLoginTotal = view.findViewById(R.id.btnTotalAccLogin);
         btnRunTotal = view.findViewById(R.id.btnTotalAccRun);
+        btnTotalAccLink = view.findViewById(R.id.btnTotalAccLink);
         btnStartBot = view.findViewById(R.id.btnStartBot);
         btnStopBot = view.findViewById(R.id.btnStopBot);
         txtCodeLogin = view.findViewById(R.id.txtCodeLogin);
@@ -123,6 +129,7 @@ public class BotFragment extends Fragment {
         requireActivity().runOnUiThread(() -> {
             btnLoginTotal.setText("0");
             btnRunTotal.setText("0");
+            btnTotalAccLink.setText("0");
             txtLabelCodeLogin.setVisibility(View.GONE);
             grpCodeLogin.setVisibility(View.GONE);
             txtLogBot.setText(null);
@@ -142,11 +149,6 @@ public class BotFragment extends Fragment {
                 setLock(true);
                 executor.submit(() -> {
                     txtLogBot.setText(null);
-//                    String pathFolder = String.format("%s/%s/%s",
-//                            Constants.FOLDER_ROOT,
-//                            "Movies",
-//                            "Instagram");
-//                    File file = new File(pathFolder, "test.mp4");
                     if(initBot()){
                         botIG(v);
                     }
@@ -208,11 +210,8 @@ public class BotFragment extends Fragment {
                     ? arrAccLogin.get(new Random().nextInt(arrAccLogin.size()-1))
                     : arrAccLogin.get(0);
             setLog("=> Login with username:" + accLogin.getUsername());
-//            boolean resultLogin = botIG.login(v.getContext().getApplicationContext(),
-//                    accLogin.getUsername(), accLogin.getPassword());
             boolean resultLogin = loginIG(accLogin.getUsername(), accLogin.getPassword());
             if(resultLogin){
-//                setLog("=> Login Ok");
                 setLog("=> Total acc run:" + arrAccRun.size());
                 if(arrAccRun.size() > 0){
                     for (Account accountRun: arrAccRun) {
@@ -232,7 +231,6 @@ public class BotFragment extends Fragment {
                                         if(usernameVideo != null){
                                             setLog("=> Get username video:" + usernameVideo);
                                             Thread.sleep(500);
-//                                            if(botIG.recent_app()){
                                             if(Util.recentApp(
                                                     v.getContext(),
                                                     automatorService.getInstrumentation(),
@@ -264,29 +262,22 @@ public class BotFragment extends Fragment {
                                                                 new String[] { "video/*" },
                                                                 null);
                                                         setLog("=> Video path downloaded:" + fileVideo.getPath());
-//                                                        if(botIG.share_video(v.getContext().getApplicationContext(), fileVideo)){
                                                         Util.openApp(
                                                                 v.getContext(),
                                                                 automatorService.getInstrumentation(),
                                                                 Constants.PACKAGE_NAME_INSTAGRAM,
                                                                 5);
+                                                        setLog("=> Random header");
+                                                        String[] temp = accountRun.getHeader().split(Pattern.quote(accountRun.getSplitHeader()));
+                                                        String header = temp[Util.randInt(0, temp.length-1)];
+                                                        setLog("=> Random content");
+                                                        temp = accountRun.getContent().split(Pattern.quote(accountRun.getSplitContent()));
+                                                        String content = temp[Util.randInt(0, temp.length-1)];
+                                                        setLog("=> Random footer");
+                                                        temp = accountRun.getFooter().split(Pattern.quote(accountRun.getSplitFooter()));
+                                                        String footer = temp[Util.randInt(0, temp.length-1)];
                                                         if(botIG.share_video_to_reel("Download")){
                                                             setLog("=> Share video Ok");
-                                                            setLog("=> Random header");
-                                                            String[] temp = accountRun.getHeader().split(Pattern.quote(accountRun.getSplitHeader()));
-                                                            String header = temp[temp.length > 0
-                                                                    ? new Random().nextInt(temp.length-1)
-                                                                    : 0];
-                                                            setLog("=> Random content");
-                                                            temp = accountRun.getContent().split(Pattern.quote(accountRun.getSplitContent()));
-                                                            String content = temp[temp.length > 0
-                                                                    ? new Random().nextInt(temp.length-1)
-                                                                    : 0];
-                                                            setLog("=> Random footer");
-                                                            temp = accountRun.getFooter().split(Pattern.quote(accountRun.getSplitFooter()));
-                                                            String footer = temp[temp.length > 0
-                                                                    ? new Random().nextInt(temp.length-1)
-                                                                    : 0];
                                                             if(botIG.post_reel(String.format("%s @%s\n%s\n%s",
                                                                     header, usernameVideo,
                                                                     content,
@@ -330,12 +321,18 @@ public class BotFragment extends Fragment {
                                 isRunning = false;
                             }
                         }
-//                        botIG.recent_app();
-//                        Util.recentApp(
-//                                v.getContext(),
-//                                automatorService.getInstrumentation(),
-//                                "com.thucnobita.autoapp",
-//                                5);
+                        try{
+                            Util.recentApp(
+                                    v.getContext(),
+                                    automatorService.getInstrumentation(),
+                                    "com.thucnobita.autoapp",
+                                    5);
+                            Thread.sleep(5000);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                            setLog("=> Error:" + e);
+                            isRunning = false;
+                        }
                     }
                 }
                 Util.recentApp(
@@ -410,17 +407,30 @@ public class BotFragment extends Fragment {
                 if(fileAccounts != null){
                     totalAccLogin = 0;
                     totalAccRun = 0;
+                    totalAccLink = 0;
                     arrAccLogin = new ArrayList<>();
                     arrAccRun = new ArrayList<>();
+                    arrAccLink = new ArrayList<>();
                     for (File src : fileAccounts) {
                         try {
-                            Account account = Util.file2Object(src, Account.class);
-                            if(account.getPassword() != null){
+                            Account account = null;
+                            JsonNode jsonAccount = Util.file2Json(src);
+                            if(jsonAccount.findPath("linkTShirt").isMissingNode()){
+                                ObjectNode jsonNew = ((ObjectNode)jsonAccount).put("linkTShirt", (String)null);
+                                account = Util.objectNode2Object(jsonNew, Account.class);
+                            }else{
+                                account = Util.file2Object(src, Account.class);
+                            }
+                            if(account.getPassword() != null) {
                                 totalAccLogin++;
-                                if(account.isActived()) arrAccLogin.add(account);
+                                if (account.isActived()) arrAccLogin.add(account);
                             }else{
                                 totalAccRun++;
                                 if(account.isActived()) arrAccRun.add(account);
+                                if (account.getLinkTShirt() != null) {
+                                    totalAccLink++;
+                                    if (account.isActived()) arrAccLink.add(account);
+                                }
                             }
                         }catch (IOException e) {
                             e.printStackTrace();
@@ -429,6 +439,7 @@ public class BotFragment extends Fragment {
                 }
                 btnLoginTotal.setText(String.format("%s/%s", arrAccLogin.size(), totalAccLogin));
                 btnRunTotal.setText(String.format("%s/%s", arrAccRun.size(), totalAccRun));
+                btnTotalAccLink.setText(String.format("%s/%s", arrAccLink.size(), totalAccLink));
             }
         }
     }

@@ -20,7 +20,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
         android:orientation="horizontal">
 
         <Button
@@ -48,7 +50,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
         android:orientation="horizontal">
 
         <Button
@@ -63,6 +67,37 @@
 
         <Button
             android:id="@+id/btnTotalAccRun"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/black"
+            android:text="0"
+            android:textAllCaps="false"
+            android:textColor="@android:color/holo_orange_light"
+            android:textSize="16sp" />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@color/black"
+            android:text="Link"
+            android:textAllCaps="false"
+            android:textColor="@android:color/holo_orange_light"
+            android:textSize="16sp" />
+
+        <Button
+            android:id="@+id/btnTotalAccLink"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
@@ -146,12 +181,13 @@
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
             android:layout_weight="1"
+            android:autofillHints="000000"
             android:ems="10"
             android:gravity="center"
             android:inputType="number"
-            android:text="00000"
             android:textColor="@color/design_default_color_error"
-            android:textStyle="bold" />
+            android:textStyle="bold"
+            tools:ignore="LabelFor" />
 
         <Button
             android:id="@+id/btnConfirmCodeLogin"

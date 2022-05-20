@@ -55,7 +55,8 @@ public class AccountActivity extends AppCompatActivity {
                         true,
                         "|",null,
                         "|", null,
-                        "|", null);
+                        "|", null,
+                        null);
                 binding.setAccount(account);
             }else if(bundle.getString("type").equals("edit")){
                 if(bundle.getString("account") != null){
@@ -71,6 +72,7 @@ public class AccountActivity extends AppCompatActivity {
     }
 
     private void initValueDefault(){
+        binding.grpLinkTShirt.setVisibility(View.GONE);
         binding.grpPasswordLogin.setVisibility(View.VISIBLE);
         binding.grpPostContent.setVisibility(View.GONE);
         binding.txtStrDataHeader.setVisibility(View.GONE);
@@ -85,6 +87,7 @@ public class AccountActivity extends AppCompatActivity {
                 binding.ckbUserLogin.setChecked(false);
                 binding.grpPasswordLogin.setVisibility(View.GONE);
                 binding.grpPostContent.setVisibility(View.VISIBLE);
+                binding.grpLinkTShirt.setVisibility(View.VISIBLE);
                 if(account.getSplitHeader() != null && account.getHeader() != null){
                     try {
                         String[] data = account.getHeader().split(Pattern.quote(String.valueOf(account.getSplitHeader().charAt(0))));
@@ -155,21 +158,7 @@ public class AccountActivity extends AppCompatActivity {
                 binding.btnCancelAccount.setVisibility(View.VISIBLE);
             }
         });
-//        binding.txtStrDataHeader.setOnEditorActionListener((v, actionId, event) -> {
-//            if (actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_DONE){
-//                CharSequence strData = binding.txtStrDataHeader.getText();
-//                CharSequence charSplit = binding.txtStrSplitHeader.getText();
-//                if(strData != null && charSplit != null){
-//                    try {
-//                        String[] data = strData.toString().split(Pattern.quote(String.valueOf(charSplit.charAt(0))));
-//                        binding.txtTotalHeader.setText(String.valueOf(data.length));
-//                    }catch (Exception e){
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//            return true;
-//        });
+
         binding.btnShowHideDataContent.setOnClickListener(v -> {
             if(binding.btnShowHideDataContent.getText().toString().equals("Expand")){
                 binding.btnShowHideDataContent.setText("Collapse");
@@ -199,21 +188,7 @@ public class AccountActivity extends AppCompatActivity {
                 binding.btnCancelAccount.setVisibility(View.VISIBLE);
             }
         });
-//        binding.txtStrDataContent.setOnEditorActionListener((v, actionId, event) -> {
-//            if (actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_DONE){
-//                CharSequence strData = binding.txtStrDataContent.getText();
-//                CharSequence charSplit = binding.txtStrSplitContent.getText();
-//                if(strData != null && charSplit != null){
-//                    try {
-//                        String[] data = strData.toString().split(Pattern.quote(String.valueOf(charSplit.charAt(0))));
-//                        binding.txtTotalContent.setText(String.valueOf(data.length));
-//                    }catch (Exception e){
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//            return true;
-//        });
+
         binding.btnShowHideDataFooter.setOnClickListener(v -> {
             if(binding.btnShowHideDataFooter.getText().toString().equals("Expand")){
                 binding.btnShowHideDataFooter.setText("Collapse");
@@ -243,26 +218,13 @@ public class AccountActivity extends AppCompatActivity {
                 binding.btnCancelAccount.setVisibility(View.VISIBLE);
             }
         });
-//        binding.txtStrDataFooter.setOnEditorActionListener((v, actionId, event) -> {
-//            if (actionId == EditorInfo.IME_ACTION_NEXT || actionId == EditorInfo.IME_ACTION_DONE){
-//                CharSequence strData = binding.txtStrDataFooter.getText();
-//                CharSequence charSplit = binding.txtStrSplitFooter.getText();
-//                if(strData != null && charSplit != null){
-//                    try {
-//                        String[] data = strData.toString().split(Pattern.quote(String.valueOf(charSplit.charAt(0))));
-//                        binding.txtTotalFooter.setText(String.valueOf(data.length));
-//                    }catch (Exception e){
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//            return true;
-//        });
+
         binding.btnCancelAccount.setOnClickListener(v -> {
             Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
         });
+
         binding.btnSaveAccount.setOnClickListener(v -> {
             try {
                 String fileFolder = String.format("%s/%s/%s",
@@ -280,6 +242,7 @@ public class AccountActivity extends AppCompatActivity {
                             binding.getAccount().setHeader(null);
                             binding.getAccount().setContent(null);
                             binding.getAccount().setFooter(null);
+                            binding.getAccount().setLinkTShirt(null);
                             Util.object2File(fileAccount, binding.getAccount());
                             Intent intent = new Intent(this, MainActivity.class);
                             startActivity(intent);
@@ -294,6 +257,7 @@ public class AccountActivity extends AppCompatActivity {
                         String dataHeader = binding.txtStrDataHeader.getText().toString();
                         String dataContent = binding.txtStrDataContent.getText().toString();
                         String dataFooter = binding.txtStrDataFooter.getText().toString();
+                        String linkTShirt = binding.txtLinkTShirt.getText().toString().trim();
                         if(splitHeader.isEmpty()){
                             Toast.makeText(v.getContext(), "Split header is required", Toast.LENGTH_SHORT).show();
                             binding.txtStrSplitHeader.forceLayout();
@@ -309,7 +273,7 @@ public class AccountActivity extends AppCompatActivity {
                         }else if(splitFooter.isEmpty()){
                             Toast.makeText(v.getContext(), "Split footer is required", Toast.LENGTH_SHORT).show();
                             binding.txtStrSplitFooter.forceLayout();
-                        }else if(dataFooter.isEmpty()){
+                        }else if(dataFooter.isEmpty()) {
                             Toast.makeText(v.getContext(), "Data footer is required", Toast.LENGTH_SHORT).show();
                             binding.txtStrDataFooter.forceLayout();
                         }else{
@@ -319,6 +283,7 @@ public class AccountActivity extends AppCompatActivity {
                             binding.getAccount().setHeader(dataHeader);
                             binding.getAccount().setContent(dataContent);
                             binding.getAccount().setFooter(dataFooter);
+                            binding.getAccount().setLinkTShirt(linkTShirt.isEmpty() ? null : linkTShirt);
                             binding.getAccount().setPassword(null);
                             Util.object2File(fileAccount, binding.getAccount());
                             Intent intent = new Intent(this, MainActivity.class);

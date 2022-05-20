@@ -17,6 +17,7 @@ public class Account extends BaseObservable {
     private String content;
     private String splitFooter;
     private String footer;
+    private String linkTShirt;
 
     @JsonCreator
     public Account(
@@ -28,7 +29,8 @@ public class Account extends BaseObservable {
             @JsonProperty("splitContent") String splitContent,
             @JsonProperty("content") String content,
             @JsonProperty("splitFooter")String splitFooter,
-            @JsonProperty("footer")String footer)
+            @JsonProperty("footer")String footer,
+            @JsonProperty("linkTShirt")String linkTShirt)
     {
         super();
         this.username = username;
@@ -40,6 +42,7 @@ public class Account extends BaseObservable {
         this.content = content;
         this.splitFooter = splitFooter;
         this.footer = footer;
+        this.linkTShirt = linkTShirt;
     }
 
     @Bindable
@@ -130,5 +133,15 @@ public class Account extends BaseObservable {
     public void setFooter(String footer) {
         this.footer = footer;
         notifyPropertyChanged(BR.footer);
+    }
+
+    @Bindable
+    public String getLinkTShirt() {
+        return linkTShirt;
+    }
+
+    public void setLinkTShirt(String linkTShirt) {
+        this.linkTShirt = linkTShirt;
+        notifyPropertyChanged(BR.linkTShirt);
     }
 }

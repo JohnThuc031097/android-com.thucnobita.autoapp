@@ -76,12 +76,13 @@ public class MainActivity extends AppCompatActivity   {
         });
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.R)
     private void askPermissions() {
-        if(!Environment.isExternalStorageManager()){
-            Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
-            Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri);
-            startActivity(intent);
+        if(Build.VERSION.SDK_INT > Build.VERSION_CODES.Q){
+            if(!Environment.isExternalStorageManager()){
+                Uri uri = Uri.parse("package:" + BuildConfig.APPLICATION_ID);
+                Intent intent = new Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION, uri);
+                startActivity(intent);
+            }
         }else{
             String[] permissions = {
                     "android.permission.READ_EXTERNAL_STORAGE",

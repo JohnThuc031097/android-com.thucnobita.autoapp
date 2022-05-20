@@ -76,7 +76,7 @@ public class Bot {
         try{
             username = actions.get_username_video_saved();
             Log.i(TAG_NAME, "=> Username video:" + username);
-        }catch (UiObjectNotFoundException e){
+        }catch (UiObjectNotFoundException | InterruptedException e){
             e.printStackTrace();
         }
         return username;

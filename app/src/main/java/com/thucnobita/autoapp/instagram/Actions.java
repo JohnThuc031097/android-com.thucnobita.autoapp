@@ -5,6 +5,7 @@ import android.os.RemoteException;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.thucnobita.autoapp.utils.Constants;
+import com.thucnobita.autoapp.utils.Util;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 import com.thucnobita.uiautomator.Selector;
 
@@ -52,22 +53,21 @@ public class Actions {
         if(content != null){
             automatorService.setText(arrSelect.get(1), content);
         }
-        Thread.sleep(2500);
+        Thread.sleep(2000);
         automatorService.pressKey("back"); // Hide keybroad
+        Thread.sleep(1000);
         Selector selector = new Selector(automatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/tabs_viewpager");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
-        Thread.sleep(1000);
         automatorService.swipe(selector, "u", 500);
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         if(click(arrSelect.get(2), 5)){ // Click "Share" to begin post
-            Thread.sleep(500);
+            Thread.sleep(1000);
 //            return waitGone(arrSelect.get(3), 60*5); // Wait for process done (time wait default: 5 min)
             if(click(arrSelect.get(3), 5)){ // Click return Home
                 if(waitGone(arrSelect.get(4), 60 * 5)){ // Wait for process done (time wait default: 5 min)
-                    Thread.sleep(500);
-                    return waitGone(arrSelect.get(5), 60);
+                    return waitGone(arrSelect.get(5), 60 * 2);
                 }
             }
         }
@@ -77,25 +77,27 @@ public class Actions {
     public boolean share_video_to_reel(String folderVideo) throws UiObjectNotFoundException, InterruptedException {
         ArrayList<Selector> arrSelector = selectors.share_video_to_reel(folderVideo);
         if(click_profile()){
-            Thread.sleep(500);
+            Thread.sleep(2000);
             if(click(arrSelector.get(0), 5)){
-                Thread.sleep(500);
+                Thread.sleep(2000);
                 if(click(arrSelector.get(1), 5)){
-                    Thread.sleep(500);
+                    Thread.sleep(2000);
                     if(click(arrSelector.get(2), 5)){
-                        Thread.sleep(500);
+                        Thread.sleep(2000);
                         if(click(arrSelector.get(3), 5)){
-                            Thread.sleep(500);
+                            Thread.sleep(2000);
                             if(click(arrSelector.get(4), 5)){ // Select folder "Instagram"
-                                Thread.sleep(1000);
+                                Thread.sleep(2000);
                                 if(click(arrSelector.get(5), 5)){ // Select video index "0" (default)
-                                    Thread.sleep(1000);
+                                    Thread.sleep(3000);
                                     if(click(arrSelector.get(6), 5)){ // Click "Add"
-                                        Thread.sleep(1000);
-                                        if(waitGone(arrSelector.get(6), 60)){
+                                        Thread.sleep(3000);
+                                        if(waitGone(arrSelector.get(6), 60 * 2)){
+                                            Thread.sleep(3000);
                                             if(click(arrSelector.get(7), 5)){ // Click "Preview"
-                                                Thread.sleep(1000);
-                                                if(waitGone(arrSelector.get(7), 60)){
+                                                Thread.sleep(3000);
+                                                if(waitGone(arrSelector.get(7), 60 * 2)){
+                                                    Thread.sleep(3000);
                                                     return click(arrSelector.get(8), 5); // Click "Next" to the end share video
                                                 }
                                             }
@@ -114,11 +116,14 @@ public class Actions {
     public boolean click_switch_account(String username) throws UiObjectNotFoundException, InterruptedException, RemoteException {
         ArrayList<Selector> arrSelector = selectors.switch_account(username);
         if(click(arrSelector.get(0), 5)){
-            Thread.sleep(1000);
+            Thread.sleep(2000);
             if(click(arrSelector.get(1), 5)){
+                Thread.sleep(2000);
                 if(waitGone(arrSelector.get(1), 5)){
+                    Thread.sleep(2000);
                     return true;
                 }else{
+                    Thread.sleep(2000);
                     return automatorService.pressKey("back");
                 }
             }
@@ -126,18 +131,20 @@ public class Actions {
         return false;
     }
 
-    public boolean click_profile() throws UiObjectNotFoundException {
+    public boolean click_profile() throws UiObjectNotFoundException, InterruptedException {
+        Thread.sleep(2000);
         return click(selectors.profile(), 5);
     }
 
-    public boolean click_options() throws UiObjectNotFoundException {
+    public boolean click_options() throws UiObjectNotFoundException, InterruptedException {
+        Thread.sleep(2000);
         return click(selectors.options(), 5);
     }
 
     public boolean click_saved() throws UiObjectNotFoundException, InterruptedException {
         ArrayList<Selector> arrSelector = selectors.saved();
         if (click(arrSelector.get(0), 5)) {
-            Thread.sleep(1000);
+            Thread.sleep(2000);
             if (click(arrSelector.get(1), 5)) {
                 Thread.sleep(2000);
                 return waitGone(arrSelector.get(2), 60);
@@ -146,16 +153,18 @@ public class Actions {
         return false;
     }
 
-    public boolean click_video_saved() throws UiObjectNotFoundException {
+    public boolean click_video_saved() throws UiObjectNotFoundException, InterruptedException {
         ArrayList<String> idObjs = selectors.videos_saved();
-        int index = 0;
-        if(idObjs.size() > 1) {
-            index = (new Random().nextInt(idObjs.size()-1));
+        int size = idObjs.size();
+        if(size > 0){
+            Thread.sleep(1000);
+            return click(idObjs.get(Util.randInt(0, size - 1)), 5);
         }
-        return click(idObjs.get(index), 5);
+        return false;
     }
 
-    public String get_username_video_saved() throws UiObjectNotFoundException {
+    public String get_username_video_saved() throws UiObjectNotFoundException, InterruptedException {
+        Thread.sleep(2000);
         return automatorService.getText(selectors.username_video_saved());
     }
 
@@ -165,25 +174,25 @@ public class Actions {
                 ? arrSelector.get(0)
                 : arrSelector.get(1);
         if (click(selectorSelectVideo, 5)) { // Select video
-            Thread.sleep(1000);
+            Thread.sleep(2000);
             click(arrSelector.get(2), 5); // "Pause" video if video not type reel
             Thread.sleep(500);
             if(click(arrSelector.get(3), 5)){ // Show More
-                Thread.sleep(1000);
                 Selector selectorCopyLink = automatorService.exist(arrSelector.get(4))
                         ? arrSelector.get(4)
                         : arrSelector.get(5);
+                Thread.sleep(2000);
                 if (click(selectorCopyLink, 5)) { // 1.Copy link
-                    Thread.sleep(1000);
+                    Thread.sleep(2000);
                     if (click(arrSelector.get(6), 5)) { // Again Select video
                         Thread.sleep(500);
                         if (click(arrSelector.get(3), 5)) { // Show More
-                            Thread.sleep(1000);
                             Selector selectorRemoveSaved = automatorService.exist(arrSelector.get(7))
                                     ? arrSelector.get(7)
                                     : arrSelector.get(8);
+                            Thread.sleep(2000);
                             if (click(selectorRemoveSaved, 5)) { // 2.Remove video
-                                Thread.sleep(1000);
+                                Thread.sleep(2000);
                                 return automatorService.pressKey("back");
                             }
                         }
