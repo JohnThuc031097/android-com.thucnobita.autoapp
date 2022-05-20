@@ -11,6 +11,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.thucnobita.autoapp.activities.MainActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -67,11 +68,26 @@ public class Util {
     public static boolean recentApp(Context context, Instrumentation instrumentation, String packageName, long timeWait) {
         UiDevice device = UiDevice.getInstance(instrumentation);
         Intent intent = context.getPackageManager().getLaunchIntentForPackage(packageName);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION | Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
+                | Intent.FLAG_ACTIVITY_NO_ANIMATION
+                | Intent.FLAG_ACTIVITY_NEW_TASK);
         intent.setPackage(packageName);
         context.startActivity(intent);
         device.wait(Until.hasObject(By.pkg(packageName).depth(0)), timeWait * 1000L);
         return true;
+    }
+
+    public static boolean recentMainActivity(Context context) {
+        try{
+            Intent intent = new Intent(context, MainActivity.class);
+            intent.setAction(Intent.ACTION_MAIN);
+            intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT | Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            context.startActivity(intent);
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
     }
 
 }

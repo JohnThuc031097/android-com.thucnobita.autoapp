@@ -231,14 +231,7 @@ public class BotFragment extends Fragment {
                                         if(usernameVideo != null){
                                             setLog("=> Get username video:" + usernameVideo);
                                             Thread.sleep(500);
-                                            if(Util.recentApp(
-                                                    v.getContext(),
-                                                    automatorService.getInstrumentation(),
-                                                    "com.thucnobita.autoapp",
-                                                    5)){
-                                                requireActivity().runOnUiThread(() -> {
-                                                    btnGetClipbroad.forceLayout();
-                                                });
+                                            if(Util.recentMainActivity(v.getContext())){
                                                 Thread.sleep(1000);
                                                 setLog("=> Result link video:" + linkVideo);
                                                 String urlLink = linkVideo.split("\\?")[0];
@@ -322,11 +315,7 @@ public class BotFragment extends Fragment {
                             }
                         }
                         try{
-                            Util.recentApp(
-                                    v.getContext(),
-                                    automatorService.getInstrumentation(),
-                                    "com.thucnobita.autoapp",
-                                    5);
+                            Util.recentMainActivity(v.getContext());
                             Thread.sleep(5000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -335,11 +324,7 @@ public class BotFragment extends Fragment {
                         }
                     }
                 }
-                Util.recentApp(
-                        v.getContext(),
-                        automatorService.getInstrumentation(),
-                        "com.thucnobita.autoapp",
-                        5);
+                Util.recentMainActivity(v.getContext());
             }
         }
     }

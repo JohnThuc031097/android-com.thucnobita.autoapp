@@ -64,7 +64,6 @@ public class Actions {
         Thread.sleep(2000);
         if(click(arrSelect.get(2), 5)){ // Click "Share" to begin post
             Thread.sleep(1000);
-//            return waitGone(arrSelect.get(3), 60*5); // Wait for process done (time wait default: 5 min)
             if(click(arrSelect.get(3), 5)){ // Click return Home
                 if(waitGone(arrSelect.get(4), 60 * 5)){ // Wait for process done (time wait default: 5 min)
                     return waitGone(arrSelect.get(5), 60 * 2);
