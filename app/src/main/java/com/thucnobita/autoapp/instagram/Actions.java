@@ -27,31 +27,13 @@ public class Actions {
         return click(selectors.app_floating_view(), 5) || automatorService.pressKey("recent") && click(selectors.app_current(name), 5);
     }
 
-    public boolean post_feed(String content) throws UiObjectNotFoundException, InterruptedException, RemoteException {
-        ArrayList<Selector> arrSelector = selectors.post_feed();
-        if(click(arrSelector.get(0), 5)){
-            if(click(arrSelector.get(1), 60)){
-                if(waitExist(arrSelector.get(2), 30)){
-                    if(automatorService.setText(arrSelector.get(2), content)){
-                        Thread.sleep(2500);
-                        automatorService.pressKey("back");
-                        if(click(arrSelector.get(3), 2)){
-                            return waitExist(arrSelector.get(4), 60 * 10);
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
     public boolean post_reel(String content, boolean noShareToFeed) throws UiObjectNotFoundException, InterruptedException, RemoteException {
-        ArrayList<Selector> arrSelect = selectors.post_reel();
+        ArrayList<Selector> arrSelector = selectors.post_reel();
         if(noShareToFeed){
-            click(arrSelect.get(0), 5);
+            click(arrSelector.get(0), 5);
         }
         if(content != null){
-            automatorService.setText(arrSelect.get(1), content);
+            automatorService.setText(arrSelector.get(1), content);
         }
         Thread.sleep(2000);
         automatorService.pressKey("back"); // Hide keybroad
@@ -62,19 +44,38 @@ public class Actions {
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
         automatorService.swipe(selector, "u", 500);
         Thread.sleep(2000);
-        if(click(arrSelect.get(2), 5)){ // Click "Share" to begin post
+        if(click(arrSelector.get(2), 5)){ // Click "Share" to begin post
             Thread.sleep(1000);
-            if(click(arrSelect.get(3), 5)){ // Click return Home
-                if(waitGone(arrSelect.get(4), 60 * 5)){ // Wait for process done (time wait default: 5 min)
-                    return waitGone(arrSelect.get(5), 60 * 2);
+            if(click(arrSelector.get(3), 5)){ // Click return Home
+                if(waitGone(arrSelector.get(4), 60 * 5)){ // Wait for process done (time wait default: 5 min)
+                    return waitGone(arrSelector.get(5), 60 * 5);
                 }
             }
         }
         return false;
     }
 
-    public boolean share_video_to_reel(String folderVideo) throws UiObjectNotFoundException, InterruptedException {
-        ArrayList<Selector> arrSelector = selectors.share_video_to_reel(folderVideo);
+    public boolean post_feed(String content) throws UiObjectNotFoundException, InterruptedException, RemoteException {
+        ArrayList<Selector> arrSelector = selectors.post_feed();
+        if(content != null){
+            automatorService.setText(arrSelector.get(0), content);
+        }
+        Thread.sleep(2000);
+        automatorService.pressKey("back"); // Hide keybroad
+        Thread.sleep(1000);
+        if(click(arrSelector.get(1), 5)){ // Click "Share" to begin post
+            Thread.sleep(1000);
+            if(click(arrSelector.get(2), 5)){ // Click return Home
+                if(waitGone(arrSelector.get(3), 60 * 5)){ // Wait for process done (time wait default: 5 min)
+                    return waitGone(arrSelector.get(5), 60 * 5);
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean share_video_to_reel(String folderShare) throws UiObjectNotFoundException, InterruptedException {
+        ArrayList<Selector> arrSelector = selectors.share_video_to_reel(folderShare);
         if(click_profile()){
             Thread.sleep(2000);
             if(click(arrSelector.get(0), 5)){
@@ -100,6 +101,46 @@ public class Actions {
                                                     return click(arrSelector.get(8), 5); // Click "Next" to the end share video
                                                 }
                                             }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean share_video_image_to_feed(String folderShare) throws UiObjectNotFoundException, InterruptedException {
+        ArrayList<Selector> arrSelector = selectors.browse_select_video_image_to_post(folderShare);
+        if(click_profile()){
+            Thread.sleep(2000);
+            if(click(arrSelector.get(0), 5)){ // Click create post
+                Thread.sleep(2000);
+                if(click(arrSelector.get(1), 5)){
+                    Thread.sleep(2000);
+                    if(click(arrSelector.get(2), 5)){
+                        Thread.sleep(2000);
+                        if(click(arrSelector.get(3), 5)){ // Select folder share
+                            Thread.sleep(2000);
+                            ArrayList<String> arrFile = selectors.get_video_image_to_post(); // Get all file in browse
+                            if(arrFile.size() > 0){
+                                if(click(selectors.btn_select_mutiple_file(), 5)){ // Click select check mutiple file
+                                    Thread.sleep(1000);
+                                    for (int i = 1; i < arrFile.size(); i++) {
+                                        if(!click(arrFile.get(i),5)){
+                                            return false;
+                                        }
+                                        Thread.sleep(1000);
+                                    }
+                                    Thread.sleep(2000);
+                                    Selector selectorBtnNext = selectors.share_video_image_to_feed();
+                                    if(click(selectorBtnNext, 5)){ // Click button Next
+                                        Thread.sleep(5000);
+                                        if(click(selectorBtnNext, 5)){  // Click button Next
+                                            return waitGone(selectorBtnNext, 60 * 5);
                                         }
                                     }
                                 }

@@ -32,43 +32,6 @@ class Data {
         return selector;
     }
 
-    public ArrayList<Selector> post_feed(){
-        ArrayList<Selector> selectors = new ArrayList<>();
-        Selector selector = new Selector(mAutomatorService.getInstrumentation());
-        selector.setPackageName("android");
-        selector.setClassName("android.widget.TextView");
-        selector.setText("Feed");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_TEXT);
-        selectors.add(selector);
-        selector = new Selector(mAutomatorService.getInstrumentation());
-        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setClassName("android.widget.Button");
-        selector.setDescription("Next");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_DESCRIPTION);
-        selectors.add(selector);
-        selector = new Selector(mAutomatorService.getInstrumentation());
-        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setClassName("android.widget.EditText");
-        selector.setText("Write a caption…");
-        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/caption_input_text_view");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
-        selectors.add(selector);
-        selector = new Selector(mAutomatorService.getInstrumentation());
-        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setClassName("android.widget.TextView");
-        selector.setText("Share");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_TEXT);
-        selectors.add(selector);
-        selector = new Selector(mAutomatorService.getInstrumentation());
-        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setClassName("android.widget.TextView");
-        selector.setText("Finishing up");
-        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/row_pending_media_status_textview");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
-        selectors.add(selector);
-        return selectors;
-    }
-
     public ArrayList<Selector> post_reel(){
         ArrayList<Selector> selectors = new ArrayList<>();
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
@@ -112,7 +75,35 @@ class Data {
         return selectors;
     }
 
-    public ArrayList<Selector> share_video_to_reel(String folderVideo){
+    public ArrayList<Selector> post_feed(){
+        ArrayList<Selector> selectors = new ArrayList<>();
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setText("Write a caption…");
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/caption_text_view");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
+        selectors.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setDescription("Share");
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/next_button_imageview");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
+        selectors.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/row_pending_media_progress_bar");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        selectors.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setText("Finishing up");
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/row_pending_media_status_textview");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
+        selectors.add(selector);
+        return selectors;
+    }
+
+    public ArrayList<Selector> share_video_to_reel(String folderShare){
         ArrayList<Selector> selectors = new ArrayList<>();
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
@@ -140,7 +131,7 @@ class Data {
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
         selector.setClassName("android.widget.TextView");
-        selector.setText(folderVideo != null ? folderVideo : "Instagram");
+        selector.setText(folderShare != null ? folderShare : "Instagram");
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/folder_picker_text_view");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
         selectors.add(selector);
@@ -167,6 +158,80 @@ class Data {
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT);
         selectors.add(selector);
         return selectors;
+    }
+
+    public Selector share_video_image_to_feed(){
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setDescription("Next");
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/next_button_imageview");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
+        return selector;
+    }
+
+    public ArrayList<Selector> browse_select_video_image_to_post(String folderShare){
+        ArrayList<Selector> selectors = new ArrayList<>();
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setDescription("Create New");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION);
+        selectors.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setText("Post");
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/label");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
+        selectors.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/gallery_folder_menu");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        selectors.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setText(folderShare != null ? folderShare : "Instagram");
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/action_sheet_row_text_view");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
+        selectors.add(selector);
+        return selectors;
+    }
+
+    public ArrayList<String> get_video_image_to_post() {
+        ArrayList<String> idObjs = new ArrayList<>();
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setClassName("android.widget.CheckBox");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME);
+        ObjInfo[] objInfos = mAutomatorService.objInfoOfAllInstances(selector);
+        int tryAgain = 3;
+        while (tryAgain-- > 0 && objInfos.length == 0){
+            try {
+                Thread.sleep(1000L);
+                objInfos = mAutomatorService.objInfoOfAllInstances(selector);
+            }catch (Exception e){
+                tryAgain = 0;
+            }
+        }
+        if(objInfos.length > 0){
+            for (ObjInfo objInfo: objInfos) {
+                Selector selectorChild = new Selector(mAutomatorService.getInstrumentation());
+                selectorChild.setPackageName(objInfo.getPackageName());
+                selectorChild.setClassName(objInfo.getClassName());
+                selectorChild.setDescription(objInfo.getContentDescription());
+                selectorChild.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_DESCRIPTION);
+                idObjs.add(mAutomatorService.getUiObject(selectorChild));
+            }
+        }
+        return idObjs;
+    }
+
+    public Selector btn_select_mutiple_file(){
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setDescription("Select multiple");
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/multi_select_slide_button");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
+        return selector;
     }
 
     public Selector username_video_saved(){

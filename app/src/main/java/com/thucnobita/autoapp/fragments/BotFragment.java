@@ -150,7 +150,17 @@ public class BotFragment extends Fragment {
                 executor.submit(() -> {
                     txtLogBot.setText(null);
                     if(initBot()){
-                        botIG(v);
+//                        botIG(v);
+                        Util.openApp(
+                                v.getContext(),
+                                automatorService.getInstrumentation(),
+                                Constants.PACKAGE_NAME_INSTAGRAM,
+                                5);
+                        if(botIG.share_video_to_feed("Download")){
+                            setLog("=> Share video Ok");
+                        }else{
+                            setLog("=> Share video Failed");
+                        }
                     }
                     requireActivity().runOnUiThread(() -> {
                         scrollViewLog.post(() -> {
@@ -255,11 +265,6 @@ public class BotFragment extends Fragment {
                                                                 new String[] { "video/*" },
                                                                 null);
                                                         setLog("=> Video path downloaded:" + fileVideo.getPath());
-                                                        Util.openApp(
-                                                                v.getContext(),
-                                                                automatorService.getInstrumentation(),
-                                                                Constants.PACKAGE_NAME_INSTAGRAM,
-                                                                5);
                                                         setLog("=> Random header");
                                                         String[] temp = accountRun.getHeader().split(Pattern.quote(accountRun.getSplitHeader()));
                                                         String header = temp[Util.randInt(0, temp.length-1)];
@@ -269,21 +274,27 @@ public class BotFragment extends Fragment {
                                                         setLog("=> Random footer");
                                                         temp = accountRun.getFooter().split(Pattern.quote(accountRun.getSplitFooter()));
                                                         String footer = temp[Util.randInt(0, temp.length-1)];
-                                                        if(botIG.share_video_to_reel("Download")){
+                                                        Util.openApp(
+                                                                v.getContext(),
+                                                                automatorService.getInstrumentation(),
+                                                                Constants.PACKAGE_NAME_INSTAGRAM,
+                                                                5);
+                                                        if(botIG.share_video_to_feed("Download")){
                                                             setLog("=> Share video Ok");
-                                                            if(botIG.post_reel(String.format("%s @%s\n%s\n%s",
+                                                            if(botIG.post_feed(String.format("%s @%s\n%s\n%s",
                                                                     header, usernameVideo,
                                                                     content,
-                                                                    footer), false)){
-                                                                setLog("=> Post reel Ok");
-                                                                if(fileVideo.delete()){
-                                                                    setLog("=> Delete file video Ok");
-                                                                }else{
-                                                                    setLog("=> Delete file video Failed");
-                                                                    isRunning = false;
-                                                                }
+                                                                    footer))){
+                                                                setLog("=> Post Ok");
+                                                                isRunning = false;
+//                                                                if(fileVideo.delete()){
+//                                                                    setLog("=> Delete file video Ok");
+//                                                                }else{
+//                                                                    setLog("=> Delete file video Failed");
+//                                                                    isRunning = false;
+//                                                                }
                                                             }else{
-                                                                setLog("=> Post feed Failed");
+                                                                setLog("=> Post Failed");
                                                                 isRunning = false;
                                                             }
                                                         }else{

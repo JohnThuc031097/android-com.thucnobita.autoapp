@@ -133,8 +133,7 @@ public class Bot {
         try{
             Uri uri = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", pathFile);
             Intent intentVideo = new Intent();
-//            intentVideo.setAction(Intent.ACTION_SEND);
-            intentVideo.setAction("com.instagram.share.ADD_TO_STORY");
+            intentVideo.setAction(Intent.ACTION_SEND);
             intentVideo.setType("video/*"); // image/* or video/* or text/plain
             intentVideo.putExtra(Intent.EXTRA_STREAM, uri);
             intentVideo.setPackage(Constants.PACKAGE_NAME_INSTAGRAM);
@@ -145,18 +144,6 @@ public class Bot {
             e.printStackTrace();
         }
         return false;
-    }
-
-    public boolean post_feed(String content) {
-        boolean result = false;
-        try{
-            result = actions.post_feed(content);
-            Log.i(TAG_NAME, "=> Post feed => " + result);
-            Thread.sleep(1000);
-        }catch (UiObjectNotFoundException | InterruptedException | RemoteException e){
-            e.printStackTrace();
-        }
-        return result;
     }
 
     public boolean post_reel(String content, boolean noShareToFeed){
@@ -172,17 +159,39 @@ public class Bot {
         return result;
     }
 
-    public boolean share_video_to_reel(String folderVideo){
+    public boolean post_feed(String content){
         boolean result = false;
         try{
-            result = actions.share_video_to_reel(folderVideo);
+            result = actions.post_feed(content);
+            Log.i(TAG_NAME, "=> Post feed => " + result);
+        } catch (UiObjectNotFoundException | InterruptedException | RemoteException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public boolean share_video_to_reel(String folderShare){
+        boolean result = false;
+        try{
+            result = actions.share_video_to_reel(folderShare);
             Log.i(TAG_NAME, "=> Click share video to reel => " + result);
         } catch (InterruptedException | UiObjectNotFoundException e) {
             e.printStackTrace();
         }
         return result;
     }
-
+    
+    public boolean share_video_to_feed(String folderShare){
+        boolean result = false;
+        try{
+            result = actions.share_video_image_to_feed(folderShare);
+            Log.i(TAG_NAME, "=> Click share video + image to post => " + result);
+        } catch (InterruptedException | UiObjectNotFoundException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+    
     public boolean login(Context context, String username, String password) {
         if(client == null){
             client = loadClientCookie(username);
