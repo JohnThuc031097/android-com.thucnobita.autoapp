@@ -9,4 +9,6 @@ public interface Constants {
     String FOLDER_NAME_APP = "auto-app";
     String FOLDER_NAME_SESSION = "sessions";
     String FOLDER_NAME_ACCOUNT = "accounts";
+    String FOLDER_NAME_CREDENTIAL = "credentials";
+    String FOLDER_NAME_TOKEN = "tokens";
 }

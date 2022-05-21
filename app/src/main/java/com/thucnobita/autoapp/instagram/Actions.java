@@ -27,11 +27,8 @@ public class Actions {
         return click(selectors.app_floating_view(), 5) || automatorService.pressKey("recent") && click(selectors.app_current(name), 5);
     }
 
-    public boolean post_reel(String content, boolean noShareToFeed) throws UiObjectNotFoundException, InterruptedException, RemoteException {
+    public boolean post_reel(String content) throws UiObjectNotFoundException, InterruptedException, RemoteException {
         ArrayList<Selector> arrSelector = selectors.post_reel();
-        if(noShareToFeed){
-            click(arrSelector.get(0), 5);
-        }
         if(content != null){
             automatorService.setText(arrSelector.get(1), content);
         }
@@ -47,9 +44,11 @@ public class Actions {
         if(click(arrSelector.get(2), 5)){ // Click "Share" to begin post
             Thread.sleep(1000);
             if(click(arrSelector.get(3), 5)){ // Click return Home
-                if(waitGone(arrSelector.get(4), 60 * 5)){ // Wait for process done (time wait default: 5 min)
-                    return waitGone(arrSelector.get(5), 60 * 5);
-                }
+//                if(waitGone(arrSelector.get(4), 60 * 5)){ // Wait for process done (time wait default: 5 min)
+//                    return waitGone(arrSelector.get(5), 60 * 5);
+//                }
+                Thread.sleep(2000);
+                return waitGone(arrSelector.get(4), 60 * 10); // Wait for process done (time wait default: 10 min)
             }
         }
         return false;
@@ -66,9 +65,11 @@ public class Actions {
         if(click(arrSelector.get(1), 5)){ // Click "Share" to begin post
             Thread.sleep(1000);
             if(click(arrSelector.get(2), 5)){ // Click return Home
-                if(waitGone(arrSelector.get(3), 60 * 5)){ // Wait for process done (time wait default: 5 min)
-                    return waitGone(arrSelector.get(5), 60 * 5);
-                }
+//                if(waitGone(arrSelector.get(3), 60 * 5)){ // Wait for process done (time wait default: 5 min)
+//                    return waitGone(arrSelector.get(5), 60 * 5);
+//                }
+                Thread.sleep(2000);
+                return waitGone(arrSelector.get(3), 60 * 10); // Wait for process done (time wait default: 10 min)
             }
         }
         return false;
@@ -215,8 +216,11 @@ public class Actions {
                 : arrSelector.get(1);
         if (click(selectorSelectVideo, 5)) { // Select video
             Thread.sleep(2000);
-            click(arrSelector.get(2), 5); // "Pause" video if video not type reel
-            Thread.sleep(500);
+            if(click(arrSelector.get(2), 5)){  // "Pause" video if video not type reel
+                Thread.sleep(500);
+                click(selectorSelectVideo, 5);
+                Thread.sleep(500);
+            }
             if(click(arrSelector.get(3), 5)){ // Show More
                 Selector selectorCopyLink = automatorService.exist(arrSelector.get(4))
                         ? arrSelector.get(4)

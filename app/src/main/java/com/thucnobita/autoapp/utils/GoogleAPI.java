@@ -1,0 +1,111 @@
+package com.thucnobita.autoapp.utils;
+
+import android.util.Log;
+
+import com.google.api.client.auth.oauth2.Credential;
+import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
+import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
+import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
+import com.google.api.client.http.javanet.NetHttpTransport;
+import com.google.api.client.json.JsonFactory;
+import com.google.api.client.json.gson.GsonFactory;
+import com.google.api.client.util.store.FileDataStoreFactory;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.DriveScopes;
+
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.security.GeneralSecurityException;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
+
+public class GoogleAPI {
+    private static final String TAG_NAME = "GOOGLE-API";
+    /** Application name. */
+    private static final String APPLICATION_NAME = "Google API for AutoApp";
+    /** Global instance of the JSON factory. */
+    private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
+    /** Directory to store authorization tokens for this application. */
+    private static final String TOKENS_DIRECTORY_PATH = "tokens";
+//    private static final String TOKENS_DIRECTORY_PATH = String.format("%s/%s/%s",
+//            Constants.FOLDER_ROOT,
+//            Constants.FOLDER_NAME_APP,
+//            Constants.FOLDER_NAME_TOKEN);
+
+    /**
+     * Global instance of the scopes required by this quickstart.
+     * If modifying these scopes, delete your previously saved tokens/ folder.
+     */
+//    private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE_METADATA_READONLY);
+    private static final Set<String> SCOPES = DriveScopes.all();
+
+    private static final String CREDENTIALS_FILE_PATH = String.format("%s/%s/%s/%s",
+            Constants.FOLDER_ROOT,
+            Constants.FOLDER_NAME_APP,
+            Constants.FOLDER_NAME_CREDENTIAL,
+            "google-api.json");
+
+    private Drive _service;
+
+    public GoogleAPI() throws GeneralSecurityException, IOException {
+
+    }
+
+    public boolean build(){
+        try{
+            // Build a new authorized API client service.
+            final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
+            this._service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+                    .setApplicationName(APPLICATION_NAME)
+                    .build();
+            return true;
+        }catch (GeneralSecurityException | IOException e){
+            Log.e(TAG_NAME, e.getMessage());
+        }
+        return false;
+    }
+
+    public Drive getService(){
+        return _service;
+    }
+
+    /**
+     * Creates an authorized Credential object.
+     * @param HTTP_TRANSPORT The network HTTP Transport.
+     * @return An authorized Credential object.
+     * @throws IOException If the credentials.json file cannot be found.
+     */
+    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
+        // Load client secrets.
+//        InputStream in = GoogleAPI.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
+        InputStream in;
+        try{
+            in = new FileInputStream(CREDENTIALS_FILE_PATH);
+        }catch (FileNotFoundException | SecurityException e){
+            Log.e(TAG_NAME, "Resource not found: " + CREDENTIALS_FILE_PATH);
+            return null;
+        }
+        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+
+        // Build flow and trigger user authorization request.
+        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
+//                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
+                .setApprovalPrompt("force")
+                .setAccessType("offline")
+                .build();
+        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+        Credential credential = new AuthorizationCodeInstalledApp(flow, receiver)
+                .authorize("102492036309235103034");
+        //returns an authorized Credential object.
+        return credential;
+    }
+}

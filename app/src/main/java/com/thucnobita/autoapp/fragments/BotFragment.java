@@ -32,19 +32,23 @@ import android.widget.Toast;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.impl.CreatorCandidate;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.google.api.services.drive.model.FileList;
 import com.thucnobita.autoapp.R;
 import com.thucnobita.autoapp.activities.MainActivity;
 import com.thucnobita.autoapp.instagram.Bot;
 import com.thucnobita.autoapp.instagram.Callback;
 import com.thucnobita.autoapp.models.Account;
 import com.thucnobita.autoapp.utils.Constants;
+import com.thucnobita.autoapp.utils.GoogleAPI;
 import com.thucnobita.autoapp.utils.Util;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Parameter;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.Callable;
@@ -149,19 +153,30 @@ public class BotFragment extends Fragment {
                 setLock(true);
                 executor.submit(() -> {
                     txtLogBot.setText(null);
-                    if(initBot()){
-//                        botIG(v);
-                        Util.openApp(
-                                v.getContext(),
-                                automatorService.getInstrumentation(),
-                                Constants.PACKAGE_NAME_INSTAGRAM,
-                                5);
-                        if(botIG.share_video_to_feed("Download")){
-                            setLog("=> Share video Ok");
-                        }else{
-                            setLog("=> Share video Failed");
+                    try {
+                        GoogleAPI googleAPI = new GoogleAPI();
+                        if(googleAPI.build()){
+                            // Print the names and IDs for up to 10 files.
+                            FileList result = googleAPI.getService().files().list()
+                                    .setPageSize(10)
+                                    .setFields("nextPageToken, files(id, name)")
+                                    .execute();
+                            List<com.google.api.services.drive.model.File> files = result.getFiles();
+                            if (files == null || files.isEmpty()) {
+                                setLog("No files found.");
+                            } else {
+                                for (com.google.api.services.drive.model.File file : files) {
+                                    setLog(String.format("Files: %s (%s)\n", file.getName(), file.getId()));
+                                }
+                            }
                         }
+                    } catch (GeneralSecurityException | IOException e) {
+                        e.printStackTrace();
+                        setLog("Error:" + e.getMessage());
                     }
+//                    if(initBot()){
+//                        botIG(v);
+//                    }
                     requireActivity().runOnUiThread(() -> {
                         scrollViewLog.post(() -> {
                             scrollViewLog.fullScroll(View.FOCUS_DOWN);
@@ -279,20 +294,19 @@ public class BotFragment extends Fragment {
                                                                 automatorService.getInstrumentation(),
                                                                 Constants.PACKAGE_NAME_INSTAGRAM,
                                                                 5);
-                                                        if(botIG.share_video_to_feed("Download")){
+                                                        if(botIG.share_video_to_reel("Download")){
                                                             setLog("=> Share video Ok");
-                                                            if(botIG.post_feed(String.format("%s @%s\n%s\n%s",
+                                                            if(botIG.post_reel(String.format("%s @%s\n%s\n%s",
                                                                     header, usernameVideo,
                                                                     content,
                                                                     footer))){
                                                                 setLog("=> Post Ok");
-                                                                isRunning = false;
-//                                                                if(fileVideo.delete()){
-//                                                                    setLog("=> Delete file video Ok");
-//                                                                }else{
-//                                                                    setLog("=> Delete file video Failed");
-//                                                                    isRunning = false;
-//                                                                }
+                                                                if(fileVideo.delete()){
+                                                                    setLog("=> Delete file video Ok");
+                                                                }else{
+                                                                    setLog("=> Delete file video Failed");
+                                                                    isRunning = false;
+                                                                }
                                                             }else{
                                                                 setLog("=> Post Failed");
                                                                 isRunning = false;

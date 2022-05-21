@@ -146,12 +146,12 @@ public class Bot {
         return false;
     }
 
-    public boolean post_reel(String content, boolean noShareToFeed){
+    public boolean post_reel(String content){
         boolean result = false;
         try{
             result = actions.click_profile();
             Log.i(TAG_NAME, "=> Click profile => " + result);
-            result = actions.post_reel(content, noShareToFeed);
+            result = actions.post_reel(content);
             Log.i(TAG_NAME, "=> Post reel => " + result);
         } catch (UiObjectNotFoundException | InterruptedException | RemoteException e) {
             e.printStackTrace();
