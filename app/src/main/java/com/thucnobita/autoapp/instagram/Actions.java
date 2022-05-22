@@ -215,12 +215,9 @@ public class Actions {
                 ? arrSelector.get(0)
                 : arrSelector.get(1);
         if (click(selectorSelectVideo, 5)) { // Select video
-            Thread.sleep(2000);
-            if(click(arrSelector.get(2), 5)){  // "Pause" video if video not type reel
-                Thread.sleep(500);
-                click(selectorSelectVideo, 5);
-                Thread.sleep(500);
-            }
+            Thread.sleep(500);
+            click(arrSelector.get(2), 1);
+            Thread.sleep(500);
             if(click(arrSelector.get(3), 5)){ // Show More
                 Selector selectorCopyLink = automatorService.exist(arrSelector.get(4))
                         ? arrSelector.get(4)

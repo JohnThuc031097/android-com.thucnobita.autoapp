@@ -1,7 +1,11 @@
 package com.thucnobita.autoapp.utils;
 
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.util.Log;
 
+import com.google.api.client.auth.oauth2.AuthorizationCodeRequestUrl;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.extensions.java6.auth.oauth2.AuthorizationCodeInstalledApp;
 import com.google.api.client.extensions.jetty.auth.oauth2.LocalServerReceiver;
@@ -34,11 +38,16 @@ public class GoogleAPI {
     /** Global instance of the JSON factory. */
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     /** Directory to store authorization tokens for this application. */
-    private static final String TOKENS_DIRECTORY_PATH = "tokens";
-//    private static final String TOKENS_DIRECTORY_PATH = String.format("%s/%s/%s",
-//            Constants.FOLDER_ROOT,
-//            Constants.FOLDER_NAME_APP,
-//            Constants.FOLDER_NAME_TOKEN);
+    private static final String TOKENS_DIRECTORY_PATH = String.format("%s/%s/%s/%s",
+            Constants.FOLDER_ROOT,
+            Constants.FOLDER_NAME_APP,
+            Constants.FOLDER_NAME_GOOGLE_API,
+            "tokens");
+    private static final String CREDENTIALS_FILE_PATH = String.format("%s/%s/%s/%s",
+            Constants.FOLDER_ROOT,
+            Constants.FOLDER_NAME_APP,
+            Constants.FOLDER_NAME_GOOGLE_API,
+            "credential.json");
 
     /**
      * Global instance of the scopes required by this quickstart.
@@ -47,23 +56,17 @@ public class GoogleAPI {
 //    private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE_METADATA_READONLY);
     private static final Set<String> SCOPES = DriveScopes.all();
 
-    private static final String CREDENTIALS_FILE_PATH = String.format("%s/%s/%s/%s",
-            Constants.FOLDER_ROOT,
-            Constants.FOLDER_NAME_APP,
-            Constants.FOLDER_NAME_CREDENTIAL,
-            "google-api.json");
-
     private Drive _service;
 
-    public GoogleAPI() throws GeneralSecurityException, IOException {
+    public GoogleAPI() {
 
     }
 
-    public boolean build(){
+    public boolean build(Context context){
         try{
             // Build a new authorized API client service.
             final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-            this._service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+            this._service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(context, HTTP_TRANSPORT))
                     .setApplicationName(APPLICATION_NAME)
                     .build();
             return true;
@@ -83,7 +86,7 @@ public class GoogleAPI {
      * @return An authorized Credential object.
      * @throws IOException If the credentials.json file cannot be found.
      */
-    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException {
+    private static Credential getCredentials(Context context, final NetHttpTransport HTTP_TRANSPORT) throws IOException {
         // Load client secrets.
 //        InputStream in = GoogleAPI.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
         InputStream in;
@@ -98,14 +101,20 @@ public class GoogleAPI {
         // Build flow and trigger user authorization request.
         GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
                 HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-//                .setDataStoreFactory(new FileDataStoreFactory(new java.io.File(TOKENS_DIRECTORY_PATH)))
-                .setApprovalPrompt("force")
+                .setDataStoreFactory(new FileDataStoreFactory(new File(TOKENS_DIRECTORY_PATH)))
                 .setAccessType("offline")
+//                .setApprovalPrompt("force")
                 .build();
         LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-        Credential credential = new AuthorizationCodeInstalledApp(flow, receiver)
-                .authorize("102492036309235103034");
+        AuthorizationCodeInstalledApp credential = new AuthorizationCodeInstalledApp(flow, receiver){
+            protected void onAuthorization(AuthorizationCodeRequestUrl authorizationUrl) {
+                String url = (authorizationUrl.build());
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                context.startActivity(browserIntent);
+            }
+        };
+//                .authorize("android-autoapp@skilful-alpha-324009.iam.gserviceaccount.com");
         //returns an authorized Credential object.
-        return credential;
+        return credential.authorize("android-autoapp@skilful-alpha-324009.iam.gserviceaccount.com");
     }
 }

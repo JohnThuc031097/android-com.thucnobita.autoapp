@@ -55,8 +55,7 @@ public class AccountActivity extends AppCompatActivity {
                         true,
                         "|",null,
                         "|", null,
-                        "|", null,
-                        null);
+                        "|", null);
                 binding.setAccount(account);
             }else if(bundle.getString("type").equals("edit")){
                 if(bundle.getString("account") != null){
@@ -72,7 +71,6 @@ public class AccountActivity extends AppCompatActivity {
     }
 
     private void initValueDefault(){
-        binding.grpLinkTShirt.setVisibility(View.GONE);
         binding.grpPasswordLogin.setVisibility(View.VISIBLE);
         binding.grpPostContent.setVisibility(View.GONE);
         binding.txtStrDataHeader.setVisibility(View.GONE);
@@ -87,7 +85,6 @@ public class AccountActivity extends AppCompatActivity {
                 binding.ckbUserLogin.setChecked(false);
                 binding.grpPasswordLogin.setVisibility(View.GONE);
                 binding.grpPostContent.setVisibility(View.VISIBLE);
-                binding.grpLinkTShirt.setVisibility(View.VISIBLE);
                 if(account.getSplitHeader() != null && account.getHeader() != null){
                     try {
                         String[] data = account.getHeader().split(Pattern.quote(String.valueOf(account.getSplitHeader().charAt(0))));
@@ -242,7 +239,6 @@ public class AccountActivity extends AppCompatActivity {
                             binding.getAccount().setHeader(null);
                             binding.getAccount().setContent(null);
                             binding.getAccount().setFooter(null);
-                            binding.getAccount().setLinkTShirt(null);
                             Util.object2File(fileAccount, binding.getAccount());
                             Intent intent = new Intent(this, MainActivity.class);
                             startActivity(intent);
@@ -257,7 +253,6 @@ public class AccountActivity extends AppCompatActivity {
                         String dataHeader = binding.txtStrDataHeader.getText().toString();
                         String dataContent = binding.txtStrDataContent.getText().toString();
                         String dataFooter = binding.txtStrDataFooter.getText().toString();
-                        String linkTShirt = binding.txtLinkTShirt.getText().toString().trim();
                         if(splitHeader.isEmpty()){
                             Toast.makeText(v.getContext(), "Split header is required", Toast.LENGTH_SHORT).show();
                             binding.txtStrSplitHeader.forceLayout();
@@ -283,7 +278,6 @@ public class AccountActivity extends AppCompatActivity {
                             binding.getAccount().setHeader(dataHeader);
                             binding.getAccount().setContent(dataContent);
                             binding.getAccount().setFooter(dataFooter);
-                            binding.getAccount().setLinkTShirt(linkTShirt.isEmpty() ? null : linkTShirt);
                             binding.getAccount().setPassword(null);
                             Util.object2File(fileAccount, binding.getAccount());
                             Intent intent = new Intent(this, MainActivity.class);

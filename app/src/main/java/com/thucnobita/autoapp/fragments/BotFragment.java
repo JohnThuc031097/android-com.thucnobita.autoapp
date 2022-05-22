@@ -59,7 +59,6 @@ import java.util.regex.Pattern;
 public class BotFragment extends Fragment {
     private Button btnLoginTotal;
     private Button btnRunTotal;
-    private Button btnTotalAccLink;
     private Button btnStartBot;
     private Button btnStopBot;
     private Button btnConfirmCodeLogin;
@@ -75,8 +74,6 @@ public class BotFragment extends Fragment {
     private ArrayList<Account> arrAccLogin;
     private int totalAccRun;
     private ArrayList<Account> arrAccRun;
-    private int totalAccLink;
-    private ArrayList<Account> arrAccLink;
 
     private ExecutorService executor;
     public boolean isRunning;
@@ -107,7 +104,6 @@ public class BotFragment extends Fragment {
 
         btnLoginTotal = view.findViewById(R.id.btnTotalAccLogin);
         btnRunTotal = view.findViewById(R.id.btnTotalAccRun);
-        btnTotalAccLink = view.findViewById(R.id.btnTotalAccLink);
         btnStartBot = view.findViewById(R.id.btnStartBot);
         btnStopBot = view.findViewById(R.id.btnStopBot);
         txtCodeLogin = view.findViewById(R.id.txtCodeLogin);
@@ -133,7 +129,6 @@ public class BotFragment extends Fragment {
         requireActivity().runOnUiThread(() -> {
             btnLoginTotal.setText("0");
             btnRunTotal.setText("0");
-            btnTotalAccLink.setText("0");
             txtLabelCodeLogin.setVisibility(View.GONE);
             grpCodeLogin.setVisibility(View.GONE);
             txtLogBot.setText(null);
@@ -155,7 +150,7 @@ public class BotFragment extends Fragment {
                     txtLogBot.setText(null);
                     try {
                         GoogleAPI googleAPI = new GoogleAPI();
-                        if(googleAPI.build()){
+                        if(googleAPI.build(v.getContext())){
                             // Print the names and IDs for up to 10 files.
                             FileList result = googleAPI.getService().files().list()
                                     .setPageSize(10)
@@ -170,7 +165,7 @@ public class BotFragment extends Fragment {
                                 }
                             }
                         }
-                    } catch (GeneralSecurityException | IOException e) {
+                    } catch (IOException e) {
                         e.printStackTrace();
                         setLog("Error:" + e.getMessage());
                     }
@@ -417,30 +412,17 @@ public class BotFragment extends Fragment {
                 if(fileAccounts != null){
                     totalAccLogin = 0;
                     totalAccRun = 0;
-                    totalAccLink = 0;
                     arrAccLogin = new ArrayList<>();
                     arrAccRun = new ArrayList<>();
-                    arrAccLink = new ArrayList<>();
                     for (File src : fileAccounts) {
                         try {
-                            Account account = null;
-                            JsonNode jsonAccount = Util.file2Json(src);
-                            if(jsonAccount.findPath("linkTShirt").isMissingNode()){
-                                ObjectNode jsonNew = ((ObjectNode)jsonAccount).put("linkTShirt", (String)null);
-                                account = Util.objectNode2Object(jsonNew, Account.class);
-                            }else{
-                                account = Util.file2Object(src, Account.class);
-                            }
+                            Account account = Util.file2Object(src, Account.class);
                             if(account.getPassword() != null) {
                                 totalAccLogin++;
                                 if (account.isActived()) arrAccLogin.add(account);
                             }else{
                                 totalAccRun++;
                                 if(account.isActived()) arrAccRun.add(account);
-                                if (account.getLinkTShirt() != null) {
-                                    totalAccLink++;
-                                    if (account.isActived()) arrAccLink.add(account);
-                                }
                             }
                         }catch (IOException e) {
                             e.printStackTrace();
@@ -449,7 +431,6 @@ public class BotFragment extends Fragment {
                 }
                 btnLoginTotal.setText(String.format("%s/%s", arrAccLogin.size(), totalAccLogin));
                 btnRunTotal.setText(String.format("%s/%s", arrAccRun.size(), totalAccRun));
-                btnTotalAccLink.setText(String.format("%s/%s", arrAccLink.size(), totalAccLink));
             }
         }
     }
