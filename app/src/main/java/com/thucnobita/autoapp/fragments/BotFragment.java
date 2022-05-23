@@ -148,30 +148,30 @@ public class BotFragment extends Fragment {
                 setLock(true);
                 executor.submit(() -> {
                     txtLogBot.setText(null);
-                    try {
-                        GoogleAPI googleAPI = new GoogleAPI();
-                        if(googleAPI.build(v.getContext())){
-                            // Print the names and IDs for up to 10 files.
-                            FileList result = googleAPI.getService().files().list()
-                                    .setPageSize(10)
-                                    .setFields("nextPageToken, files(id, name)")
-                                    .execute();
-                            List<com.google.api.services.drive.model.File> files = result.getFiles();
-                            if (files == null || files.isEmpty()) {
-                                setLog("No files found.");
-                            } else {
-                                for (com.google.api.services.drive.model.File file : files) {
-                                    setLog(String.format("Files: %s (%s)\n", file.getName(), file.getId()));
-                                }
-                            }
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        setLog("Error:" + e.getMessage());
-                    }
-//                    if(initBot()){
-//                        botIG(v);
+//                    try {
+//                        GoogleAPI googleAPI = new GoogleAPI();
+//                        if(googleAPI.build(v.getContext())){
+//                            // Print the names and IDs for up to 10 files.
+//                            FileList result = googleAPI.getService().files().list()
+//                                    .setPageSize(10)
+//                                    .setFields("nextPageToken, files(id, name)")
+//                                    .execute();
+//                            List<com.google.api.services.drive.model.File> files = result.getFiles();
+//                            if (files == null || files.isEmpty()) {
+//                                setLog("No files found.");
+//                            } else {
+//                                for (com.google.api.services.drive.model.File file : files) {
+//                                    setLog(String.format("Files: %s (%s)\n", file.getName(), file.getId()));
+//                                }
+//                            }
+//                        }
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                        setLog("Error:" + e.getMessage());
 //                    }
+                    if(initBot()){
+                        botIG(v);
+                    }
                     requireActivity().runOnUiThread(() -> {
                         scrollViewLog.post(() -> {
                             scrollViewLog.fullScroll(View.FOCUS_DOWN);

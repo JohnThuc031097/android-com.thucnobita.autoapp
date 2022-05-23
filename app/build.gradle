@@ -32,14 +32,23 @@ android {
         exclude 'META-INF/*'
     }
     signingConfigs {
+        debug {
+            storeFile file('keystore')
+            storePassword 'thucnobita@0310@1997'
+            keyPassword 'thucnobita@0310@1997'
+            keyAlias 'auto-app-v1'
+        }
         release {
-            storeFile file('keystore.jks')
+            storeFile file('keystore')
             storePassword 'thucnobita@0310@1997'
             keyPassword 'thucnobita@0310@1997'
             keyAlias 'auto-app-v1'
         }
     }
     buildTypes {
+        debug {
+            signingConfig signingConfigs.release
+        }
         release {
             signingConfig signingConfigs.release
         }
