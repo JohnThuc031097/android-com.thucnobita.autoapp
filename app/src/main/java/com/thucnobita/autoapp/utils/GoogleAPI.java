@@ -38,23 +38,22 @@ public class GoogleAPI {
     /** Global instance of the JSON factory. */
     private static final JsonFactory JSON_FACTORY = GsonFactory.getDefaultInstance();
     /** Directory to store authorization tokens for this application. */
-    private static final String TOKENS_DIRECTORY_PATH = String.format("%s/%s/%s/%s",
+    private static final String TOKENS_DIRECTORY_PATH = String.format("%s/%s/%s",
             Constants.FOLDER_ROOT,
             Constants.FOLDER_NAME_APP,
-            Constants.FOLDER_NAME_GOOGLE_API,
-            "tokens");
+            Constants.FOLDER_NAME_CREDENTIAL);
     private static final String CREDENTIALS_FILE_PATH = String.format("%s/%s/%s/%s",
             Constants.FOLDER_ROOT,
             Constants.FOLDER_NAME_APP,
-            Constants.FOLDER_NAME_GOOGLE_API,
-            "credential.json");
+            Constants.FOLDER_NAME_CREDENTIAL,
+            "client_secret.p12");
 
     /**
      * Global instance of the scopes required by this quickstart.
      * If modifying these scopes, delete your previously saved tokens/ folder.
      */
-//    private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE_METADATA_READONLY);
-    private static final Set<String> SCOPES = DriveScopes.all();
+    private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE_METADATA_READONLY);
+//    private static final Set<String> SCOPES = DriveScopes.all();
 
     private Drive _service;
 
@@ -86,7 +85,7 @@ public class GoogleAPI {
      * @return An authorized Credential object.
      * @throws IOException If the credentials.json file cannot be found.
      */
-    private static Credential getCredentials(Context context, final NetHttpTransport HTTP_TRANSPORT) throws IOException {
+    private static Credential getCredentials(Context context, final NetHttpTransport HTTP_TRANSPORT) throws IOException, GeneralSecurityException {
         // Load client secrets.
 //        InputStream in = GoogleAPI.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
         InputStream in;
@@ -97,24 +96,32 @@ public class GoogleAPI {
             return null;
         }
         GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+//
+//        // Build flow and trigger user authorization request.
+//        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+//                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
+//                .setDataStoreFactory(new FileDataStoreFactory(new File(TOKENS_DIRECTORY_PATH)))
+//                .setAccessType("offline")
+//                .build();
+//        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+//        AuthorizationCodeInstalledApp credential = new AuthorizationCodeInstalledApp(flow, receiver);
+////        {
+////            protected void onAuthorization(AuthorizationCodeRequestUrl authorizationUrl) {
+////                String url = (authorizationUrl.build());
+////                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+////                context.startActivity(browserIntent);
+////            }
+////        };
+//        //returns an authorized Credential object.
 
-        // Build flow and trigger user authorization request.
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-                .setDataStoreFactory(new FileDataStoreFactory(new File(TOKENS_DIRECTORY_PATH)))
-                .setAccessType("offline")
-//                .setApprovalPrompt("force")
+//        return credential.authorize("user");
+        return new GoogleCredential.Builder()
+                .setTransport(HTTP_TRANSPORT)
+                .setJsonFactory(JSON_FACTORY)
+                .setServiceAccountId("102492036309235103034")
+                .setServiceAccountScopes(SCOPES)
+                .setServiceAccountPrivateKeyFromP12File(new File(CREDENTIALS_FILE_PATH))
+                .setServiceAccountUser("android-autoapp@skilful-alpha-324009.iam.gserviceaccount.com")
                 .build();
-        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-        AuthorizationCodeInstalledApp credential = new AuthorizationCodeInstalledApp(flow, receiver){
-            protected void onAuthorization(AuthorizationCodeRequestUrl authorizationUrl) {
-                String url = (authorizationUrl.build());
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-                context.startActivity(browserIntent);
-            }
-        };
-//                .authorize("android-autoapp@skilful-alpha-324009.iam.gserviceaccount.com");
-        //returns an authorized Credential object.
-        return credential.authorize("android-autoapp@skilful-alpha-324009.iam.gserviceaccount.com");
     }
 }
