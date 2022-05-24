@@ -307,6 +307,11 @@ class Data {
         selector.setText("Remove from Saved");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID | Selector.MASK_TEXT);
         selectors.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setText("Unsave");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT);
+        selectors.add(selector);
         return selectors;
     }
 

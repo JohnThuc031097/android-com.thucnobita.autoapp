@@ -233,7 +233,9 @@ public class Actions {
                         if (click(arrSelector.get(2), 5)) { // Show More
                             Selector selectorRemoveSaved = automatorService.exist(arrSelector.get(7))
                                     ? arrSelector.get(7)
-                                    : arrSelector.get(8);
+                                    : automatorService.exist(arrSelector.get(8))
+                                        ? arrSelector.get(8)
+                                        : arrSelector.get(9);
                             Thread.sleep(2000);
                             if (click(selectorRemoveSaved, 5)) { // 2.Remove video
                                 Thread.sleep(2000);

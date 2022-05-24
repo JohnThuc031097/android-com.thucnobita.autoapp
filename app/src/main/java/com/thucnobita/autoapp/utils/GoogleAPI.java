@@ -52,7 +52,7 @@ public class GoogleAPI {
      * Global instance of the scopes required by this quickstart.
      * If modifying these scopes, delete your previously saved tokens/ folder.
      */
-    private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE_METADATA_READONLY);
+    private static final List<String> SCOPES = Collections.singletonList(DriveScopes.DRIVE);
 //    private static final Set<String> SCOPES = DriveScopes.all();
 
     private Drive _service;
@@ -61,11 +61,11 @@ public class GoogleAPI {
 
     }
 
-    public boolean build(Context context){
+    public boolean build(){
         try{
             // Build a new authorized API client service.
             final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-            this._service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(context, HTTP_TRANSPORT))
+            this._service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
                     .setApplicationName(APPLICATION_NAME)
                     .build();
             return true;
@@ -85,7 +85,7 @@ public class GoogleAPI {
      * @return An authorized Credential object.
      * @throws IOException If the credentials.json file cannot be found.
      */
-    private static Credential getCredentials(Context context, final NetHttpTransport HTTP_TRANSPORT) throws IOException, GeneralSecurityException {
+    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException, GeneralSecurityException {
         // Load client secrets.
 //        InputStream in = GoogleAPI.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
         InputStream in;
@@ -95,7 +95,7 @@ public class GoogleAPI {
             Log.e(TAG_NAME, "Resource not found: " + CREDENTIALS_FILE_PATH);
             return null;
         }
-        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+//        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
 //
 //        // Build flow and trigger user authorization request.
 //        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
@@ -118,10 +118,9 @@ public class GoogleAPI {
         return new GoogleCredential.Builder()
                 .setTransport(HTTP_TRANSPORT)
                 .setJsonFactory(JSON_FACTORY)
-                .setServiceAccountId("102492036309235103034")
+                .setServiceAccountId("android-autoapp@skilful-alpha-324009.iam.gserviceaccount.com")
                 .setServiceAccountScopes(SCOPES)
-                .setServiceAccountPrivateKeyFromP12File(new File(CREDENTIALS_FILE_PATH))
-                .setServiceAccountUser("android-autoapp@skilful-alpha-324009.iam.gserviceaccount.com")
+                .setServiceAccountPrivateKeyFromP12File(in)
                 .build();
     }
 }
