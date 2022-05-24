@@ -39,7 +39,7 @@ public class Actions {
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/tabs_viewpager");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
-        automatorService.swipe(selector, "u", 500);
+        automatorService.swipe(selector, "u", 1000);
         Thread.sleep(2000);
         if(click(arrSelector.get(2), 5)){ // Click "Share" to begin post
             Thread.sleep(1000);
@@ -222,16 +222,18 @@ public class Actions {
             if(click(arrSelector.get(2), 5)){ // Show More
                 Selector selectorCopyLink = automatorService.exist(arrSelector.get(3))
                         ? arrSelector.get(3)
-                        : arrSelector.get(4);
+                        : automatorService.exist(arrSelector.get(4))
+                            ? arrSelector.get(4)
+                            : arrSelector.get(5);
                 Thread.sleep(2000);
                 if (click(selectorCopyLink, 5)) { // 1.Copy link
                     Thread.sleep(2000);
-                    if (click(arrSelector.get(5), 5)) { // Again Select video
+                    if (click(arrSelector.get(6), 5)) { // Again Select video
                         Thread.sleep(500);
                         if (click(arrSelector.get(2), 5)) { // Show More
-                            Selector selectorRemoveSaved = automatorService.exist(arrSelector.get(6))
-                                    ? arrSelector.get(6)
-                                    : arrSelector.get(7);
+                            Selector selectorRemoveSaved = automatorService.exist(arrSelector.get(7))
+                                    ? arrSelector.get(7)
+                                    : arrSelector.get(8);
                             Thread.sleep(2000);
                             if (click(selectorRemoveSaved, 5)) { // 2.Remove video
                                 Thread.sleep(2000);

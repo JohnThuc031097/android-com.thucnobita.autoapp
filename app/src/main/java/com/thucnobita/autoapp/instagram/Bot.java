@@ -34,8 +34,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Function;
 
 public class Bot {
     private final String TAG_NAME = "BOT_INSTAGRAM";
@@ -91,10 +94,10 @@ public class Bot {
             Thread.sleep(1000);
             result = actions.click_saved();
             Log.i(TAG_NAME, "=> Click saved => " + result);
-            Thread.sleep(1000);
+            Thread.sleep(2000);
             result = actions.click_video_saved();
             Log.i(TAG_NAME, "=> Click video => " + result);
-            Thread.sleep(1000);
+            Thread.sleep(3000);
             result = actions.click_copy_link_video_saved();
             Log.i(TAG_NAME, "=> Click get link video => " + result);
         }catch (UiObjectNotFoundException | InterruptedException | RemoteException e){
@@ -308,24 +311,28 @@ public class Bot {
         }
     }
 
-    public String getLinkVideoByCode(String code){
-        AtomicReference<String> result = new AtomicReference<>();
+    public HashMap<String, Object> getDataByCodeVideo(String code){
+        HashMap<String, Object> result = new HashMap<>();
         new MediaInfoRequest(String.valueOf(IGUtils.fromCode(code)))
                 .execute(client)
                 .thenAccept(mediaInfoResponse -> {
                     try {
                         JsonNode jsonMedia = Util.string2Json(Util.object2String(mediaInfoResponse));
-                        String linkVideo = jsonMedia
+                        JsonNode linkVideo = jsonMedia
                                 .get("items").get(0)
                                 .get("video_versions").get(0)
-                                .get("url").textValue();
-                        result.set(linkVideo);
+                                .get("url");
+                        result.put("link_video", linkVideo.textValue());
+                        JsonNode captionText = jsonMedia
+                                .get("items").get(0)
+                                .get("caption");
+                        result.put("caption", captionText.isEmpty() ? "" : captionText.get("text").textValue());
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }
                 })
                 .join();
-        return result.get();
+        return result;
     }
 
     public void getLinkVideoByCode(String code, Callback.Media callback){

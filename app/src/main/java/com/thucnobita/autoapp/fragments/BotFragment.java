@@ -48,6 +48,7 @@ import java.io.IOException;
 import java.lang.reflect.Parameter;
 import java.security.GeneralSecurityException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Random;
@@ -148,30 +149,30 @@ public class BotFragment extends Fragment {
                 setLock(true);
                 executor.submit(() -> {
                     txtLogBot.setText(null);
-                    try {
-                        GoogleAPI googleAPI = new GoogleAPI();
-                        if(googleAPI.build(v.getContext())){
-                            // Print the names and IDs for up to 10 files.
-                            FileList result = googleAPI.getService().files().list()
-                                    .setPageSize(10)
-                                    .setFields("nextPageToken, files(id, name)")
-                                    .execute();
-                            List<com.google.api.services.drive.model.File> files = result.getFiles();
-                            if (files == null || files.isEmpty()) {
-                                setLog("No files found.");
-                            } else {
-                                for (com.google.api.services.drive.model.File file : files) {
-                                    setLog(String.format("Files: %s (%s)\n", file.getName(), file.getId()));
-                                }
-                            }
-                        }
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        setLog("Error:" + e.getMessage());
-                    }
-//                    if(initBot()){
-//                        botIG(v);
+//                    try {
+//                        GoogleAPI googleAPI = new GoogleAPI();
+//                        if(googleAPI.build(v.getContext())){
+//                            // Print the names and IDs for up to 10 files.
+//                            FileList result = googleAPI.getService().files().list()
+//                                    .setPageSize(10)
+//                                    .setFields("nextPageToken, files(id, name)")
+//                                    .execute();
+//                            List<com.google.api.services.drive.model.File> files = result.getFiles();
+//                            if (files == null || files.isEmpty()) {
+//                                setLog("No files found.");
+//                            } else {
+//                                for (com.google.api.services.drive.model.File file : files) {
+//                                    setLog(String.format("Files: %s (%s)\n", file.getName(), file.getId()));
+//                                }
+//                            }
+//                        }
+//                    } catch (IOException e) {
+//                        e.printStackTrace();
+//                        setLog("Error:" + e.getMessage());
 //                    }
+                    if(initBot()){
+                        botIG(v);
+                    }
                     requireActivity().runOnUiThread(() -> {
                         scrollViewLog.post(() -> {
                             scrollViewLog.fullScroll(View.FOCUS_DOWN);
@@ -258,7 +259,8 @@ public class BotFragment extends Fragment {
                                                 String[] codeVideo = urlLink.split(Pattern.quote("/"));
                                                 String textCodeVideo = codeVideo[codeVideo.length-1];
                                                 setLog("=> Result Code video:" + textCodeVideo);
-                                                String linkDownload  = botIG.getLinkVideoByCode(textCodeVideo);
+                                                HashMap<String, Object> jsonData = botIG.getDataByCodeVideo(textCodeVideo);
+                                                String linkDownload  = (String) jsonData.get("link_video");
                                                 if(linkDownload != null){
                                                     setLog("=> Result Size video:" + linkDownload.length());
                                                     String pathFolder = String.format("%s/%s",
@@ -275,6 +277,13 @@ public class BotFragment extends Fragment {
                                                                 new String[] { "video/*" },
                                                                 null);
                                                         setLog("=> Video path downloaded:" + fileVideo.getPath());
+                                                        setLog("=> Get caption from user video");
+                                                        String captionText = String.valueOf(jsonData.get("caption"));
+                                                        captionText = captionText.isEmpty()
+                                                                ? ""
+                                                                : captionText.indexOf("#") > 0
+                                                                ? captionText.split(Pattern.quote("#"))[0]
+                                                                : captionText;
                                                         setLog("=> Random header");
                                                         String[] temp = accountRun.getHeader().split(Pattern.quote(accountRun.getSplitHeader()));
                                                         String header = temp[Util.randInt(0, temp.length-1)];
@@ -291,7 +300,8 @@ public class BotFragment extends Fragment {
                                                                 5);
                                                         if(botIG.share_video_to_reel("Download")){
                                                             setLog("=> Share video Ok");
-                                                            if(botIG.post_reel(String.format("%s @%s\n%s\n%s",
+                                                            if(botIG.post_reel(String.format("%s\n%s @%s\n%s\n%s",
+                                                                    captionText,
                                                                     header, usernameVideo,
                                                                     content,
                                                                     footer))){
@@ -314,6 +324,9 @@ public class BotFragment extends Fragment {
                                                         setLog("=> Download video Failed");
                                                         isRunning = false;
                                                     }
+                                                }else{
+                                                    setLog("=> Link video is null");
+                                                    isRunning = false;
                                                 }
                                             }
                                         }else{
