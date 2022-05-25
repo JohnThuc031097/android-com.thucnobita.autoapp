@@ -107,7 +107,7 @@ public class Bot {
     }
 
     public File download_video(String link, String nameFile, String pathFolder) {
-        File pathFile = new File(pathFolder, "AutoApp_" + nameFile + ".mp4");
+        File pathFile = new File(pathFolder, nameFile + ".mp4");
         if (!new File(pathFolder).exists()) {
             new File(pathFolder).mkdirs();
         }
