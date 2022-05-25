@@ -46,7 +46,7 @@ public class GoogleAPI {
             Constants.FOLDER_ROOT,
             Constants.FOLDER_NAME_APP,
             Constants.FOLDER_NAME_CREDENTIAL,
-            "client_secret.p12");
+            "client_secret.json");
 
     /**
      * Global instance of the scopes required by this quickstart.
@@ -61,11 +61,11 @@ public class GoogleAPI {
 
     }
 
-    public boolean build(){
+    public boolean build(Context context){
         try{
             // Build a new authorized API client service.
             final NetHttpTransport HTTP_TRANSPORT = GoogleNetHttpTransport.newTrustedTransport();
-            this._service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(HTTP_TRANSPORT))
+            this._service = new Drive.Builder(HTTP_TRANSPORT, JSON_FACTORY, getCredentials(context, HTTP_TRANSPORT))
                     .setApplicationName(APPLICATION_NAME)
                     .build();
             return true;
@@ -85,42 +85,45 @@ public class GoogleAPI {
      * @return An authorized Credential object.
      * @throws IOException If the credentials.json file cannot be found.
      */
-    private static Credential getCredentials(final NetHttpTransport HTTP_TRANSPORT) throws IOException, GeneralSecurityException {
+    private static Credential getCredentials(Context context, final NetHttpTransport HTTP_TRANSPORT) throws IOException, GeneralSecurityException {
         // Load client secrets.
 //        InputStream in = GoogleAPI.class.getResourceAsStream(CREDENTIALS_FILE_PATH);
-        InputStream in;
-        try{
-            in = new FileInputStream(CREDENTIALS_FILE_PATH);
-        }catch (FileNotFoundException | SecurityException e){
-            Log.e(TAG_NAME, "Resource not found: " + CREDENTIALS_FILE_PATH);
-            return null;
-        }
-//        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
-//
-//        // Build flow and trigger user authorization request.
-//        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-//                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
-//                .setDataStoreFactory(new FileDataStoreFactory(new File(TOKENS_DIRECTORY_PATH)))
-//                .setAccessType("offline")
-//                .build();
-//        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
-//        AuthorizationCodeInstalledApp credential = new AuthorizationCodeInstalledApp(flow, receiver);
-////        {
-////            protected void onAuthorization(AuthorizationCodeRequestUrl authorizationUrl) {
-////                String url = (authorizationUrl.build());
-////                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
-////                context.startActivity(browserIntent);
-////            }
-////        };
-//        //returns an authorized Credential object.
+        InputStream in = new FileInputStream(CREDENTIALS_FILE_PATH);
 
-//        return credential.authorize("user");
-        return new GoogleCredential.Builder()
-                .setTransport(HTTP_TRANSPORT)
-                .setJsonFactory(JSON_FACTORY)
-                .setServiceAccountId("android-autoapp@skilful-alpha-324009.iam.gserviceaccount.com")
-                .setServiceAccountScopes(SCOPES)
-                .setServiceAccountPrivateKeyFromP12File(in)
+        GoogleClientSecrets clientSecrets = GoogleClientSecrets.load(JSON_FACTORY, new InputStreamReader(in));
+
+        // Build flow and trigger user authorization request.
+        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+                HTTP_TRANSPORT, JSON_FACTORY, clientSecrets, SCOPES)
+                .setDataStoreFactory(new FileDataStoreFactory(new File(TOKENS_DIRECTORY_PATH)))
+                .setAccessType("offline")
+                .setApprovalPrompt("auto")
                 .build();
+        LocalServerReceiver receiver = new LocalServerReceiver.Builder().setPort(8888).build();
+        AuthorizationCodeInstalledApp credential = new AuthorizationCodeInstalledApp(flow, receiver, new AuthorizationCodeInstalledApp.Browser() {
+            @Override
+            public void browse(String url) throws IOException {
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+                context.startActivity(browserIntent);
+            }
+        });
+//        {
+//            @Override
+//            protected void onAuthorization(AuthorizationCodeRequestUrl authorizationUrl) {
+//                String url = (authorizationUrl.build());
+//                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(url));
+//                context.startActivity(browserIntent);
+//            }
+//        };
+        //returns an authorized Credential object.
+
+        return credential.authorize("user");
+//        return new GoogleCredential.Builder()
+//                .setTransport(HTTP_TRANSPORT)
+//                .setJsonFactory(JSON_FACTORY)
+//                .setServiceAccountId("android-autoapp@skilful-alpha-324009.iam.gserviceaccount.com")
+//                .setServiceAccountScopes(SCOPES)
+//                .setServiceAccountPrivateKeyFromP12File(in)
+//                .build();
     }
 }

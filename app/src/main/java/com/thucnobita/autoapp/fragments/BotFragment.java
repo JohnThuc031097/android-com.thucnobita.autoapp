@@ -15,6 +15,7 @@ import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
+import android.os.Environment;
 import android.os.RemoteException;
 import android.provider.Settings;
 import android.text.PrecomputedText;
@@ -33,6 +34,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.deser.impl.CreatorCandidate;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.api.services.drive.model.FileList;
+import com.thucnobita.autoapp.BuildConfig;
 import com.thucnobita.autoapp.R;
 import com.thucnobita.autoapp.activities.MainActivity;
 import com.thucnobita.autoapp.instagram.Bot;
@@ -94,7 +96,7 @@ public class BotFragment extends Fragment {
                 Constants.FOLDER_ROOT,
                 Constants.FOLDER_NAME_APP,
                 Constants.FOLDER_NAME_ACCOUNT));
-        executor = Executors.newFixedThreadPool(3);
+        executor = Executors.newFixedThreadPool(5);
         isRunning = false;
     }
 
@@ -151,7 +153,7 @@ public class BotFragment extends Fragment {
                     txtLogBot.setText(null);
                     try {
                         GoogleAPI googleAPI = new GoogleAPI();
-                        if(googleAPI.build()){
+                        if(googleAPI.build(v.getContext().getApplicationContext())){
                             // Print the names and IDs for up to 10 files.
                             FileList result = googleAPI.getService().files().list()
                                     .setPageSize(10)
@@ -279,11 +281,13 @@ public class BotFragment extends Fragment {
                                                         setLog("=> Video path downloaded:" + fileVideo.getPath());
                                                         setLog("=> Get caption from user video");
                                                         String captionText = String.valueOf(jsonData.get("caption"));
-                                                        captionText = captionText.isEmpty()
-                                                                ? ""
-                                                                : captionText.indexOf("#") > 0
-                                                                ? captionText.split(Pattern.quote("#"))[0]
-                                                                : captionText;
+                                                        if(!captionText.isEmpty()){
+                                                            if(!captionText.startsWith("#")){
+                                                                captionText = captionText.split(Pattern.quote("#"))[0];
+                                                            }else{
+                                                                captionText = "";
+                                                            }
+                                                        }
                                                         setLog("=> Random header");
                                                         String[] temp = accountRun.getHeader().split(Pattern.quote(accountRun.getSplitHeader()));
                                                         String header = temp[Util.randInt(0, temp.length-1)];
@@ -435,15 +439,17 @@ public class BotFragment extends Fragment {
                                 if (account.isActived()) arrAccLogin.add(account);
                             }else{
                                 totalAccRun++;
-                                if(account.isActived()) arrAccRun.add(account);
+                                if (account.isActived()) arrAccRun.add(account);
                             }
                         }catch (IOException e) {
                             e.printStackTrace();
                         }
                     }
                 }
-                btnLoginTotal.setText(String.format("%s/%s", arrAccLogin.size(), totalAccLogin));
-                btnRunTotal.setText(String.format("%s/%s", arrAccRun.size(), totalAccRun));
+                requireActivity().runOnUiThread(() -> {
+                    btnLoginTotal.setText(String.format("%s/%s", arrAccLogin.size(), totalAccLogin));
+                    btnRunTotal.setText(String.format("%s/%s", arrAccRun.size(), totalAccRun));
+                });
             }
         }
     }
