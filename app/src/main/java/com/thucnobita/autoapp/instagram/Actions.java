@@ -30,7 +30,7 @@ public class Actions {
     public boolean post_reel(String content) throws UiObjectNotFoundException, InterruptedException, RemoteException {
         ArrayList<Selector> arrSelector = selectors.post_reel();
         if(content != null){
-            automatorService.setText(arrSelector.get(1), content);
+            automatorService.setText(arrSelector.get(0), content);
         }
         Thread.sleep(2000);
         automatorService.pressKey("back"); // Hide keybroad
@@ -41,14 +41,14 @@ public class Actions {
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
         automatorService.swipe(selector, "u", 1000);
         Thread.sleep(2000);
-        if(click(arrSelector.get(2), 5)){ // Click "Share" to begin post
+        if(click(arrSelector.get(1), 5)){ // Click "Share" to begin post
             Thread.sleep(1000);
-            if(click(arrSelector.get(3), 5)){ // Click return Home
+            if(click(arrSelector.get(2), 5)){ // Click return Home
 //                if(waitGone(arrSelector.get(4), 60 * 5)){ // Wait for process done (time wait default: 5 min)
 //                    return waitGone(arrSelector.get(5), 60 * 5);
 //                }
                 Thread.sleep(2000);
-                return waitGone(arrSelector.get(4), 60 * 10); // Wait for process done (time wait default: 10 min)
+                return waitGone(arrSelector.get(3), 60 * 10); // Wait for process done (time wait default: 10 min)
             }
         }
         return false;
@@ -126,21 +126,27 @@ public class Actions {
                         Thread.sleep(2000);
                         if(click(arrSelector.get(3), 5)){ // Select folder share
                             Thread.sleep(2000);
-                            ArrayList<String> arrFile = selectors.get_video_image_to_post(); // Get all file in browse
-                            if(arrFile.size() > 0){
+                            int totalFile = selectors.get_total_video_image_to_post(); // Get all file in browse
+                            if(totalFile > 0){
                                 if(click(selectors.btn_select_mutiple_file(), 5)){ // Click select check mutiple file
                                     Thread.sleep(1000);
-                                    for (int i = 1; i < arrFile.size(); i++) {
-                                        if(!click(arrFile.get(i),5)){
+                                    for (int i = 1; i < totalFile; i++) {
+                                        Selector selector = new Selector(automatorService.getInstrumentation());
+                                        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+                                        selector.setClassName("android.widget.CheckBox");
+                                        selector.setIndex(i);
+                                        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_INDEX);
+                                        if(!click(selector,5)){
                                             return false;
                                         }
                                         Thread.sleep(1000);
                                     }
-                                    Thread.sleep(2000);
+                                    Thread.sleep(3000);
                                     Selector selectorBtnNext = selectors.share_video_image_to_feed();
                                     if(click(selectorBtnNext, 5)){ // Click button Next
                                         Thread.sleep(5000);
                                         if(click(selectorBtnNext, 5)){  // Click button Next
+                                            Thread.sleep(5000);
                                             return waitGone(selectorBtnNext, 60 * 5);
                                         }
                                     }

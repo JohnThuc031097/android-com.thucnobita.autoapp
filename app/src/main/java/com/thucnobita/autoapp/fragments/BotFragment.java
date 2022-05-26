@@ -272,9 +272,19 @@ public class BotFragment extends Fragment {
                                             }
                                             try {
                                                 for (int i = 0; i < totalImageCanUpload; i++) {
-                                                    fileImages[i].renameTo(new File(pathFolderUploads, fileImages[i].getName()));
+                                                    File pathImage = new File(pathFolderUploads, fileImages[i].getName());
+                                                    if(fileImages[i].renameTo(pathImage)){
+                                                        MediaScannerConnection.scanFile(v.getContext(),
+                                                                new String[] { pathImage.getAbsolutePath() },
+                                                                new String[] { "image/*" },
+                                                                null);
+                                                    }else{
+                                                        setLog("=> Copy file " + fileImages[i] + " to folder uploads Failed");
+                                                        isRunning = false;
+                                                        break;
+                                                    }
                                                 }
-                                                setLog("=> Copy file image to folder uploads Ok");
+                                                setLog("=> Copy " + totalImageCanUpload + " file image to folder uploads Ok");
                                             }catch (Exception e){
                                                 e.printStackTrace();
                                                 isRunning = false;
@@ -313,36 +323,37 @@ public class BotFragment extends Fragment {
                                                 String linkDownload  = (String) jsonData.get("link_video");
                                                 if(linkDownload != null){
                                                     setLog("=> Result Size video:" + linkDownload.length());
-                                                    String pathFolder = String.format("%s/%s",
+                                                    String pathFolderDownload = String.format("%s/%s/%s",
                                                             Constants.FOLDER_ROOT,
-                                                            "Download");
+                                                            Constants.FOLDER_NAME_APP,
+                                                            Constants.FOLDER_NAME_UPLOAD);
                                                     File fileVideo = botIG.download_video(
                                                             linkDownload,
                                                             textCodeVideo,
-                                                            pathFolder);
+                                                            pathFolderDownload);
                                                     if(fileVideo.exists()){
                                                         // Update file on system
                                                         MediaScannerConnection.scanFile(v.getContext(),
                                                                 new String[] { fileVideo.getAbsolutePath() },
                                                                 new String[] { "video/*" },
                                                                 null);
-                                                        setLog("=> Video path downloaded:" + fileVideo.getPath());
-                                                        setLog("=> Get caption from user video");
+                                                        setLog("=> Download video " + fileVideo.getName() + " to folder uploads Ok");
                                                         String captionText = String.valueOf(jsonData.get("caption"));
                                                         if(!captionText.isEmpty()){
                                                             if(!captionText.startsWith("#")){
                                                                 captionText = captionText.split(Pattern.quote("#"))[0];
+                                                                setLog("=> Get caption video of user Ok");
                                                             }else{
                                                                 captionText = "";
                                                             }
                                                         }
-                                                        setLog("=> Random header");
+                                                        setLog("=> Random header Ok");
                                                         String[] temp = accountRun.getHeader().split(Pattern.quote(accountRun.getSplitHeader()));
                                                         String header = temp[Util.randInt(0, temp.length-1)];
-                                                        setLog("=> Random content");
+                                                        setLog("=> Random content Ok");
                                                         temp = accountRun.getContent().split(Pattern.quote(accountRun.getSplitContent()));
                                                         String content = temp[Util.randInt(0, temp.length-1)];
-                                                        setLog("=> Random footer");
+                                                        setLog("=> Random footer Ok");
                                                         temp = accountRun.getFooter().split(Pattern.quote(accountRun.getSplitFooter()));
                                                         String footer = temp[Util.randInt(0, temp.length-1)];
                                                         String contentPost = String.format("%s @%s\n%s\n%s\n%s",
@@ -361,11 +372,10 @@ public class BotFragment extends Fragment {
                                                                 setLog("=> Share video Ok");
                                                                 if(botIG.post_reel(contentPost)){
                                                                     setLog("=> Post Ok");
-//                                                                    if(fileVideo.delete()){
-                                                                    if(new File(pathFolderUploads).delete()){
-                                                                        setLog("=> Delete file in folder uploads Ok");
+                                                                    if(Util.deleteDir(new File(pathFolderUploads))){
+                                                                        setLog("=> Delete folder uploads Ok");
                                                                     }else{
-                                                                        setLog("=> Delete file in folder uploads Failed");
+                                                                        setLog("=> Delete folder uploads Failed");
                                                                         isRunning = false;
                                                                     }
                                                                 }else{
@@ -381,10 +391,10 @@ public class BotFragment extends Fragment {
                                                                 setLog("=> Share video Ok");
                                                                 if(botIG.post_feed(contentPost)){
                                                                     setLog("=> Post Ok");
-                                                                    if(new File(pathFolderUploads).delete()){
-                                                                        setLog("=> Delete file in folder uploads Ok");
+                                                                    if(Util.deleteDir(new File(pathFolderUploads))){
+                                                                        setLog("=> Delete folder uploads Ok");
                                                                     }else{
-                                                                        setLog("=> Delete file in folder uploads Failed");
+                                                                        setLog("=> Delete folder uploads Failed");
                                                                         isRunning = false;
                                                                     }
                                                                 }else{
@@ -496,6 +506,12 @@ public class BotFragment extends Fragment {
 
     public void loadData() {
         if(!isRunning){
+            String pathFolderImage = String.format("%s/%s/%s",
+                    Constants.FOLDER_ROOT,
+                    Constants.FOLDER_NAME_APP,
+                    Constants.FOLDER_NAME_IMAGE);
+            File fileFolderImage = new File(pathFolderImage);
+            if(!fileFolderImage.exists()) fileFolderImage.mkdirs();
             if(fileFolder.exists()){
                 File[] fileAccounts = fileFolder.listFiles(pathname -> pathname.getPath().endsWith(".json"));
                 if(fileAccounts != null){
@@ -512,6 +528,8 @@ public class BotFragment extends Fragment {
                             }else{
                                 totalAccRun++;
                                 if (account.isActived()) arrAccRun.add(account);
+                                File fileFolderImageAccount = new File(pathFolderImage + "/" + account.getUsername());
+                                if(!fileFolderImageAccount.exists()) fileFolderImageAccount.mkdirs();
                             }
                         }catch (IOException e) {
                             e.printStackTrace();

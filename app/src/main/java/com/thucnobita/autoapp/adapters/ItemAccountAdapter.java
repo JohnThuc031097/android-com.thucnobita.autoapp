@@ -52,10 +52,14 @@ public class ItemAccountAdapter extends RecyclerView.Adapter<ItemAccountAdapter.
         }
     }
 
-    private final String fileFolderAccount = String.format("%s/%s/%s",
+    private final String pathFolderAccount = String.format("%s/%s/%s",
             Constants.FOLDER_ROOT,
             Constants.FOLDER_NAME_APP,
             Constants.FOLDER_NAME_ACCOUNT);
+    private final String pathFolderImage = String.format("%s/%s/%s",
+            Constants.FOLDER_ROOT,
+            Constants.FOLDER_NAME_APP,
+            Constants.FOLDER_NAME_IMAGE);
     private final ArrayList<Account> listAccount;
 
     public ItemAccountAdapter(ArrayList<Account> listAccount){
@@ -91,7 +95,7 @@ public class ItemAccountAdapter extends RecyclerView.Adapter<ItemAccountAdapter.
                 account.setActived(true);
                 holder.imgActived.setImageResource(R.drawable.ic_baseline_check_circle_outline_24);
             }
-            File fileAccount = new File(fileFolderAccount, account.getUsername() + ".json");
+            File fileAccount = new File(pathFolderAccount, account.getUsername() + ".json");
             try {
                 Util.object2File(fileAccount, account);
                 notifyItemChanged(position);
@@ -106,9 +110,11 @@ public class ItemAccountAdapter extends RecyclerView.Adapter<ItemAccountAdapter.
                     .setMessage("Are you sure you want to delete this account?")
                     .setPositiveButton(android.R.string.yes, (dialog, which) -> {
                         try{
-                            File fileAccount = new File(fileFolderAccount, account.getUsername() + ".json");
+                            File fileAccount = new File(pathFolderAccount, account.getUsername() + ".json");
+                            File fileImage = new File(pathFolderImage + "/" + account.getUsername());
                             if(fileAccount.exists()){
                                 if(fileAccount.delete()){
+                                    Util.deleteDir(fileImage);
                                     listAccount.remove(position);
                                     notifyItemRemoved(position);
                                     notifyItemRangeChanged(position, listAccount.size());

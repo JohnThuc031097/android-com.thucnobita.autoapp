@@ -53,6 +53,21 @@ public class Util {
         return new Random().nextInt((max - min) + 1) + min;
     }
 
+    public static boolean deleteDir(File dir) {
+        if (dir.isDirectory()) {
+            String[] children = dir.list();
+            if(children != null){
+                for (String child : children) {
+                    boolean success = deleteDir(new File(dir, child));
+                    if (!success) {
+                        return false;
+                    }
+                }
+            }
+        }
+        return dir.delete();
+    }
+
     public static void openApp(Context context, Instrumentation instrumentation, String packageName, long timeWait) {
         UiDevice device = UiDevice.getInstance(instrumentation);
         Intent intent = context.getPackageManager().getLaunchIntentForPackage(packageName);
@@ -63,18 +78,6 @@ public class Util {
         intent.setPackage(packageName);
         context.startActivity(intent);
         device.wait(Until.hasObject(By.pkg(packageName).depth(0)), timeWait * 1000L);
-    }
-
-    public static boolean recentApp(Context context, Instrumentation instrumentation, String packageName, long timeWait) {
-        UiDevice device = UiDevice.getInstance(instrumentation);
-        Intent intent = context.getPackageManager().getLaunchIntentForPackage(packageName);
-        intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT
-                | Intent.FLAG_ACTIVITY_NO_ANIMATION
-                | Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.setPackage(packageName);
-        context.startActivity(intent);
-        device.wait(Until.hasObject(By.pkg(packageName).depth(0)), timeWait * 1000L);
-        return true;
     }
 
     public static boolean recentMainActivity(Context context) {

@@ -36,11 +36,6 @@ class Data {
         ArrayList<Selector> selectors = new ArrayList<>();
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/share_to_feed_switch");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
-        selectors.add(selector);
-        selector = new Selector(mAutomatorService.getInstrumentation());
-        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
         selector.setText("Write a caption…");
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/caption_input_text_view");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
@@ -55,17 +50,6 @@ class Data {
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/feed_tab");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
         selectors.add(selector);
-//        selector = new Selector(mAutomatorService.getInstrumentation());
-//        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-//        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/row_pending_media_progress_bar");
-//        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
-//        selectors.add(selector);
-//        selector = new Selector(mAutomatorService.getInstrumentation());
-//        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-//        selector.setText("Finishing up");
-//        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/row_pending_media_status_textview");
-//        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
-//        selectors.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/row_pending_container");
@@ -88,17 +72,11 @@ class Data {
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/next_button_imageview");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
         selectors.add(selector);
-//        selector = new Selector(mAutomatorService.getInstrumentation());
-//        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-//        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/row_pending_media_progress_bar");
-//        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
-//        selectors.add(selector);
-//        selector = new Selector(mAutomatorService.getInstrumentation());
-//        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-//        selector.setText("Finishing up");
-//        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/row_pending_media_status_textview");
-//        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
-//        selectors.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/feed_tab");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        selectors.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/row_pending_container");
@@ -200,8 +178,7 @@ class Data {
         return selectors;
     }
 
-    public ArrayList<String> get_video_image_to_post() {
-        ArrayList<String> idObjs = new ArrayList<>();
+    public int get_total_video_image_to_post() {
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
         selector.setClassName("android.widget.CheckBox");
@@ -216,17 +193,7 @@ class Data {
                 tryAgain = 0;
             }
         }
-        if(objInfos.length > 0){
-            for (ObjInfo objInfo: objInfos) {
-                Selector selectorChild = new Selector(mAutomatorService.getInstrumentation());
-                selectorChild.setPackageName(objInfo.getPackageName());
-                selectorChild.setClassName(objInfo.getClassName());
-                selectorChild.setDescription(objInfo.getContentDescription());
-                selectorChild.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_DESCRIPTION);
-                idObjs.add(mAutomatorService.getUiObject(selectorChild));
-            }
-        }
-        return idObjs;
+        return objInfos.length;
     }
 
     public Selector btn_select_mutiple_file(){
