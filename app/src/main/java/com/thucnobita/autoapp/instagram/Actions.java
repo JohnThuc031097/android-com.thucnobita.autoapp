@@ -225,23 +225,26 @@ public class Actions {
             Thread.sleep(500);
             click(arrSelector.get(1), 1);
             Thread.sleep(500);
-            if(click(arrSelector.get(2), 5)){ // Show More
-                Selector selectorCopyLink = automatorService.exist(arrSelector.get(3))
-                        ? arrSelector.get(3)
-                        : automatorService.exist(arrSelector.get(4))
-                            ? arrSelector.get(4)
-                            : arrSelector.get(5);
+            Selector selectorMore = automatorService.exist(arrSelector.get(2))
+                    ? arrSelector.get(2)
+                    : arrSelector.get(3);
+            if(click(selectorMore, 5)){ // Show More
+                Selector selectorCopyLink = automatorService.exist(arrSelector.get(4))
+                        ? arrSelector.get(4)
+                        : automatorService.exist(arrSelector.get(5))
+                            ? arrSelector.get(5)
+                            : arrSelector.get(6);
                 Thread.sleep(2000);
                 if (click(selectorCopyLink, 5)) { // 1.Copy link
                     Thread.sleep(2000);
-                    if (click(arrSelector.get(6), 5)) { // Again Select video
+                    if (click(arrSelector.get(7), 5)) { // Again Select video
                         Thread.sleep(500);
-                        if (click(arrSelector.get(2), 5)) { // Show More
-                            Selector selectorRemoveSaved = automatorService.exist(arrSelector.get(7))
-                                    ? arrSelector.get(7)
-                                    : automatorService.exist(arrSelector.get(8))
-                                        ? arrSelector.get(8)
-                                        : arrSelector.get(9);
+                        if (click(selectorMore, 5)) { // Show More
+                            Selector selectorRemoveSaved = automatorService.exist(arrSelector.get(8))
+                                    ? arrSelector.get(8)
+                                    : automatorService.exist(arrSelector.get(9))
+                                        ? arrSelector.get(9)
+                                        : arrSelector.get(10);
                             Thread.sleep(2000);
                             if (click(selectorRemoveSaved, 5)) { // 2.Remove video
                                 Thread.sleep(2000);
