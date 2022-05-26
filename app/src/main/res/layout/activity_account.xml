@@ -6,11 +6,18 @@
             name="account"
             type="com.thucnobita.autoapp.models.Account" />
     </data>
-<!--    <ScrollView-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="match_parent"-->
-<!--        android:orientation="vertical">-->
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
         <LinearLayout
+            android:id="@+id/grpUser"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
@@ -28,8 +35,8 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:ems="10"
-                android:text="@{account.username}"
-                android:inputType="text" />
+                android:inputType="text"
+                android:text="@{account.username}" />
 
             <CheckBox
                 android:id="@+id/ckbUserLogin"
@@ -40,315 +47,322 @@
                 android:textColor="@android:color/holo_orange_light"
                 android:textSize="15sp" />
 
-            <LinearLayout
-                android:id="@+id/grpPasswordLogin"
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/grpPasswordLogin"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="gone">
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="gone">
+                android:layout_margin="10dp"
+                android:text="Password"
+                android:textSize="20sp" />
 
-                <TextView
+            <EditText
+                android:id="@+id/txtPassword"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:ems="10"
+                android:inputType="textPassword"
+                android:text="@{account.password}" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/grpPostContent"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <LinearLayout
+                android:id="@+id/grpHeader"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:text="Header"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/txtTotalHeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_margin="10dp"
+                        android:layout_weight="1"
+                        android:text="0"
+                        android:textColor="@android:color/holo_orange_light"
+                        android:textSize="20sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:text="Password"
-                    android:textSize="20sp" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Split"
+                        android:textSize="15sp" />
+
+                    <EditText
+                        android:id="@+id/txtStrSplitHeader"
+                        android:layout_width="5dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:gravity="center"
+                        android:inputType="text"
+                        android:text="@{account.splitHeader}" />
+
+                    <Button
+                        android:id="@+id/btnShowHideDataHeader"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Expand"
+                        android:textAllCaps="false"
+                        android:textColor="@android:color/holo_orange_light" />
+                </LinearLayout>
 
                 <EditText
-                    android:id="@+id/txtPassword"
+                    android:id="@+id/txtStrDataHeader"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
+                    android:background="@drawable/border_bg"
                     android:ems="10"
-                    android:inputType="textPassword"
-                    android:text="@{account.password}" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:id="@+id/grpPostContent"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:visibility="visible">
-
-                <LinearLayout
-                    android:id="@+id/grpHeader"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="10dp"
-                            android:text="Header"
-                            android:textSize="20sp" />
-
-                        <TextView
-                            android:id="@+id/txtTotalHeader"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_margin="10dp"
-                            android:layout_weight="1"
-                            android:text="0"
-                            android:textColor="@android:color/holo_orange_light"
-                            android:textSize="20sp" />
-
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Split"
-                            android:textSize="15sp" />
-
-                        <EditText
-                            android:id="@+id/txtStrSplitHeader"
-                            android:layout_width="5dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:ems="10"
-                            android:inputType="text"
-                            android:text="@{account.splitHeader}" />
-
-                        <Button
-                            android:id="@+id/btnShowHideDataHeader"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Expand"
-                            android:textAllCaps="false"
-                            android:textColor="@android:color/holo_orange_light" />
-                    </LinearLayout>
-
-                    <EditText
-                        android:id="@+id/txtStrDataHeader"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:background="@drawable/border_bg"
-                        android:ems="10"
-                        android:gravity="start|top"
-                        android:hint="String data"
-                        android:inputType="textMultiLine"
-                        android:lines="15"
-                        android:minLines="1"
-                        android:overScrollMode="always"
-                        android:padding="10dp"
-                        android:scrollbarStyle="insideInset"
-                        android:scrollbars="vertical"
-                        android:visibility="gone"
-                        android:text="@{account.header}" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/grpContent"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="10dp"
-                            android:text="Content"
-                            android:textSize="20sp" />
-
-                        <TextView
-                            android:id="@+id/txtTotalContent"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_margin="10dp"
-                            android:layout_weight="1"
-                            android:text="0"
-                            android:textColor="@android:color/holo_orange_light"
-                            android:textSize="20sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Split"
-                            android:textSize="15sp" />
-
-                        <EditText
-                            android:id="@+id/txtStrSplitContent"
-                            android:layout_width="5dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:ems="10"
-                            android:inputType="text"
-                            android:text="@{account.splitContent}" />
-
-                        <Button
-                            android:id="@+id/btnShowHideDataContent"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Expand"
-                            android:textAllCaps="false"
-                            android:textColor="@android:color/holo_orange_light" />
-                    </LinearLayout>
-
-                    <EditText
-                        android:id="@+id/txtStrDataContent"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:padding="10dp"
-                        android:background="@drawable/border_bg"
-                        android:ems="10"
-                        android:gravity="start|top"
-                        android:hint="String data"
-                        android:inputType="textMultiLine"
-                        android:lines="15"
-                        android:minLines="1"
-                        android:text="@{account.content}"
-                        android:visibility="gone" />
-
-                </LinearLayout>
-
-                <LinearLayout
-                    android:id="@+id/grpFooter"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical">
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_margin="10dp"
-                            android:text="Footer"
-                            android:textSize="20sp" />
-
-                        <TextView
-                            android:id="@+id/txtTotalFooter"
-                            android:layout_width="wrap_content"
-                            android:layout_height="match_parent"
-                            android:layout_margin="10dp"
-                            android:layout_weight="1"
-                            android:text="0"
-                            android:textColor="@android:color/holo_orange_light"
-                            android:textSize="20sp" />
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:orientation="horizontal">
-
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Split"
-                            android:textSize="15sp" />
-
-                        <EditText
-                            android:id="@+id/txtStrSplitFooter"
-                            android:layout_width="5dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:gravity="center"
-                            android:ems="10"
-                            android:inputType="text"
-                            android:text="@{account.splitFooter}" />
-
-                        <Button
-                            android:id="@+id/btnShowHideDataFooter"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Expand"
-                            android:textAllCaps="false"
-                            android:textColor="@android:color/holo_orange_light" />
-                    </LinearLayout>
-
-                    <EditText
-                        android:id="@+id/txtStrDataFooter"
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:layout_margin="10dp"
-                        android:padding="10dp"
-                        android:background="@drawable/border_bg"
-                        android:ems="10"
-                        android:lines="15"
-                        android:minLines="1"
-                        android:gravity="start|top"
-                        android:hint="String data"
-                        android:inputType="textMultiLine"
-                        android:overScrollMode="always"
-                        android:scrollbarStyle="insideInset"
-                        android:scrollbars="vertical"
-                        android:text="@{account.footer}"
-                        android:visibility="gone" />
-
-                </LinearLayout>
+                    android:gravity="start|top"
+                    android:hint="String data"
+                    android:inputType="textMultiLine"
+                    android:lines="15"
+                    android:minLines="1"
+                    android:overScrollMode="always"
+                    android:padding="10dp"
+                    android:scrollbarStyle="insideInset"
+                    android:scrollbars="vertical"
+                    android:text="@{account.header}"
+                    android:visibility="gone" />
 
             </LinearLayout>
 
             <LinearLayout
+                android:id="@+id/grpContent"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="30dp"
-                android:orientation="horizontal">
+                android:orientation="vertical">
 
-                <Button
-                    android:id="@+id/btnSaveAccount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:text="Save"
-                    android:textColor="@android:color/holo_orange_light"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
 
-                <Button
-                    android:id="@+id/btnCancelAccount"
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:text="Content"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/txtTotalContent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_margin="10dp"
+                        android:layout_weight="1"
+                        android:text="0"
+                        android:textColor="@android:color/holo_orange_light"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:layout_weight="1"
-                    android:text="Cancel"
-                    android:textSize="18sp"
-                    android:textStyle="bold" />
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Split"
+                        android:textSize="15sp" />
+
+                    <EditText
+                        android:id="@+id/txtStrSplitContent"
+                        android:layout_width="5dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:gravity="center"
+                        android:inputType="text"
+                        android:text="@{account.splitContent}" />
+
+                    <Button
+                        android:id="@+id/btnShowHideDataContent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Expand"
+                        android:textAllCaps="false"
+                        android:textColor="@android:color/holo_orange_light" />
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/txtStrDataContent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:orientation="vertical"
+                    android:background="@drawable/border_bg"
+                    android:ems="10"
+                    android:gravity="start|top"
+                    android:hint="String data"
+                    android:inputType="textMultiLine"
+                    android:lines="15"
+                    android:minLines="1"
+                    android:overScrollMode="always"
+                    android:scrollbarStyle="insideInset"
+                    android:scrollbars="vertical"
+                    android:padding="10dp"
+                    android:text="@{account.content}"
+                    android:visibility="gone" />
+
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/grpFooter"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="10dp"
+                        android:text="Footer"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/txtTotalFooter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_margin="10dp"
+                        android:layout_weight="1"
+                        android:text="0"
+                        android:textColor="@android:color/holo_orange_light"
+                        android:textSize="20sp" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Split"
+                        android:textSize="15sp" />
+
+                    <EditText
+                        android:id="@+id/txtStrSplitFooter"
+                        android:layout_width="5dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:gravity="center"
+                        android:inputType="text"
+                        android:text="@{account.splitFooter}" />
+
+                    <Button
+                        android:id="@+id/btnShowHideDataFooter"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Expand"
+                        android:textAllCaps="false"
+                        android:textColor="@android:color/holo_orange_light" />
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/txtStrDataFooter"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/border_bg"
+                    android:ems="10"
+                    android:gravity="start|top"
+                    android:hint="String data"
+                    android:inputType="textMultiLine"
+                    android:lines="15"
+                    android:minLines="1"
+                    android:overScrollMode="always"
+                    android:padding="10dp"
+                    android:scrollbarStyle="insideInset"
+                    android:scrollbars="vertical"
+                    android:text="@{account.footer}"
+                    android:visibility="gone" />
+
+            </LinearLayout>
 
         </LinearLayout>
-<!--    </ScrollView>-->
+
+        <LinearLayout
+            android:id="@+id/grpControl"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="30dp"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/btnSaveAccount"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:text="Save"
+                android:textColor="@android:color/holo_orange_light"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <Button
+                android:id="@+id/btnCancelAccount"
+                android:layout_width="wrap_content"
+                android:layout_height="60dp"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:text="Cancel"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+    </ScrollView>
 </layout>

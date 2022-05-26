@@ -222,32 +222,34 @@ public class Actions {
 //                ? arrSelector.get(0)
 //                : arrSelector.get(1);
         if (click(selectorSelectVideo, 5)) { // Select video
-            Thread.sleep(500);
+            Thread.sleep(1000);
+            click(selectorSelectVideo, 5); // use for emulator
+            Thread.sleep(1000);
             click(arrSelector.get(1), 1);
-            Thread.sleep(500);
+            Thread.sleep(1000);
             Selector selectorMore = automatorService.exist(arrSelector.get(2))
                     ? arrSelector.get(2)
                     : arrSelector.get(3);
             if(click(selectorMore, 5)){ // Show More
+                Thread.sleep(3000);
                 Selector selectorCopyLink = automatorService.exist(arrSelector.get(4))
                         ? arrSelector.get(4)
                         : automatorService.exist(arrSelector.get(5))
                             ? arrSelector.get(5)
                             : arrSelector.get(6);
-                Thread.sleep(2000);
                 if (click(selectorCopyLink, 5)) { // 1.Copy link
-                    Thread.sleep(2000);
+                    Thread.sleep(3000);
                     if (click(arrSelector.get(7), 5)) { // Again Select video
-                        Thread.sleep(500);
+                        Thread.sleep(3000);
                         if (click(selectorMore, 5)) { // Show More
+                            Thread.sleep(3000);
                             Selector selectorRemoveSaved = automatorService.exist(arrSelector.get(8))
                                     ? arrSelector.get(8)
                                     : automatorService.exist(arrSelector.get(9))
                                         ? arrSelector.get(9)
                                         : arrSelector.get(10);
-                            Thread.sleep(2000);
                             if (click(selectorRemoveSaved, 5)) { // 2.Remove video
-                                Thread.sleep(2000);
+                                Thread.sleep(3000);
                                 return automatorService.pressKey("back");
                             }
                         }

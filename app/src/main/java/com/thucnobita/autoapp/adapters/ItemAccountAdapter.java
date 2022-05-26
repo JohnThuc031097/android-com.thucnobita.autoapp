@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -34,16 +35,20 @@ import java.util.ArrayList;
 public class ItemAccountAdapter extends RecyclerView.Adapter<ItemAccountAdapter.ViewHolder> {
 
     public static class ViewHolder extends RecyclerView.ViewHolder{
+        public LinearLayout grpInfo;
         public ImageView imgActived;
         public ImageView imgRemove;
         public TextView txtAccountName;
+        public TextView txtTotalImage;
         public ItemAccountBinding itemAccountBinding;
 
         public ViewHolder(View view){
             super(view);
+            grpInfo = view.findViewById(R.id.grpInfo);
             imgActived = view.findViewById(R.id.imgActivedAccount);
             imgRemove = view.findViewById(R.id.imgRemoveAccount);
             txtAccountName = view.findViewById(R.id.txtAccountName);
+            txtTotalImage = view.findViewById(R.id.txtTotalImage);
             itemAccountBinding = DataBindingUtil.bind(view);
         }
 
@@ -80,6 +85,7 @@ public class ItemAccountAdapter extends RecyclerView.Adapter<ItemAccountAdapter.
         Account account = listAccount.get(position);
         holder.setBinding(account);
         // Set value default
+        updateTotalImageInAccount(account, holder);
         holder.imgActived.setTag(account.isActived());
         holder.imgActived.setImageResource(account.isActived() ?
                 R.drawable.ic_baseline_check_circle_outline_24 :
@@ -128,7 +134,7 @@ public class ItemAccountAdapter extends RecyclerView.Adapter<ItemAccountAdapter.
                     .setIcon(android.R.drawable.ic_delete)
                     .show();
         });
-        // Event Click Edit
+        // Event Click Account name
         holder.txtAccountName.setOnClickListener(v -> {
             Intent intent = new Intent(v.getContext(), AccountActivity.class);
             intent.putExtra("type", "edit");
@@ -139,6 +145,10 @@ public class ItemAccountAdapter extends RecyclerView.Adapter<ItemAccountAdapter.
                 e.printStackTrace();
             }
         });
+        // Event Click Total image
+        holder.txtTotalImage.setOnClickListener(v -> {
+            updateTotalImageInAccount(account, holder);
+        });
 
     }
 
@@ -146,4 +156,21 @@ public class ItemAccountAdapter extends RecyclerView.Adapter<ItemAccountAdapter.
     public int getItemCount() {
         return listAccount.size();
     }
+
+    public void updateTotalImageInAccount(Account account, ItemAccountAdapter.ViewHolder holder){
+        File fileFolderImage = new File(String.format("%s/%s/%s/%s",
+                Constants.FOLDER_ROOT,
+                Constants.FOLDER_NAME_APP,
+                Constants.FOLDER_NAME_IMAGE,
+                account.getUsername()));
+        if(fileFolderImage.exists()){
+            File[] arrImage = fileFolderImage.listFiles();
+            if(arrImage != null){
+                if(account.getPassword() == null){
+                    holder.txtTotalImage.setText(String.valueOf(arrImage.length));
+                }
+            }
+        }
+    }
+
 }

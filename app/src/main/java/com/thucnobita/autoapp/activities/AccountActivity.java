@@ -113,7 +113,7 @@ public class AccountActivity extends AppCompatActivity {
         });
     }
 
-    @SuppressLint("SetTextI18n")
+    @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
     private void initAction(){
         binding.ckbUserLogin.setOnClickListener(v -> {
             runOnUiThread(() -> {
@@ -126,14 +126,15 @@ public class AccountActivity extends AppCompatActivity {
                 }
             });
         });
+
         binding.btnShowHideDataHeader.setOnClickListener(v -> {
             if(binding.btnShowHideDataHeader.getText().toString().equals("Expand")){
                 binding.btnShowHideDataHeader.setText("Collapse");
+                binding.grpUser.setVisibility(View.GONE);
                 binding.grpContent.setVisibility(View.GONE);
                 binding.grpFooter.setVisibility(View.GONE);
+                binding.grpControl.setVisibility(View.GONE);
                 binding.txtStrDataHeader.setVisibility(View.VISIBLE);
-                binding.btnSaveAccount.setVisibility(View.GONE);
-                binding.btnCancelAccount.setVisibility(View.GONE);
             }else{
                 String strData = binding.txtStrDataHeader.getText().toString();
                 String charSplit = binding.txtStrSplitHeader.getText().toString();
@@ -148,22 +149,22 @@ public class AccountActivity extends AppCompatActivity {
                     binding.txtTotalHeader.setText("0");
                 }
                 binding.btnShowHideDataHeader.setText("Expand");
+                binding.grpUser.setVisibility(View.VISIBLE);
                 binding.grpContent.setVisibility(View.VISIBLE);
                 binding.grpFooter.setVisibility(View.VISIBLE);
+                binding.grpControl.setVisibility(View.VISIBLE);
                 binding.txtStrDataHeader.setVisibility(View.GONE);
-                binding.btnSaveAccount.setVisibility(View.VISIBLE);
-                binding.btnCancelAccount.setVisibility(View.VISIBLE);
             }
         });
 
         binding.btnShowHideDataContent.setOnClickListener(v -> {
             if(binding.btnShowHideDataContent.getText().toString().equals("Expand")){
                 binding.btnShowHideDataContent.setText("Collapse");
+                binding.grpUser.setVisibility(View.GONE);
                 binding.grpHeader.setVisibility(View.GONE);
                 binding.grpFooter.setVisibility(View.GONE);
+                binding.grpControl.setVisibility(View.GONE);
                 binding.txtStrDataContent.setVisibility(View.VISIBLE);
-                binding.btnSaveAccount.setVisibility(View.GONE);
-                binding.btnCancelAccount.setVisibility(View.GONE);
             }else{
                 String strData = binding.txtStrDataContent.getText().toString();
                 String charSplit = binding.txtStrSplitContent.getText().toString();
@@ -178,22 +179,22 @@ public class AccountActivity extends AppCompatActivity {
                     binding.txtTotalContent.setText("0");
                 }
                 binding.btnShowHideDataContent.setText("Expand");
+                binding.grpUser.setVisibility(View.VISIBLE);
                 binding.grpHeader.setVisibility(View.VISIBLE);
                 binding.grpFooter.setVisibility(View.VISIBLE);
+                binding.grpControl.setVisibility(View.VISIBLE);
                 binding.txtStrDataContent.setVisibility(View.GONE);
-                binding.btnSaveAccount.setVisibility(View.VISIBLE);
-                binding.btnCancelAccount.setVisibility(View.VISIBLE);
             }
         });
 
         binding.btnShowHideDataFooter.setOnClickListener(v -> {
             if(binding.btnShowHideDataFooter.getText().toString().equals("Expand")){
                 binding.btnShowHideDataFooter.setText("Collapse");
+                binding.grpUser.setVisibility(View.GONE);
                 binding.grpHeader.setVisibility(View.GONE);
                 binding.grpContent.setVisibility(View.GONE);
+                binding.grpControl.setVisibility(View.GONE);
                 binding.txtStrDataFooter.setVisibility(View.VISIBLE);
-                binding.btnSaveAccount.setVisibility(View.GONE);
-                binding.btnCancelAccount.setVisibility(View.GONE);
             }else{
                 String strData = binding.txtStrDataFooter.getText().toString();
                 String charSplit = binding.txtStrSplitFooter.getText().toString();
@@ -208,11 +209,11 @@ public class AccountActivity extends AppCompatActivity {
                     binding.txtTotalFooter.setText("0");
                 }
                 binding.btnShowHideDataFooter.setText("Expand");
+                binding.grpUser.setVisibility(View.VISIBLE);
                 binding.grpHeader.setVisibility(View.VISIBLE);
                 binding.grpContent.setVisibility(View.VISIBLE);
+                binding.grpControl.setVisibility(View.VISIBLE);
                 binding.txtStrDataFooter.setVisibility(View.GONE);
-                binding.btnSaveAccount.setVisibility(View.VISIBLE);
-                binding.btnCancelAccount.setVisibility(View.VISIBLE);
             }
         });
 
@@ -288,6 +289,14 @@ public class AccountActivity extends AppCompatActivity {
             } catch (IOException e) {
                 e.printStackTrace();
             }
+        });
+
+        binding.txtStrDataContent.setOnTouchListener((v, event) -> {
+            v.getParent().getParent().requestDisallowInterceptTouchEvent(true);
+            if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
+                v.getParent().getParent().requestDisallowInterceptTouchEvent(false);
+            }
+            return false;
         });
     }
 }

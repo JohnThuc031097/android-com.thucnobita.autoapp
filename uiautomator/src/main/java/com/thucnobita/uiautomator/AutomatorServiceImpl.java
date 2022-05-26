@@ -665,6 +665,15 @@ public class AutomatorServiceImpl implements AutomatorService {
         }
     }
 
+    public boolean setGestureMargins(Selector obj, int l, int t, int r, int b) throws UiObjectNotFoundException {
+        try {
+            obj.toUiObject2().setGestureMargins(l, t, r, b);
+            return true;
+        } catch (NullPointerException | StaleObjectException e) {
+            return false;
+        }
+    }
+
     /**
      * Performs a click at the center of the visible bounds of the UI element represented by this UiObject.
      *

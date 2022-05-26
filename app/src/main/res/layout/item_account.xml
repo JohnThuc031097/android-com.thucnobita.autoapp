@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:android="http://schemas.android.com/apk/res/android">
     <data>
         <variable
@@ -9,18 +10,18 @@
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_marginTop="5dp"
-        android:layout_marginBottom="5dp"
+        android:layout_height="80dp"
         android:background="@color/white"
-        android:gravity="bottom"
+        android:gravity="top"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="50dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="2dp"
+            android:layout_weight="1"
             android:background="@color/white"
-            android:gravity="bottom">
+            android:gravity="top">
 
             <ImageView
                 android:id="@+id/imgActivedAccount"
@@ -28,16 +29,35 @@
                 android:layout_height="match_parent"
                 app:srcCompat="@drawable/ic_baseline_radio_button_unchecked_24" />
 
-            <TextView
-                android:id="@+id/txtAccountName"
+            <LinearLayout
+                android:id="@+id/grpInfo"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:background="@color/white"
-                android:gravity="center"
-                android:text="@{account.username}"
-                android:textColor="@color/black"
-                android:textSize="20sp" />
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtAccountName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:background="@color/white"
+                    android:gravity="center"
+                    android:text="@{account.username}"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    tools:text="name_account" />
+
+                <TextView
+                    android:id="@+id/txtTotalImage"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:textColor="@color/purple_700"
+                    android:textSize="18sp"
+                    tools:text="0" />
+            </LinearLayout>
 
             <ImageView
                 android:id="@+id/imgRemoveAccount"
@@ -50,7 +70,8 @@
 
         <View
             android:layout_width="match_parent"
-            android:layout_height="1dp"
+            android:layout_height="2dp"
+            android:layout_weight="1"
             android:background="@color/black" />
     </LinearLayout>
 </layout>
