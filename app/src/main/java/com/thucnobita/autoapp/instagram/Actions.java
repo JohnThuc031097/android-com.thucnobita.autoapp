@@ -226,7 +226,7 @@ public class Actions {
 //            Thread.sleep(1000);
 //            click(selectorSelectVideo, 5); // use for emulator
             Thread.sleep(1000);
-            click(arrSelector.get(1), 1);
+            click(arrSelector.get(1), 1); // Pause video
             Thread.sleep(1000);
             Selector selectorMore = automatorService.exist(arrSelector.get(2))
                     ? arrSelector.get(2)
