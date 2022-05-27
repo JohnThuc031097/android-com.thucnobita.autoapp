@@ -114,41 +114,45 @@ public class Actions {
         return false;
     }
 
-    public boolean share_video_image_to_feed(String folderShare) throws UiObjectNotFoundException, InterruptedException {
+    public boolean share_video_image_to_feed(String folderShare, int totalImage) throws UiObjectNotFoundException, InterruptedException {
         ArrayList<Selector> arrSelector = selectors.browse_select_video_image_to_post(folderShare);
         if(click_profile()){
             Thread.sleep(2000);
             if(click(arrSelector.get(0), 5)){ // Click create post
                 Thread.sleep(2000);
-                if(click(arrSelector.get(1), 5)){
+                if(click(arrSelector.get(1), 5)){ // Click type = post
                     Thread.sleep(2000);
-                    if(click(arrSelector.get(2), 5)){
+                    if(click(arrSelector.get(2), 5)){ // Click tab Gallery
                         Thread.sleep(2000);
-                        if(click(arrSelector.get(3), 5)){ // Select folder share
+                        if(click(arrSelector.get(3), 5)){ // Click comboBox Gallery
                             Thread.sleep(2000);
-                            int totalFile = selectors.get_total_video_image_to_post(); // Get all file in browse
-                            if(totalFile > 0){
-                                if(click(selectors.btn_select_mutiple_file(), 5)){ // Click select check mutiple file
-                                    Thread.sleep(1000);
-                                    for (int i = 1; i < totalFile; i++) {
-                                        Selector selector = new Selector(automatorService.getInstrumentation());
-                                        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-                                        selector.setClassName("android.widget.CheckBox");
-                                        selector.setIndex(i);
-                                        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_INDEX);
-                                        if(!click(selector,5)){
-                                            totalFile = selectors.get_total_video_image_to_post(); // Get all file in browse
-                                            i = 0;
-                                        }
+                            if(click(arrSelector.get(4), 5)){ // Select folder share
+                                Thread.sleep(2000);
+//                                int totalFile = selectors.get_total_video_image_to_post(); // Get all file in browse
+                                int totalFile = totalImage; // Get all file in browse
+                                if(totalFile > 0){
+                                    if(click(selectors.btn_select_mutiple_file(), 5)){ // Click select check mutiple file
                                         Thread.sleep(1000);
-                                    }
-                                    Thread.sleep(3000);
-                                    Selector selectorBtnNext = selectors.share_video_image_to_feed();
-                                    if(click(selectorBtnNext, 5)){ // Click button Next
-                                        Thread.sleep(5000);
-                                        if(click(selectorBtnNext, 5)){  // Click button Next
+                                        for (int i = 1; i < totalFile; i++) {
+                                            Selector selector = new Selector(automatorService.getInstrumentation());
+                                            selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+                                            selector.setClassName("android.widget.CheckBox");
+                                            selector.setIndex(i);
+                                            selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_INDEX);
+                                            if(!click(selector,5)){
+                                                totalFile = totalFile - i;
+                                                i = 0;
+                                            }
+                                            Thread.sleep(1000);
+                                        }
+                                        Thread.sleep(3000);
+                                        Selector selectorBtnNext = selectors.share_video_image_to_feed();
+                                        if(click(selectorBtnNext, 5)){ // Click button Next
                                             Thread.sleep(5000);
-                                            return waitGone(selectorBtnNext, 60 * 5);
+                                            if(click(selectorBtnNext, 5)){  // Click button Next
+                                                Thread.sleep(5000);
+                                                return waitGone(selectorBtnNext, 60 * 5);
+                                            }
                                         }
                                     }
                                 }

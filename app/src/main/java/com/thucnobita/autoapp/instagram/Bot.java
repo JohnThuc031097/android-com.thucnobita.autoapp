@@ -106,10 +106,47 @@ public class Bot {
         return result;
     }
 
-    public File download_video(String link, String nameFile, String pathFolder) {
+    public int copy_image(Context context, String pathFolderSrc, String pathFolderDest){
+        try{
+            File[] fileImages = new File(pathFolderSrc).listFiles();
+            if(fileImages != null){
+                if(fileImages.length > 0){
+                    Log.i(TAG_NAME, "=> Find " + fileImages.length + " file image in folder user ");
+                    int totalImage = Constants.LIMIT_IMAGE_UPLOAD;
+                    if(fileImages.length < Constants.LIMIT_IMAGE_UPLOAD){
+                        totalImage = fileImages.length;
+                    }
+                    // Copy image from folder images/<user> to folder uploads
+                    if(!new File(pathFolderDest).exists()){
+                        if(!new File(pathFolderDest).mkdirs()) return 0;
+                    }
+                    for (int i = 0; i < totalImage; i++) {
+                        File pathImageNew = new File(pathFolderDest, fileImages[i].getName());
+                        if(fileImages[i].renameTo(pathImageNew)){
+                            MediaScannerConnection.scanFile(context,
+                                    new String[] { pathImageNew.getAbsolutePath() },
+                                    new String[] { "image/*" },
+                                    null);
+                        }else{
+                            Log.i(TAG_NAME,"=> Copy file " + fileImages[i] + " to folder uploads Failed");
+                            return 0;
+                        }
+                    }
+                    Log.i(TAG_NAME,"=> Copy " + totalImage + " file image to folder uploads Ok");
+                    return fileImages.length;
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.i(TAG_NAME, "=> Error: " + e.getMessage());
+        }
+        return 0;
+    }
+
+    public File download_video(Context context, String link, String nameFile, String pathFolder) {
         File pathFile = new File(pathFolder, nameFile + ".mp4");
         if (!new File(pathFolder).exists()) {
-            new File(pathFolder).mkdirs();
+            if(!new File(pathFolder).mkdirs()) return null;
         }
         try{
             if(pathFile.exists()) return pathFile;
@@ -122,6 +159,11 @@ public class Bot {
             }
             input.close();
             output.close();
+            // Update file on system
+            MediaScannerConnection.scanFile(context,
+                    new String[] { pathFile.getAbsolutePath() },
+                    new String[] { "video/*" },
+                    null);
             return pathFile;
         }catch (IOException e){
             e.printStackTrace();
@@ -184,10 +226,10 @@ public class Bot {
         return result;
     }
     
-    public boolean share_video_to_feed(String folderShare){
+    public boolean share_video_to_feed(String folderShare, int totalImage){
         boolean result = false;
         try{
-            result = actions.share_video_image_to_feed(folderShare);
+            result = actions.share_video_image_to_feed(folderShare, totalImage);
             Log.i(TAG_NAME, "=> Click share video + image to post => " + result);
         } catch (InterruptedException | UiObjectNotFoundException e) {
             e.printStackTrace();

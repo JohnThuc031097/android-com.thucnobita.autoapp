@@ -166,6 +166,11 @@ class Data {
         selectors.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setText("GALLERY");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT);
+        selectors.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/gallery_folder_menu");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
         selectors.add(selector);
