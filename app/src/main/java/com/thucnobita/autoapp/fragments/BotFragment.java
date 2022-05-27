@@ -186,11 +186,6 @@ public class BotFragment extends Fragment {
                             scrollViewLog.fullScroll(View.FOCUS_DOWN);
                         });
                     });
-                    String pathFolderUploads = String.format("%s/%s/%s",
-                            Constants.FOLDER_ROOT,
-                            Constants.FOLDER_NAME_APP,
-                            Constants.FOLDER_NAME_UPLOAD);
-                    Util.deleteDir(new File(pathFolderUploads));
                     isRunning = false;
                     setLock(false);
                 });
@@ -239,7 +234,24 @@ public class BotFragment extends Fragment {
     private void botIG(View v){
         setLog("+ [App] [Bot] [Instagram]");
         setLog("=> Total acc login:" + arrAccLogin.size());
-        if(arrAccLogin.size() > 0){
+        String pathFolderUploads = String.format("%s/%s/%s",
+                Constants.FOLDER_ROOT,
+                Constants.FOLDER_NAME_APP,
+                Constants.FOLDER_NAME_UPLOAD);
+        // Remove folder uploads befor start run
+        if(Util.deleteDir(new File(pathFolderUploads))){
+            setLog("=> Remove folder uploads Ok");
+            if(new File(pathFolderUploads).mkdirs()){
+                setLog("=> Create folder uploads Ok");
+            }else{
+                setLog("=> Create folder uploads Failed");
+                isRunning = false;
+            }
+        }else{
+            setLog("=> Remove folder uploads Failed");
+            isRunning = false;
+        }
+        if(arrAccLogin.size() > 0 && isRunning){
             Account accLogin = arrAccLogin.size() > 1
                     ? arrAccLogin.get(new Random().nextInt(arrAccLogin.size()-1))
                     : arrAccLogin.get(0);
@@ -254,35 +266,27 @@ public class BotFragment extends Fragment {
                         setLog("=> Actived:" + accountRun.isActived());
                         if(accountRun.isActived()){
                             try {
-                                String pathFolderUploads = String.format("%s/%s/%s",
-                                        Constants.FOLDER_ROOT,
-                                        Constants.FOLDER_NAME_APP,
-                                        Constants.FOLDER_NAME_UPLOAD);
                                 if(radVideoImage.isChecked()){
-                                    String pathFolder = String.format("%s/%s/%s/%s",
+                                    String pathFolderImageAccount = String.format("%s/%s/%s/%s",
                                             Constants.FOLDER_ROOT,
                                             Constants.FOLDER_NAME_APP,
                                             Constants.FOLDER_NAME_IMAGE,
                                             accountRun.getUsername());
-                                    File[] fileImages = new File(pathFolder).listFiles();
+                                    File[] fileImages = new File(pathFolderImageAccount).listFiles();
                                     if(fileImages != null){
                                         if(fileImages.length > 0){
                                             setLog("=> Find " + fileImages.length + " file image in folder user ");
-                                            int totalDefaultImageUpload = 9;
-                                            int totalImageCanUpload = totalDefaultImageUpload;
-                                            if(fileImages.length < totalDefaultImageUpload){
-                                                totalImageCanUpload = fileImages.length;
+                                            int totalImage = Constants.LIMIT_IMAGE_UPLOAD;
+                                            if(fileImages.length < Constants.LIMIT_IMAGE_UPLOAD){
+                                                totalImage = fileImages.length;
                                             }
                                             // Copy image from folder images/<user> to folder uploads
-                                            if (!new File(pathFolderUploads).exists()) {
-                                                new File(pathFolderUploads).mkdirs();
-                                            }
                                             try {
-                                                for (int i = 0; i < totalImageCanUpload; i++) {
-                                                    File pathImage = new File(pathFolderUploads, fileImages[i].getName());
-                                                    if(fileImages[i].renameTo(pathImage)){
-                                                        MediaScannerConnection.scanFile(v.getContext(),
-                                                                new String[] { pathImage.getPath() },
+                                                for (int i = 0; i < totalImage; i++) {
+                                                    File pathImageNew = new File(pathFolderUploads, fileImages[i].getName());
+                                                    if(fileImages[i].renameTo(pathImageNew)){
+                                                        MediaScannerConnection.scanFile(v.getContext().getApplicationContext(),
+                                                                new String[] { pathImageNew.getAbsolutePath() },
                                                                 new String[] { "image/*" },
                                                                 null);
                                                     }else{
@@ -291,7 +295,8 @@ public class BotFragment extends Fragment {
                                                         break;
                                                     }
                                                 }
-                                                setLog("=> Copy " + totalImageCanUpload + " file image to folder uploads Ok");
+
+                                                setLog("=> Copy " + totalImage + " file image to folder uploads Ok");
                                             }catch (Exception e){
                                                 e.printStackTrace();
                                                 isRunning = false;
@@ -308,133 +313,122 @@ public class BotFragment extends Fragment {
                                         break;
                                     }
                                 }
-                                setLog("=> Open app " + Constants.PACKAGE_NAME_INSTAGRAM);
-                                Util.openApp(v.getContext(), automatorService.getInstrumentation(), Constants.PACKAGE_NAME_INSTAGRAM, 5);
-                                botIG.share_video_to_feed(Constants.FOLDER_NAME_UPLOAD);
-//\                                setLog("=> Begin remote click on app");
-//                                if(botIG.click_select_account(accountRun.getUsername())){
-//                                    setLog("=> Click select account Ok");
-//                                    if(botIG.click_get_link_video()){
-//                                        setLog("=> Click get link video Ok");
-//                                        String usernameVideo = botIG.get_username_video();
-//                                        if(usernameVideo != null){
-//                                            setLog("=> Get username video:" + usernameVideo);
-//                                            Thread.sleep(500);
-//                                            if(Util.recentMainActivity(v.getContext())){
-//                                                Thread.sleep(1000);
-//                                                setLog("=> Result link video:" + linkVideo);
-//                                                String urlLink = linkVideo.split("\\?")[0];
-//                                                String[] codeVideo = urlLink.split(Pattern.quote("/"));
-//                                                String textCodeVideo = codeVideo[codeVideo.length-1];
-//                                                setLog("=> Result Code video:" + textCodeVideo);
-//                                                HashMap<String, Object> jsonData = botIG.getDataByCodeVideo(textCodeVideo);
-//                                                String linkDownload  = (String) jsonData.get("link_video");
-//                                                if(linkDownload != null){
-//                                                    setLog("=> Result Size video:" + linkDownload.length());
-//                                                    String pathFolderDownload = String.format("%s/%s/%s",
-//                                                            Constants.FOLDER_ROOT,
-//                                                            Constants.FOLDER_NAME_APP,
-//                                                            Constants.FOLDER_NAME_UPLOAD);
-//                                                    File fileVideo = botIG.download_video(
-//                                                            linkDownload,
-//                                                            textCodeVideo,
-//                                                            pathFolderDownload);
-//                                                    if(fileVideo.exists()){
-//                                                        // Update file on system
-//                                                        MediaScannerConnection.scanFile(v.getContext(),
-//                                                                new String[] { fileVideo.getAbsolutePath() },
-//                                                                new String[] { "video/*" },
-//                                                                null);
-//                                                        setLog("=> Download video " + fileVideo.getName() + " to folder uploads Ok");
-//                                                        String captionText = String.valueOf(jsonData.get("caption"));
-//                                                        if(!captionText.isEmpty()){
-//                                                            if(!captionText.startsWith("#")){
-//                                                                captionText = captionText.split(Pattern.quote("#"))[0];
-//                                                                setLog("=> Get caption video of user Ok");
-//                                                            }else{
-//                                                                captionText = "";
-//                                                            }
-//                                                        }
-//                                                        setLog("=> Random header Ok");
-//                                                        String[] temp = accountRun.getHeader().split(Pattern.quote(accountRun.getSplitHeader()));
-//                                                        String header = temp[Util.randInt(0, temp.length-1)];
-//                                                        setLog("=> Random content Ok");
-//                                                        temp = accountRun.getContent().split(Pattern.quote(accountRun.getSplitContent()));
-//                                                        String content = temp[Util.randInt(0, temp.length-1)];
-//                                                        setLog("=> Random footer Ok");
-//                                                        temp = accountRun.getFooter().split(Pattern.quote(accountRun.getSplitFooter()));
-//                                                        String footer = temp[Util.randInt(0, temp.length-1)];
-//                                                        String contentPost = String.format("%s @%s\n%s\n%s\n%s",
-//                                                                header, usernameVideo,
-//                                                                captionText,
-//                                                                content,
-//                                                                footer);
-//                                                        Util.openApp(
-//                                                                v.getContext(),
-//                                                                automatorService.getInstrumentation(),
-//                                                                Constants.PACKAGE_NAME_INSTAGRAM,
-//                                                                5);
-//                                                        // Mode upload: Video
-//                                                        if (radVideo.isChecked()){
-//                                                            if(botIG.share_video_to_reel(Constants.FOLDER_NAME_UPLOAD)){
-//                                                                setLog("=> Share video Ok");
-//                                                                if(botIG.post_reel(contentPost)){
-//                                                                    setLog("=> Post Ok");
-//                                                                    if(Util.deleteDir(new File(pathFolderUploads))){
-//                                                                        setLog("=> Delete folder uploads Ok");
-//                                                                    }else{
-//                                                                        setLog("=> Delete folder uploads Failed");
-//                                                                        isRunning = false;
-//                                                                    }
-//                                                                }else{
-//                                                                    setLog("=> Post Failed");
-//                                                                    isRunning = false;
-//                                                                }
-//                                                            }else{
-//                                                                setLog("=> Share video Failed");
-//                                                                isRunning = false;
-//                                                            }
-//                                                        }else{ // Mode upload: Video + Image
-//                                                            if(botIG.share_video_to_feed(Constants.FOLDER_NAME_UPLOAD)){
-//                                                                setLog("=> Share video Ok");
-//                                                                if(botIG.post_feed(contentPost)){
-//                                                                    setLog("=> Post Ok");
-//                                                                    if(Util.deleteDir(new File(pathFolderUploads))){
-//                                                                        setLog("=> Delete folder uploads Ok");
-//                                                                    }else{
-//                                                                        setLog("=> Delete folder uploads Failed");
-//                                                                        isRunning = false;
-//                                                                    }
-//                                                                }else{
-//                                                                    setLog("=> Post Failed");
-//                                                                    isRunning = false;
-//                                                                }
-//                                                            }else{
-//                                                                setLog("=> Share video Failed");
-//                                                                isRunning = false;
-//                                                            }
-//                                                        }
-//                                                    }else{
-//                                                        setLog("=> Download video Failed");
-//                                                        isRunning = false;
-//                                                    }
-//                                                }else{
-//                                                    setLog("=> Link video is null");
-//                                                    isRunning = false;
-//                                                }
-//                                            }
-//                                        }else{
-//                                            setLog("=> Get username video Failed");
-//                                            isRunning = false;
-//                                        }
-//                                    }else{
-//                                        setLog("=> Click get link videos Failed");
-//                                        isRunning = false;
-//                                    }
-//                                }else{
-//                                    setLog("=> Click select account Failed");
-//                                    isRunning = false;
-//                                }
+//                                setLog("=> Open app " + Constants.PACKAGE_NAME_INSTAGRAM);
+//                                botIG.share_video_to_feed(Constants.FOLDER_NAME_UPLOAD);
+                                setLog("=> Begin remote click on app");
+                                Util.openApp(v.getContext(), automatorService.getInstrumentation(), Constants.PACKAGE_NAME_INSTAGRAM, 10);
+                                Thread.sleep(3000);
+                                if(botIG.click_select_account(accountRun.getUsername())){
+                                    setLog("=> Click select account Ok");
+                                    if(botIG.click_get_link_video()){
+                                        setLog("=> Click get link video Ok");
+                                        String usernameVideo = botIG.get_username_video();
+                                        if(usernameVideo != null){
+                                            setLog("=> Get username video:" + usernameVideo);
+                                            Thread.sleep(500);
+                                            if(Util.recentMainActivity(v.getContext())){
+                                                Thread.sleep(1000);
+                                                setLog("=> Result link video:" + linkVideo);
+                                                String urlLink = linkVideo.split("\\?")[0];
+                                                String[] codeVideo = urlLink.split(Pattern.quote("/"));
+                                                String textCodeVideo = codeVideo[codeVideo.length-1];
+                                                setLog("=> Result Code video:" + textCodeVideo);
+                                                HashMap<String, Object> jsonData = botIG.getDataByCodeVideo(textCodeVideo);
+                                                String linkDownload  = (String) jsonData.get("link_video");
+                                                if(linkDownload != null){
+                                                    setLog("=> Result Size video:" + linkDownload.length());
+                                                    String pathFolderDownload = String.format("%s/%s/%s",
+                                                            Constants.FOLDER_ROOT,
+                                                            Constants.FOLDER_NAME_APP,
+                                                            Constants.FOLDER_NAME_UPLOAD);
+                                                    File fileVideo = botIG.download_video(
+                                                            linkDownload,
+                                                            textCodeVideo,
+                                                            pathFolderDownload);
+                                                    if(fileVideo.exists()){
+                                                        // Update file on system
+                                                        MediaScannerConnection.scanFile(v.getContext(),
+                                                                new String[] { fileVideo.getAbsolutePath() },
+                                                                new String[] { "video/*" },
+                                                                null);
+                                                        setLog("=> Download video " + fileVideo.getName() + " to folder uploads Ok");
+                                                        String captionText = String.valueOf(jsonData.get("caption"));
+                                                        if(!captionText.isEmpty()){
+                                                            if(!captionText.startsWith("#")){
+                                                                captionText = captionText.split(Pattern.quote("#"))[0];
+                                                                setLog("=> Get caption video of user Ok");
+                                                            }else{
+                                                                captionText = "";
+                                                            }
+                                                        }
+                                                        setLog("=> Random header Ok");
+                                                        String[] temp = accountRun.getHeader().split(Pattern.quote(accountRun.getSplitHeader()));
+                                                        String header = temp[Util.randInt(0, temp.length-1)];
+                                                        setLog("=> Random content Ok");
+                                                        temp = accountRun.getContent().split(Pattern.quote(accountRun.getSplitContent()));
+                                                        String content = temp[Util.randInt(0, temp.length-1)];
+                                                        setLog("=> Random footer Ok");
+                                                        temp = accountRun.getFooter().split(Pattern.quote(accountRun.getSplitFooter()));
+                                                        String footer = temp[Util.randInt(0, temp.length-1)];
+                                                        String contentPost = String.format("%s @%s\n%s\n%s\n%s",
+                                                                header, usernameVideo,
+                                                                captionText,
+                                                                content,
+                                                                footer);
+                                                        Util.openApp(
+                                                                v.getContext(),
+                                                                automatorService.getInstrumentation(),
+                                                                Constants.PACKAGE_NAME_INSTAGRAM,
+                                                                5);
+                                                        // Mode upload: Video
+                                                        if (radVideo.isChecked()){
+                                                            if(botIG.share_video_to_reel(Constants.FOLDER_NAME_UPLOAD)){
+                                                                setLog("=> Share video Ok");
+                                                                if(botIG.post_reel(contentPost)){
+                                                                    setLog("=> Post Ok");
+                                                                }else{
+                                                                    setLog("=> Post Failed");
+                                                                    isRunning = false;
+                                                                }
+                                                            }else{
+                                                                setLog("=> Share video Failed");
+                                                                isRunning = false;
+                                                            }
+                                                        }else{ // Mode upload: Video + Image
+                                                            if(botIG.share_video_to_feed(Constants.FOLDER_NAME_UPLOAD)){
+                                                                setLog("=> Share video Ok");
+                                                                if(botIG.post_feed(contentPost)){
+                                                                    setLog("=> Post Ok");
+                                                                }else{
+                                                                    setLog("=> Post Failed");
+                                                                    isRunning = false;
+                                                                }
+                                                            }else{
+                                                                setLog("=> Share video Failed");
+                                                                isRunning = false;
+                                                            }
+                                                        }
+                                                    }else{
+                                                        setLog("=> Download video Failed");
+                                                        isRunning = false;
+                                                    }
+                                                }else{
+                                                    setLog("=> Link video is null");
+                                                    isRunning = false;
+                                                }
+                                            }
+                                        }else{
+                                            setLog("=> Get username video Failed");
+                                            isRunning = false;
+                                        }
+                                    }else{
+                                        setLog("=> Click get link videos Failed");
+                                        isRunning = false;
+                                    }
+                                }else{
+                                    setLog("=> Click select account Failed");
+                                    isRunning = false;
+                                }
                             }catch (Exception e){
                                 e.printStackTrace();
                                 setLog("=> Error:" + e);

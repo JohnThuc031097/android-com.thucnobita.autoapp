@@ -87,7 +87,7 @@ public class Actions {
                         Thread.sleep(2000);
                         if(click(arrSelector.get(3), 5)){
                             Thread.sleep(2000);
-                            if(click(arrSelector.get(4), 5)){ // Select folder "Instagram"
+                            if(click(arrSelector.get(4), 5)){ // Select folder
                                 Thread.sleep(2000);
                                 if(click(arrSelector.get(5), 5)){ // Select video index "0" (default)
                                     Thread.sleep(3000);
@@ -137,7 +137,8 @@ public class Actions {
                                         selector.setIndex(i);
                                         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_INDEX);
                                         if(!click(selector,5)){
-                                            return false;
+                                            totalFile = selectors.get_total_video_image_to_post(); // Get all file in browse
+                                            i = 0;
                                         }
                                         Thread.sleep(1000);
                                     }
@@ -222,8 +223,8 @@ public class Actions {
 //                ? arrSelector.get(0)
 //                : arrSelector.get(1);
         if (click(selectorSelectVideo, 5)) { // Select video
-            Thread.sleep(1000);
-            click(selectorSelectVideo, 5); // use for emulator
+//            Thread.sleep(1000);
+//            click(selectorSelectVideo, 5); // use for emulator
             Thread.sleep(1000);
             click(arrSelector.get(1), 1);
             Thread.sleep(1000);

@@ -54,18 +54,21 @@ public class Util {
     }
 
     public static boolean deleteDir(File dir) {
-        if (dir.isDirectory()) {
-            String[] children = dir.list();
-            if(children != null){
-                for (String child : children) {
-                    boolean success = deleteDir(new File(dir, child));
-                    if (!success) {
-                        return false;
+        if(dir.exists()){
+            if (dir.isDirectory()) {
+                String[] children = dir.list();
+                if(children != null){
+                    for (String child : children) {
+                        boolean success = deleteDir(new File(dir, child));
+                        if (!success) {
+                            return false;
+                        }
                     }
                 }
             }
+            return dir.delete();
         }
-        return dir.delete();
+        return true;
     }
 
     public static void openApp(Context context, Instrumentation instrumentation, String packageName, long timeWait) {
