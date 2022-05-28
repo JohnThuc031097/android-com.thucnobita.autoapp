@@ -135,8 +135,9 @@ public class Actions {
                                     if(click(selectors.btn_select_mutiple_file(), 5)){ // Click select check mutiple file
                                         Thread.sleep(1000);
                                         int MAX_GIRD_WIDTH = 4;
+                                        int INDEX_SKIP = 1;
                                         for (int i = 1; i <= totalFile; i++) {
-                                            if(i == (MAX_GIRD_WIDTH + 1)){
+                                            if(i == (MAX_GIRD_WIDTH + INDEX_SKIP)){
                                                 if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R){
                                                     totalFile = totalFile - i;
                                                     if(totalFile > 0){
@@ -162,7 +163,7 @@ public class Actions {
 //                                            }
                                             Thread.sleep(1000);
                                         }
-                                        Thread.sleep(3000);
+                                        Thread.sleep(2000);
                                         Selector selectorBtnNext = selectors.share_video_image_to_feed();
                                         if(click(selectorBtnNext, 5)){ // Click button Next
                                             Thread.sleep(5000);

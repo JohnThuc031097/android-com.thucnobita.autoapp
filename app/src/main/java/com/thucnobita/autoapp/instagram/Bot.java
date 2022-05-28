@@ -106,9 +106,18 @@ public class Bot {
         return result;
     }
 
-    public int copy_image(Context context, String pathFolderSrc, String pathFolderDest){
+    public int copy_image(Context context, String account){
         try{
-            File[] fileImages = new File(pathFolderSrc).listFiles();
+            String pathFolderImage = String.format("%s/%s/%s/%s",
+                    Constants.FOLDER_ROOT,
+                    Constants.FOLDER_NAME_APP,
+                    Constants.FOLDER_NAME_IMAGE,
+                    account);
+            String pathFolderUploads = String.format("%s/%s/%s",
+                    Constants.FOLDER_ROOT,
+                    Constants.FOLDER_NAME_APP,
+                    Constants.FOLDER_NAME_UPLOAD);
+            File[] fileImages = new File(pathFolderImage).listFiles();
             if(fileImages != null){
                 if(fileImages.length > 0){
                     Log.i(TAG_NAME, "=> Find " + fileImages.length + " file image in folder user ");
@@ -117,22 +126,22 @@ public class Bot {
                         totalImage = fileImages.length;
                     }
                     // Copy image from folder images/<user> to folder uploads
-                    if(!new File(pathFolderDest).exists()){
-                        if(!new File(pathFolderDest).mkdirs()) return 0;
+                    if(!new File(pathFolderUploads).exists()){
+                        if(!new File(pathFolderUploads).mkdirs()) return 0;
                     }
                     for (int i = 0; i < totalImage; i++) {
-                        File pathImageNew = new File(pathFolderDest, fileImages[i].getName());
+                        File pathImageNew = new File(pathFolderUploads, fileImages[i].getName());
                         if(fileImages[i].renameTo(pathImageNew)){
                             MediaScannerConnection.scanFile(context,
                                     new String[] { pathImageNew.getAbsolutePath() },
                                     new String[] { "image/*" },
                                     null);
                         }else{
-                            Log.i(TAG_NAME,"=> Copy file " + fileImages[i] + " to folder uploads Failed");
+                            Log.i(TAG_NAME,"=> Copy file " + fileImages[i] + " to folder <Instagram> Failed");
                             return 0;
                         }
                     }
-                    Log.i(TAG_NAME,"=> Copy " + totalImage + " file image to folder uploads Ok");
+                    Log.i(TAG_NAME,"=> Copy " + totalImage + " file image to folder <Instagram> Ok");
                     return fileImages.length;
                 }
             }
@@ -143,10 +152,14 @@ public class Bot {
         return 0;
     }
 
-    public File download_video(Context context, String link, String nameFile, String pathFolder) {
-        File pathFile = new File(pathFolder, nameFile + ".mp4");
-        if (!new File(pathFolder).exists()) {
-            if(!new File(pathFolder).mkdirs()) return null;
+    public File download_video(Context context, String link, String nameFile) {
+        String pathFolderDownload = String.format("%s/%s/%s",
+                Constants.FOLDER_ROOT,
+                Constants.FOLDER_NAME_APP,
+                Constants.FOLDER_NAME_UPLOAD);
+        File pathFile = new File(pathFolderDownload, nameFile + ".mp4");
+        if (!new File(pathFolderDownload).exists()) {
+            if(!new File(pathFolderDownload).mkdirs()) return null;
         }
         try{
             if(pathFile.exists()) return pathFile;

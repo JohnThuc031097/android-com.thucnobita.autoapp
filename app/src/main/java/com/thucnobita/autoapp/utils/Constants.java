@@ -9,7 +9,7 @@ public interface Constants {
     String FOLDER_NAME_APP = "auto-app";
     String FOLDER_NAME_SESSION = "sessions";
     String FOLDER_NAME_ACCOUNT = "accounts";
-    String FOLDER_NAME_UPLOAD = "uploads";
+    String FOLDER_NAME_UPLOAD = "Instagram";
     String FOLDER_NAME_IMAGE = "images";
 //    String FOLDER_NAME_CREDENTIAL = "credentials";
     // Value default

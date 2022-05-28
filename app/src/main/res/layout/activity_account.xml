@@ -231,7 +231,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="10dp"
-                    android:orientation="vertical"
                     android:background="@drawable/border_bg"
                     android:ems="10"
                     android:gravity="start|top"
