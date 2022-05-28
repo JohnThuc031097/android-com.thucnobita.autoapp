@@ -240,6 +240,7 @@ public class Actions {
 
     public boolean click_copy_link_video_saved() throws UiObjectNotFoundException, InterruptedException, RemoteException {
         ArrayList<Selector> arrSelector = selectors.copy_remove_link_video_saved();
+        Thread.sleep(3000);
         Selector selectorSelectVideo = arrSelector.get(0);
 //        Selector selectorSelectVideo = automatorService.exist(arrSelector.get(0))
 //                ? arrSelector.get(0)

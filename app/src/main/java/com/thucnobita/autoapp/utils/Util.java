@@ -1,8 +1,16 @@
 package com.thucnobita.autoapp.utils;
 
+import android.annotation.SuppressLint;
 import android.app.Instrumentation;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Build;
+import android.provider.DocumentsContract;
+import android.provider.MediaStore;
+
+import androidx.core.content.FileProvider;
 import androidx.test.uiautomator.By;
 import androidx.test.uiautomator.UiDevice;
 import androidx.test.uiautomator.Until;
@@ -53,22 +61,101 @@ public class Util {
         return new Random().nextInt((max - min) + 1) + min;
     }
 
-    public static boolean deleteDir(File dir) {
+    public static boolean deleteDir(Context context, File dir) {
         if(dir.exists()){
             if (dir.isDirectory()) {
                 String[] children = dir.list();
                 if(children != null){
                     for (String child : children) {
-                        boolean success = deleteDir(new File(dir, child));
+                        File fileRemove = new File(dir, child);
+                        context.getContentResolver().delete(file2Uri(context, fileRemove), null, null);
+                        boolean success = deleteDir(context, fileRemove);
                         if (!success) {
                             return false;
                         }
                     }
                 }
             }
+            context.getContentResolver().delete(file2Uri(context, dir), null, null);
             return dir.delete();
         }
         return true;
+    }
+
+    public static boolean fileDelete(Context context, Uri uri){
+        try{
+            final String docId;
+            if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+                docId = DocumentsContract.getDocumentId(uri);
+                final String[] split = docId.split(":");
+                final String type = split[0];
+
+                Uri contentUri = null;
+
+                if ("image".equals(type)) {
+                    contentUri = MediaStore.Images.Media.EXTERNAL_CONTENT_URI;
+                } else if ("video".equals(type)) {
+                    contentUri = MediaStore.Video.Media.EXTERNAL_CONTENT_URI;
+                } else if ("audio".equals(type)) {
+                    contentUri = MediaStore.Audio.Media.EXTERNAL_CONTENT_URI;
+                }
+                String selection = "_id=?";
+                String[] selectionArgs = new String[]{split[1]};
+
+
+                String temp = getDataColumn(context, contentUri, selection,selectionArgs);
+                if(temp != null){
+                    File file = new File(temp);
+                    if(file.exists()){
+                        return file.delete();
+                    }
+                }
+            }else {
+                String[] filePathColumn = { MediaStore.Images.Media.DATA };
+                Cursor cursor = context.getContentResolver().query(uri, filePathColumn, null, null, null);
+                cursor.moveToFirst();
+                @SuppressLint("Range") File file = new File(cursor.getString(cursor.getColumnIndex(filePathColumn[0])));
+                cursor.close();
+                if(file.exists()){
+                    return file.delete();
+                }
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    private static String getDataColumn(Context context, Uri uri, String selection, String[] selectionArgs) {
+        Cursor cursor = null;
+        final String column = "_data";
+        final String[] projection = {column};
+
+        try {
+            cursor = context.getContentResolver().query(uri, projection,
+                    selection, selectionArgs, null);
+
+            if (cursor != null && cursor.moveToFirst()) {
+                final int index = cursor.getColumnIndexOrThrow(column);
+                return cursor.getString(index);
+            }
+        }
+        finally {
+            if (cursor != null)
+                cursor.close();
+        }
+
+        return null;
+    }
+
+    private static Uri file2Uri(Context context, File file){
+        Uri result;
+        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
+            result = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", file);
+        }else{
+            result = Uri.fromFile(file);
+        }
+        return result;
     }
 
     public static void openApp(Context context, Instrumentation instrumentation, String packageName, long timeWait) {

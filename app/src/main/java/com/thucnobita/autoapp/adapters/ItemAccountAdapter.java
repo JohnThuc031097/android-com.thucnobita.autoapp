@@ -120,7 +120,7 @@ public class ItemAccountAdapter extends RecyclerView.Adapter<ItemAccountAdapter.
                             File fileImage = new File(pathFolderImage + "/" + account.getUsername());
                             if(fileAccount.exists()){
                                 if(fileAccount.delete()){
-                                    Util.deleteDir(fileImage);
+                                    Util.deleteDir(v.getContext(), fileImage);
                                     listAccount.remove(position);
                                     notifyItemRemoved(position);
                                     notifyItemRangeChanged(position, listAccount.size());

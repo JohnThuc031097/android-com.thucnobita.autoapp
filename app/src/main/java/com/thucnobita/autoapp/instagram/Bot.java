@@ -132,9 +132,10 @@ public class Bot {
                     for (int i = 0; i < totalImage; i++) {
                         File pathImageNew = new File(pathFolderUploads, fileImages[i].getName());
                         if(fileImages[i].renameTo(pathImageNew)){
+                            Util.deleteDir(context, fileImages[i]);
                             MediaScannerConnection.scanFile(context,
-                                    new String[] { pathImageNew.getAbsolutePath() },
-                                    new String[] { "image/*" },
+                                    new String[]{pathImageNew.getAbsolutePath()},
+                                    new String[]{"image/*"},
                                     null);
                         }else{
                             Log.i(TAG_NAME,"=> Copy file " + fileImages[i] + " to folder <Instagram> Failed");
@@ -142,7 +143,7 @@ public class Bot {
                         }
                     }
                     Log.i(TAG_NAME,"=> Copy " + totalImage + " file image to folder <Instagram> Ok");
-                    return fileImages.length;
+                    return totalImage;
                 }
             }
         }catch (Exception e){
