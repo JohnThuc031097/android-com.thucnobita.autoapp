@@ -1,5 +1,6 @@
 package com.thucnobita.autoapp.instagram;
 
+import android.os.Build;
 import android.os.RemoteException;
 
 import androidx.test.uiautomator.UiObjectNotFoundException;
@@ -129,20 +130,36 @@ public class Actions {
                             if(click(arrSelector.get(4), 5)){ // Select folder share
                                 Thread.sleep(2000);
 //                                int totalFile = selectors.get_total_video_image_to_post(); // Get all file in browse
-                                int totalFile = totalImage; // Get all file in browse
+                                int totalFile = totalImage + 1; // Get all file in browse
                                 if(totalFile > 0){
                                     if(click(selectors.btn_select_mutiple_file(), 5)){ // Click select check mutiple file
                                         Thread.sleep(1000);
-                                        for (int i = 1; i < totalFile; i++) {
+                                        int MAX_GIRD_WIDTH = 4;
+                                        for (int i = 1; i <= totalFile; i++) {
+                                            if(i == (MAX_GIRD_WIDTH + 1)){
+                                                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R){
+                                                    totalFile = totalFile - i;
+                                                    if(totalFile > 0){
+                                                        i = 1;
+                                                    }
+                                                }
+                                            }
                                             Selector selector = new Selector(automatorService.getInstrumentation());
                                             selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
                                             selector.setClassName("android.widget.CheckBox");
                                             selector.setIndex(i);
                                             selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_INDEX);
-                                            if(!click(selector,5)){
-                                                totalFile = totalFile - i;
-                                                i = 0;
+                                            if(!click(selector, 5)){
+//                                                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R){
+//                                                    i = MAX_GIRD_WIDTH;
+//                                                    totalFile = i + 2;
+//                                                }
+                                                break;
                                             }
+//                                            if(!click(selector,5)){
+//                                                totalFile = totalFile - i;
+//                                                i = 0;
+//                                            }
                                             Thread.sleep(1000);
                                         }
                                         Thread.sleep(3000);
