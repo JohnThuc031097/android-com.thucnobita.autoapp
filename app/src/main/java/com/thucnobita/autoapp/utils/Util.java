@@ -75,9 +75,10 @@ public class Util {
                         }
                     }
                 }
+            }else{
+                context.getContentResolver().delete(file2Uri(context, dir), null, null);
+                return dir.delete();
             }
-            context.getContentResolver().delete(file2Uri(context, dir), null, null);
-            return dir.delete();
         }
         return true;
     }
