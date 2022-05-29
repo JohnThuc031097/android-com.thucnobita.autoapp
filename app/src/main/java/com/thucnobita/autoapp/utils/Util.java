@@ -150,13 +150,7 @@ public class Util {
     }
 
     private static Uri file2Uri(Context context, File file){
-        Uri result;
-        if (android.os.Build.VERSION.SDK_INT > Build.VERSION_CODES.Q) {
-            result = FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", file);
-        }else{
-            result = Uri.fromFile(file);
-        }
-        return result;
+        return FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", file);
     }
 
     public static void openApp(Context context, Instrumentation instrumentation, String packageName, long timeWait) {

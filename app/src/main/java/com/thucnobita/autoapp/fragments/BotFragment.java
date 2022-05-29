@@ -29,6 +29,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
+import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -67,6 +68,7 @@ public class BotFragment extends Fragment {
     private Button btnStopBot;
     private Button btnConfirmCodeLogin;
     private Button btnGetClipbroad;
+    private RadioGroup grpRadModeUpload;
     private RadioButton radVideo;
     private RadioButton radVideoImage;
     private LinearLayout grpCodeLogin;
@@ -112,6 +114,7 @@ public class BotFragment extends Fragment {
         btnRunTotal = view.findViewById(R.id.btnTotalAccRun);
         btnStartBot = view.findViewById(R.id.btnStartBot);
         btnStopBot = view.findViewById(R.id.btnStopBot);
+        grpRadModeUpload = view.findViewById(R.id.grpRadModeUpload);
         radVideo = view.findViewById(R.id.radVideo);
         radVideoImage = view.findViewById(R.id.radVideoImage);
         txtCodeLogin = view.findViewById(R.id.txtCodeLogin);
@@ -482,7 +485,7 @@ public class BotFragment extends Fragment {
         requireActivity().runOnUiThread(() -> {
             btnStartBot.setVisibility(isLock ? View.GONE : View.VISIBLE);
             btnStopBot.setVisibility(isLock ? View.VISIBLE : View.GONE);
-            isRunning = isLock;
+            grpRadModeUpload.setVisibility(isLock ? View.GONE : View.VISIBLE);
         });
     }
 

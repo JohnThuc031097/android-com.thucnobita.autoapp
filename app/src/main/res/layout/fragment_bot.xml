@@ -100,7 +100,7 @@
             android:textStyle="bold" />
 
         <RadioGroup
-            android:id="@+id/grpUploadMode"
+            android:id="@+id/grpRadModeUpload"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:checkedButton="@id/radVideo"
