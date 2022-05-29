@@ -275,10 +275,11 @@ public class BotFragment extends Fragment {
                                 }
 //                                setLog("=> Open app " + Constants.PACKAGE_NAME_INSTAGRAM);
 //                                Util.openApp(v.getContext(), automatorService.getInstrumentation(), Constants.PACKAGE_NAME_INSTAGRAM, 10);
-//                                botIG.share_video_to_feed(Constants.FOLDER_NAME_UPLOAD, 9);
+//                                botIG.share_video_to_feed(Constants.FOLDER_NAME_UPLOAD, totalImage);
+
                                 setLog("=> Begin remote click on app");
                                 Util.openApp(v.getContext(), automatorService.getInstrumentation(), Constants.PACKAGE_NAME_INSTAGRAM, 10);
-                                Thread.sleep(3000);
+                                Thread.sleep(2000);
                                 if(botIG.click_select_account(accountRun.getUsername())){
                                     setLog("=> Click select account Ok");
                                     if(botIG.click_get_link_video()){
