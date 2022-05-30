@@ -1,9 +1,7 @@
 package com.thucnobita.autoapp.adapters;
 
 import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,19 +12,15 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.DataBindingUtil;
-import androidx.databinding.ObservableBoolean;
-import androidx.databinding.ObservableField;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.thucnobita.autoapp.R;
 import com.thucnobita.autoapp.activities.AccountActivity;
-import com.thucnobita.autoapp.activities.MainActivity;
 import com.thucnobita.autoapp.databinding.ItemAccountBinding;
 import com.thucnobita.autoapp.models.Account;
 import com.thucnobita.autoapp.utils.Constants;
-import com.thucnobita.autoapp.utils.Util;
+import com.thucnobita.autoapp.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -103,7 +97,7 @@ public class ItemAccountAdapter extends RecyclerView.Adapter<ItemAccountAdapter.
             }
             File fileAccount = new File(pathFolderAccount, account.getUsername() + ".json");
             try {
-                Util.object2File(fileAccount, account);
+                Utils.object2File(fileAccount, account);
                 notifyItemChanged(position);
             } catch (IOException e) {
                 e.printStackTrace();
@@ -120,7 +114,7 @@ public class ItemAccountAdapter extends RecyclerView.Adapter<ItemAccountAdapter.
                             File fileImage = new File(pathFolderImage + "/" + account.getUsername());
                             if(fileAccount.exists()){
                                 if(fileAccount.delete()){
-                                    Util.deleteDir(v.getContext(), fileImage);
+                                    Utils.deleteDir(v.getContext(), fileImage);
                                     listAccount.remove(position);
                                     notifyItemRemoved(position);
                                     notifyItemRangeChanged(position, listAccount.size());
@@ -139,7 +133,7 @@ public class ItemAccountAdapter extends RecyclerView.Adapter<ItemAccountAdapter.
             Intent intent = new Intent(v.getContext(), AccountActivity.class);
             intent.putExtra("type", "edit");
             try {
-                intent.putExtra("account", Util.object2String(account));
+                intent.putExtra("account", Utils.object2String(account));
                 v.getContext().startActivity(intent);
             } catch (JsonProcessingException e) {
                 e.printStackTrace();

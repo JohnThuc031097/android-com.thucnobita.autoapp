@@ -6,14 +6,11 @@ import android.os.RemoteException;
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.thucnobita.autoapp.utils.Constants;
-import com.thucnobita.autoapp.utils.Util;
+import com.thucnobita.autoapp.utils.Utils;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 import com.thucnobita.uiautomator.Selector;
 
 import java.util.ArrayList;
-import java.util.Random;
-
-import kotlin.concurrent.ThreadsKt;
 
 public class Actions {
     private AutomatorServiceImpl automatorService;
@@ -163,7 +160,7 @@ public class Actions {
 //                                            }
                                             Thread.sleep(1000);
                                         }
-                                        Thread.sleep(2000);
+                                        Thread.sleep(5000);
                                         Selector selectorBtnNext = selectors.share_video_image_to_feed();
                                         if(click(selectorBtnNext, 5)){ // Click button Next
                                             Thread.sleep(5000);
@@ -228,7 +225,7 @@ public class Actions {
         int size = idObjs.size();
         if(size > 0){
             Thread.sleep(1000);
-            return click(idObjs.get(Util.randInt(0, size - 1)), 5);
+            return click(idObjs.get(Utils.randInt(0, size - 1)), 5);
         }
         return false;
     }

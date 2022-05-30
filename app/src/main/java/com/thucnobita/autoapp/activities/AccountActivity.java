@@ -2,29 +2,20 @@ package com.thucnobita.autoapp.activities;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.databinding.DataBindingUtil;
-import androidx.fragment.app.Fragment;
 
 import android.annotation.SuppressLint;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.inputmethod.EditorInfo;
-import android.widget.CheckBox;
-import android.widget.LinearLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
 import com.thucnobita.autoapp.R;
 import com.thucnobita.autoapp.databinding.ActivityAccountBinding;
-import com.thucnobita.autoapp.fragments.AccountFragment;
 import com.thucnobita.autoapp.models.Account;
 import com.thucnobita.autoapp.utils.Constants;
-import com.thucnobita.autoapp.utils.Util;
+import com.thucnobita.autoapp.utils.Utils;
 
 import java.io.File;
 import java.io.IOException;
@@ -60,7 +51,7 @@ public class AccountActivity extends AppCompatActivity {
             }else if(bundle.getString("type").equals("edit")){
                 if(bundle.getString("account") != null){
                     try {
-                        account = Util.string2Object(bundle.getString("account"), Account.class);
+                        account = Utils.string2Object(bundle.getString("account"), Account.class);
                         binding.setAccount(account);
                     }catch (JsonProcessingException e){
                         e.printStackTrace();
@@ -240,7 +231,7 @@ public class AccountActivity extends AppCompatActivity {
                             binding.getAccount().setHeader(null);
                             binding.getAccount().setContent(null);
                             binding.getAccount().setFooter(null);
-                            Util.object2File(fileAccount, binding.getAccount());
+                            Utils.object2File(fileAccount, binding.getAccount());
                             Intent intent = new Intent(this, MainActivity.class);
                             startActivity(intent);
                         }else{
@@ -280,7 +271,7 @@ public class AccountActivity extends AppCompatActivity {
                             binding.getAccount().setContent(dataContent);
                             binding.getAccount().setFooter(dataFooter);
                             binding.getAccount().setPassword(null);
-                            Util.object2File(fileAccount, binding.getAccount());
+                            Utils.object2File(fileAccount, binding.getAccount());
                             Intent intent = new Intent(this, MainActivity.class);
                             startActivity(intent);
                         }

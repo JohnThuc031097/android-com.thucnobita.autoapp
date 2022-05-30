@@ -1,18 +1,12 @@
 package com.thucnobita.autoapp.instagram;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.media.MediaScannerConnection;
-import android.media.ThumbnailUtils;
 import android.net.Uri;
-import android.os.Build;
 import android.os.RemoteException;
-import android.provider.MediaStore;
 import android.util.Log;
-import android.util.Size;
 import android.widget.EditText;
 
 import androidx.core.content.FileProvider;
@@ -26,7 +20,8 @@ import com.thucnobita.api.instagram.requests.media.MediaInfoRequest;
 import com.thucnobita.api.instagram.utils.IGChallengeUtils;
 import com.thucnobita.api.instagram.utils.IGUtils;
 import com.thucnobita.autoapp.utils.Constants;
-import com.thucnobita.autoapp.utils.Util;
+import com.thucnobita.autoapp.utils.MediaUtils;
+import com.thucnobita.autoapp.utils.Utils;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 
 import java.io.File;
@@ -34,11 +29,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Function;
 
 public class Bot {
     private final String TAG_NAME = "BOT_INSTAGRAM";
@@ -132,11 +124,7 @@ public class Bot {
                     for (int i = 0; i < totalImage; i++) {
                         File pathImageNew = new File(pathFolderUploads, fileImages[i].getName());
                         if(fileImages[i].renameTo(pathImageNew)){
-                            MediaScannerConnection.scanFile(context,
-                                    new String[]{ pathImageNew.getAbsolutePath() },
-                                    new String[]{"image/*"},
-                                    null);
-                            Util.deleteFileImgFromMediaProvider(context, fileImages[i]);
+                            MediaUtils.updateMedia(context, pathImageNew);
                         }else{
                             Log.i(TAG_NAME,"=> Copy file " + fileImages[i].getName() + " to folder <Instagram> Failed");
                             return 0;
@@ -373,7 +361,7 @@ public class Bot {
                 .execute(client)
                 .thenAccept(mediaInfoResponse -> {
                     try {
-                        JsonNode jsonMedia = Util.string2Json(Util.object2String(mediaInfoResponse));
+                        JsonNode jsonMedia = Utils.string2Json(Utils.object2String(mediaInfoResponse));
                         JsonNode linkVideo = jsonMedia
                                 .get("items").get(0)
                                 .get("video_versions").get(0)
@@ -396,7 +384,7 @@ public class Bot {
                 .execute(client)
                 .thenAccept(mediaInfoResponse -> {
                     try {
-                        JsonNode jsonMedia = Util.string2Json(Util.object2String(mediaInfoResponse));
+                        JsonNode jsonMedia = Utils.string2Json(Utils.object2String(mediaInfoResponse));
                         String linkVideo = jsonMedia
                                 .get("items").get(0)
                                 .get("video_versions").get(0)

@@ -10,6 +10,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
+import android.text.PrecomputedText;
 import android.util.Log;
 
 import androidx.core.content.FileProvider;
@@ -25,12 +26,15 @@ import com.thucnobita.autoapp.activities.MainActivity;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Parameter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
+import java.util.regex.Pattern;
 
-public class Util {
-    private Util(){
+public class Utils {
+    private Utils(){
 
     }
     public static String object2String(Object obj) throws JsonProcessingException {
@@ -65,102 +69,6 @@ public class Util {
         return new Random().nextInt((max - min) + 1) + min;
     }
 
-    public static int deleteFileImgFromMediaProvider(Context context, File file) {
-        String tagName = "Util_Delete_File";
-        if (file == null)
-            return 0;
-
-        ContentResolver cr = context.getContentResolver();
-        // images
-        int count = 0;
-        Cursor imageCursor = null;
-        try {
-            String select = MediaStore.Images.Media.DATA + "=?";
-            String[] selectArgs = { file.getAbsolutePath() };
-
-            String[] projection = { MediaStore.Images.ImageColumns._ID };
-            imageCursor = cr
-                    .query(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                            projection, select, selectArgs, null);
-            if (imageCursor.getCount() > 0) {
-                imageCursor.moveToFirst();
-                List<Uri> imagesToDelete = new ArrayList<>();
-                do {
-                    @SuppressLint("Range") String id = imageCursor.getString(imageCursor.getColumnIndex(MediaStore.Images.ImageColumns._ID));
-
-                    imagesToDelete
-                            .add(Uri.withAppendedPath(
-                                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                                    id));
-                } while (imageCursor.moveToNext());
-
-                for (Uri uri : imagesToDelete) {
-                    Log.i(tagName, "attempting to delete: " + uri);
-                    count += cr.delete(uri, null, null);
-                }
-            }
-        } catch (Exception e) {
-            Log.e(tagName, e.toString());
-        } finally {
-            if (imageCursor != null) {
-                imageCursor.close();
-            }
-        }
-        return count;
-    }
-
-    public static int deleteFolderImgFromMediaProvider(Context context, File folder) {
-        String tagName = "Util_Delete_Folder";
-        if (folder == null)
-            return 0;
-
-        ContentResolver cr = context.getContentResolver();
-        // images
-        int count = 0;
-        Cursor imageCursor = null;
-        try {
-            String select = MediaStore.Images.Media.DATA + " like ? escape '!'";
-            String[] selectArgs = { escapePath(folder.getAbsolutePath()) };
-
-            String[] projection = { MediaStore.Images.ImageColumns._ID };
-            imageCursor = cr
-                    .query(android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                            projection, select, selectArgs, null);
-            if (imageCursor.getCount() > 0) {
-                imageCursor.moveToFirst();
-                List<Uri> imagesToDelete = new ArrayList<>();
-                do {
-                    @SuppressLint("Range") String id = imageCursor.getString(imageCursor.getColumnIndex(MediaStore.Images.ImageColumns._ID));
-
-                    imagesToDelete
-                            .add(Uri.withAppendedPath(
-                                    android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                                    id));
-                } while (imageCursor.moveToNext());
-
-                for (Uri uri : imagesToDelete) {
-                    Log.i(tagName, "attempting to delete: " + uri);
-                    count += cr.delete(uri, null, null);
-                }
-            }
-        } catch (Exception e) {
-            Log.e(tagName, e.toString());
-        } finally {
-            if (imageCursor != null) {
-                imageCursor.close();
-            }
-        }
-        return count;
-    }
-
-    private static String escapePath(String path) {
-        String ep = path;
-        ep = ep.replaceAll("\\!", "!!");
-        ep = ep.replaceAll("_", "!_");
-        ep = ep.replaceAll("%", "!%");
-        return ep;
-    }
-
     public static boolean deleteDir(Context context, File dir) {
         if(dir.exists()){
             if (dir.isDirectory()) {
@@ -173,15 +81,17 @@ public class Util {
                             return false;
                         }
                     }
+                }else{
+                    return true;
                 }
-                return true;
+            }else{
+                return dir.delete() && MediaUtils.deleteMedia(context, dir) > 0;
             }
-            return dir.delete() && deleteFileImgFromMediaProvider(context, dir) > 0;
         }
         return true;
     }
 
-    private static Uri file2Uri(Context context, File file){
+    static Uri file2Uri(Context context, File file){
         return FileProvider.getUriForFile(context, context.getApplicationContext().getPackageName() + ".provider", file);
     }
 

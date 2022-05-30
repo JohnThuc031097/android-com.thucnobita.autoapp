@@ -3,28 +3,15 @@ package com.thucnobita.autoapp.fragments;
 import android.annotation.SuppressLint;
 import android.app.Instrumentation;
 import android.content.Context;
-import android.content.Intent;
-import android.media.MediaScannerConnection;
-import android.net.Uri;
-import android.net.wifi.WifiManager;
-import android.os.Build;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.test.uiautomator.UiObjectNotFoundException;
 
-import android.os.Environment;
-import android.os.RemoteException;
-import android.provider.Settings;
-import android.text.PrecomputedText;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -32,29 +19,20 @@ import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.deser.impl.CreatorCandidate;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.thucnobita.autoapp.BuildConfig;
 import com.thucnobita.autoapp.R;
-import com.thucnobita.autoapp.activities.MainActivity;
 import com.thucnobita.autoapp.instagram.Bot;
 import com.thucnobita.autoapp.instagram.Callback;
 import com.thucnobita.autoapp.models.Account;
 import com.thucnobita.autoapp.utils.Constants;
-import com.thucnobita.autoapp.utils.Util;
+import com.thucnobita.autoapp.utils.Utils;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
+import com.thucnobita.uiautomator.Log;
 
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Parameter;
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
 import java.util.Random;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -62,6 +40,8 @@ import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
 public class BotFragment extends Fragment {
+    private final String TAG_NAME = "BotFragment";
+
     private Button btnLoginTotal;
     private Button btnRunTotal;
     private Button btnStartBot;
@@ -185,6 +165,11 @@ public class BotFragment extends Fragment {
 //                    }
                     if(initBot()){
                         if(clearCache(v.getContext())){
+                            try {
+                                Thread.sleep(3000);
+                            }catch (Exception e){
+                                Log.i(TAG_NAME , e.toString());
+                            }
                             botIG(v);
                         }
                     }
@@ -273,12 +258,13 @@ public class BotFragment extends Fragment {
                                         break;
                                     }
                                 }
+
 //                                setLog("=> Open app " + Constants.PACKAGE_NAME_INSTAGRAM);
-//                                Util.openApp(v.getContext(), automatorService.getInstrumentation(), Constants.PACKAGE_NAME_INSTAGRAM, 10);
+//                                Utils.openApp(v.getContext(), automatorService.getInstrumentation(), Constants.PACKAGE_NAME_INSTAGRAM, 10);
 //                                botIG.share_video_to_feed(Constants.FOLDER_NAME_UPLOAD, totalImage);
 
                                 setLog("=> Begin remote click on app");
-                                Util.openApp(v.getContext(), automatorService.getInstrumentation(), Constants.PACKAGE_NAME_INSTAGRAM, 10);
+                                Utils.openApp(v.getContext(), automatorService.getInstrumentation(), Constants.PACKAGE_NAME_INSTAGRAM, 10);
                                 Thread.sleep(2000);
                                 if(botIG.click_select_account(accountRun.getUsername())){
                                     setLog("=> Click select account Ok");
@@ -288,7 +274,7 @@ public class BotFragment extends Fragment {
                                         if(userOfVideo != null){
                                             setLog("=> Get username video:" + userOfVideo);
                                             Thread.sleep(500);
-                                            if(Util.recentMainActivity(v.getContext())){
+                                            if(Utils.recentMainActivity(v.getContext())){
                                                 Thread.sleep(1000);
                                                 setLog("=> Result link video:" + linkVideo);
                                                 String urlLink = linkVideo.split("\\?")[0];
@@ -313,7 +299,7 @@ public class BotFragment extends Fragment {
                                                         }
                                                         String content = randPost(caption, userOfVideo, accountRun);
                                                         if(content != null){
-                                                            Util.openApp(
+                                                            Utils.openApp(
                                                                     v.getContext(),
                                                                     automatorService.getInstrumentation(),
                                                                     Constants.PACKAGE_NAME_INSTAGRAM,
@@ -322,8 +308,9 @@ public class BotFragment extends Fragment {
                                                                 if(botIG.share_video_to_reel(Constants.FOLDER_NAME_UPLOAD)){
                                                                     setLog("=> Share video Ok");
                                                                     if(botIG.post_reel(content)){
-                                                                        setLog("=> Post Ok");
                                                                         clearCache(v.getContext());
+                                                                        Thread.sleep(2000);
+                                                                        setLog("=> Post Ok");
                                                                     }else{
                                                                         setLog("=> Post Failed");
                                                                         isRunning = false;
@@ -336,8 +323,9 @@ public class BotFragment extends Fragment {
                                                                 if(botIG.share_video_to_feed(Constants.FOLDER_NAME_UPLOAD, totalImage)){
                                                                     setLog("=> Share video Ok");
                                                                     if(botIG.post_feed(content)){
-                                                                        setLog("=> Post Ok");
                                                                         clearCache(v.getContext());
+                                                                        Thread.sleep(2000);
+                                                                        setLog("=> Post Ok");
                                                                     }else{
                                                                         setLog("=> Post Failed");
                                                                         isRunning = false;
@@ -378,7 +366,7 @@ public class BotFragment extends Fragment {
                             }
                         }
                         try{
-                            Util.recentMainActivity(v.getContext());
+                            Utils.recentMainActivity(v.getContext());
                             Thread.sleep(5000);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
@@ -387,7 +375,8 @@ public class BotFragment extends Fragment {
                         }
                     }
                 }
-                Util.recentMainActivity(v.getContext());
+                Utils.recentMainActivity(v.getContext());
+                setLog("=>>>> END <<<<=");
             }
         }
     }
@@ -400,7 +389,7 @@ public class BotFragment extends Fragment {
             HashMap<String, String> resultContent = new HashMap<>();
             for (int i = 0; i < contents.length; i++) {
                 String[] temp = contents[i].split(Pattern.quote(charSplits[i]));
-                String content = temp[Util.randInt(0, temp.length-1)];
+                String content = temp[Utils.randInt(0, temp.length-1)];
                 resultContent.put(nameContents[i], content);
                 setLog("=> Random " + nameContents[i] + " Ok");
             }
@@ -424,7 +413,7 @@ public class BotFragment extends Fragment {
                     nameFolder,
                     Constants.FOLDER_NAME_UPLOAD);
             File fileFolderApp = new File(pathFolderApp);
-            if(Util.deleteDir(context, fileFolderApp)){
+            if(Utils.deleteDir(context, fileFolderApp)){
                 setLog("=> Remove folder <" + Constants.FOLDER_NAME_UPLOAD + "> in folder <" + nameFolder + "> Ok");
             }else{
                 setLog("=> Remove folder <" + Constants.FOLDER_NAME_UPLOAD + "> in folder <" + nameFolder + "> Failed");
@@ -507,7 +496,7 @@ public class BotFragment extends Fragment {
                     arrAccRun = new ArrayList<>();
                     for (File src : fileAccounts) {
                         try {
-                            Account account = Util.file2Object(src, Account.class);
+                            Account account = Utils.file2Object(src, Account.class);
                             if(account.getPassword() != null) {
                                 totalAccLogin++;
                                 if (account.isActived()) arrAccLogin.add(account);

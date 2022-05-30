@@ -13,25 +13,18 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thucnobita.autoapp.R;
 import com.thucnobita.autoapp.activities.AccountActivity;
-import com.thucnobita.autoapp.activities.MainActivity;
 import com.thucnobita.autoapp.adapters.ItemAccountAdapter;
 import com.thucnobita.autoapp.databinding.FragmentAccountBinding;
 import com.thucnobita.autoapp.models.Account;
 import com.thucnobita.autoapp.utils.Constants;
-import com.thucnobita.autoapp.utils.Util;
+import com.thucnobita.autoapp.utils.Utils;
 
 import java.io.File;
-import java.io.FileFilter;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
 
 public class AccountFragment extends Fragment {
     private FloatingActionButton facAddAccount;
@@ -56,7 +49,7 @@ public class AccountFragment extends Fragment {
             if(fileAccounts != null){
                 for (File src : fileAccounts) {
                     try {
-                        Account account = Util.file2Object(src, Account.class);
+                        Account account = Utils.file2Object(src, Account.class);
                         listAccount.add(account);
                     }catch (IOException e) {
                         e.printStackTrace();
