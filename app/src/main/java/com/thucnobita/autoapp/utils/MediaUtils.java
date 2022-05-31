@@ -18,17 +18,38 @@ import java.util.regex.Pattern;
 public class MediaUtils {
     private static final String TAG_NAME = "MediaUtils";
 
-    public static void updateMedia(Context context, File file){
-        try{
-            MediaScannerConnection.scanFile(context,
-                    new String[]{file.getAbsolutePath()},
-                    new String[]{getType(context, file) + "/*"},
-                    (path, uri) -> {
-                        Log.i(TAG_NAME, "path:" + path);
-                        Log.i(TAG_NAME, "uri:" + uri);
-                    });
-            Thread.sleep(1000);
-        }catch (Exception e){
+//    public static void updateMedia(Context context, File file){
+//        try{
+//            MediaScannerConnection.scanFile(context,
+//                    new String[]{file.getAbsolutePath()},
+//                    new String[]{getType(context, file) + "/*"},
+//                    (path, uri) -> {
+//                        Log.i(TAG_NAME, "path:" + path);
+//                        Log.i(TAG_NAME, "uri:" + uri);
+//                    });
+//            Thread.sleep(1000);
+//        }catch (Exception e){
+//            Log.i(TAG_NAME, e.toString());
+//        }
+//    }
+
+    public static void updateMedia(Context context, File file) {
+        final MediaScannerConnection[] scannerConnection = new MediaScannerConnection[1];
+        try {
+            MediaScannerConnection.MediaScannerConnectionClient scannerClient = new MediaScannerConnection.MediaScannerConnectionClient() {
+                public void onMediaScannerConnected() {
+                    scannerConnection[0].scanFile(file.getAbsolutePath(), getType(context, file) + "/*");
+                }
+                public void onScanCompleted(String scanPath, Uri scanURI) {
+                    scannerConnection[0].disconnect();
+                    Log.i(TAG_NAME, "scanPath:" + scanPath);
+                    Log.i(TAG_NAME, "scanURI:" + scanURI);
+                }
+            };
+            Thread.sleep(2000);
+            scannerConnection[0] = new MediaScannerConnection(context, scannerClient);
+            scannerConnection[0].connect();
+        } catch (Exception e) {
             Log.i(TAG_NAME, e.toString());
         }
     }

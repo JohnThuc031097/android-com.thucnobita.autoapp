@@ -82,6 +82,7 @@ public class Utils {
                         }
                     }
                 }else{
+                    dir.delete();
                     return true;
                 }
             }else{

@@ -166,7 +166,7 @@ public class BotFragment extends Fragment {
                     if(initBot()){
                         if(clearCache(v.getContext())){
                             try {
-                                Thread.sleep(3000);
+                                Thread.sleep(2000);
                             }catch (Exception e){
                                 Log.i(TAG_NAME , e.toString());
                             }
