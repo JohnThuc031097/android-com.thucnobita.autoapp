@@ -85,7 +85,11 @@ public class Utils {
                     return true;
                 }
             }else{
-                return dir.delete() && MediaUtils.deleteMedia(context, dir) > 0;
+                if(Build.VERSION.SDK_INT > Build.VERSION_CODES.R){
+                    return dir.delete();
+                }else{
+                    return dir.delete() && MediaUtils.deleteMedia(context, dir) > 0;
+                }
             }
         }
         return true;

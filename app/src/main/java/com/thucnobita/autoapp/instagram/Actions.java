@@ -238,37 +238,39 @@ public class Actions {
     public boolean click_copy_link_video_saved() throws UiObjectNotFoundException, InterruptedException, RemoteException {
         ArrayList<Selector> arrSelector = selectors.copy_remove_link_video_saved();
         Thread.sleep(3000);
-        Selector selectorSelectVideo = arrSelector.get(0);
-//        Selector selectorSelectVideo = automatorService.exist(arrSelector.get(0))
-//                ? arrSelector.get(0)
-//                : arrSelector.get(1);
+//        Selector selectorSelectVideo = arrSelector.get(0);
+        Selector selectorSelectVideo = automatorService.exist(arrSelector.get(0))
+                ? arrSelector.get(0)
+                : automatorService.exist(arrSelector.get(1))
+                    ? arrSelector.get(1)
+                    : arrSelector.get(2);
         if (click(selectorSelectVideo, 5)) { // Select video
 //            Thread.sleep(1000);
 //            click(selectorSelectVideo, 5); // use for emulator
             Thread.sleep(1000);
-            click(arrSelector.get(1), 1); // Pause video
+            click(arrSelector.get(3), 1); // Pause video
             Thread.sleep(1000);
-            Selector selectorMore = automatorService.exist(arrSelector.get(2))
-                    ? arrSelector.get(2)
-                    : arrSelector.get(3);
+            Selector selectorMore = automatorService.exist(arrSelector.get(4))
+                    ? arrSelector.get(4)
+                    : arrSelector.get(5);
             if(click(selectorMore, 5)){ // Show More
                 Thread.sleep(3000);
-                Selector selectorCopyLink = automatorService.exist(arrSelector.get(4))
-                        ? arrSelector.get(4)
-                        : automatorService.exist(arrSelector.get(5))
-                            ? arrSelector.get(5)
-                            : arrSelector.get(6);
+                Selector selectorCopyLink = automatorService.exist(arrSelector.get(6))
+                        ? arrSelector.get(6)
+                        : automatorService.exist(arrSelector.get(7))
+                            ? arrSelector.get(7)
+                            : arrSelector.get(8);
                 if (click(selectorCopyLink, 5)) { // 1.Copy link
                     Thread.sleep(3000);
-                    if (click(arrSelector.get(7), 5)) { // Again Select video
+                    if (click(arrSelector.get(9), 5)) { // Again Select video
                         Thread.sleep(3000);
                         if (click(selectorMore, 5)) { // Show More
                             Thread.sleep(3000);
-                            Selector selectorRemoveSaved = automatorService.exist(arrSelector.get(8))
-                                    ? arrSelector.get(8)
-                                    : automatorService.exist(arrSelector.get(9))
-                                        ? arrSelector.get(9)
-                                        : arrSelector.get(10);
+                            Selector selectorRemoveSaved = automatorService.exist(arrSelector.get(10))
+                                    ? arrSelector.get(10)
+                                    : automatorService.exist(arrSelector.get(11))
+                                        ? arrSelector.get(11)
+                                        : arrSelector.get(12);
                             if (click(selectorRemoveSaved, 5)) { // 2.Remove video
                                 Thread.sleep(3000);
                                 return automatorService.pressKey("back");
