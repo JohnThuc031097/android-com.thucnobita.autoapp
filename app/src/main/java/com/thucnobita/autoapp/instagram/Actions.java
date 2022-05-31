@@ -127,18 +127,21 @@ public class Actions {
                             if(click(arrSelector.get(4), 5)){ // Select folder share
                                 Thread.sleep(2000);
 //                                int totalFile = selectors.get_total_video_image_to_post(); // Get all file in browse
-                                int totalFile = totalImage + 1; // Get all file in browse
+                                int INDEX_ADD = automatorService.exist(arrSelector.get(5)) ? 1 : 0;
+                                int totalFile = totalImage + INDEX_ADD; // Get all file in browse
+                                int MAX_GIRD_WIDTH = 4;
+                                int INDEX_SKIP = 1;
+                                int INDEX_START = 1 + INDEX_ADD;
                                 if(totalFile > 0){
                                     if(click(selectors.btn_select_mutiple_file(), 5)){ // Click select check mutiple file
                                         Thread.sleep(1000);
-                                        int MAX_GIRD_WIDTH = 4;
-                                        int INDEX_SKIP = 1;
-                                        for (int i = 1; i <= totalFile; i++) {
+                                        for (int i = INDEX_START; i < totalFile; i++) {
                                             if(i == (MAX_GIRD_WIDTH + INDEX_SKIP)){
                                                 if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R){
                                                     totalFile = totalFile - i;
                                                     if(totalFile > 0){
                                                         i = 1;
+                                                        totalFile = totalFile + 1;
                                                     }
                                                 }
                                             }
@@ -152,7 +155,7 @@ public class Actions {
 //                                                    i = MAX_GIRD_WIDTH;
 //                                                    totalFile = i + 2;
 //                                                }
-                                                break;
+                                                return false;
                                             }
 //                                            if(!click(selector,5)){
 //                                                totalFile = totalFile - i;

@@ -46,9 +46,10 @@ public class MediaUtils {
                     Log.i(TAG_NAME, "scanURI:" + scanURI);
                 }
             };
-            Thread.sleep(2000);
+            Thread.sleep(1000);
             scannerConnection[0] = new MediaScannerConnection(context, scannerClient);
             scannerConnection[0].connect();
+            Thread.sleep(1000);
         } catch (Exception e) {
             Log.i(TAG_NAME, e.toString());
         }

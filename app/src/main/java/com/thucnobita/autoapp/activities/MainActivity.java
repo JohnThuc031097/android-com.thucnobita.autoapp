@@ -82,6 +82,8 @@ public class MainActivity extends AppCompatActivity   {
             };
             int requestCode = 200;
             requestPermissions(permissions, requestCode);
+            viewPager.setCurrentItem(1);
+            viewPager.setCurrentItem(0);
         }
     }
 
