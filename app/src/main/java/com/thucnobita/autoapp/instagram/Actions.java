@@ -135,7 +135,7 @@ public class Actions {
                                 if(totalFile > 0){
                                     if(click(selectors.btn_select_mutiple_file(), 5)){ // Click select check mutiple file
                                         Thread.sleep(1000);
-                                        for (int i = INDEX_START; i < totalFile; i++) {
+                                        for (int i = INDEX_START; i <= totalFile; i++) {
                                             if(i == (MAX_GIRD_WIDTH + INDEX_SKIP)){
                                                 if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R){
                                                     totalFile = totalFile - i;

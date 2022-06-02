@@ -180,11 +180,17 @@ class Data {
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/action_sheet_row_text_view");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
         selectors.add(selector);
+//        selector = new Selector(mAutomatorService.getInstrumentation());
+//        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+//        selector.setTextStartsWith("Choose from");
+//        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/label");
+//        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXTSTARTSWITH | Selector.MASK_RESOURCEID);
+//        selectors.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setTextStartsWith("Choose from");
-        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/label");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXTSTARTSWITH | Selector.MASK_RESOURCEID);
+        selector.setIndex(0);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/inner_container");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_INDEX | Selector.MASK_RESOURCEID);
         selectors.add(selector);
         return selectors;
     }
