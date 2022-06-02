@@ -125,23 +125,24 @@ public class Actions {
                         if(click(arrSelector.get(3), 5)){ // Click comboBox Gallery
                             Thread.sleep(2000);
                             if(click(arrSelector.get(4), 5)){ // Select folder share
-                                Thread.sleep(2000);
+                                Thread.sleep(3000);
 //                                int totalFile = selectors.get_total_video_image_to_post(); // Get all file in browse
+                                int INDEX_MODE = 1; // if test debug set mode = 0 else mode = 1
                                 int INDEX_ADD = automatorService.exist(arrSelector.get(5)) ? 1 : 0;
-                                int totalFile = totalImage + INDEX_ADD; // Get all file in browse
+                                int INDEX_TOTAL = totalImage + INDEX_ADD + INDEX_MODE; // Get all file in browse
                                 int MAX_GIRD_WIDTH = 4;
                                 int INDEX_SKIP = 1;
                                 int INDEX_START = 1 + INDEX_ADD;
-                                if(totalFile > 0){
+                                if(INDEX_TOTAL > 0){
                                     if(click(selectors.btn_select_mutiple_file(), 5)){ // Click select check mutiple file
-                                        Thread.sleep(1000);
-                                        for (int i = INDEX_START; i <= totalFile; i++) {
+                                        Thread.sleep(2000);
+                                        for (int i = INDEX_START; i < INDEX_TOTAL; i++) {
                                             if(i == (MAX_GIRD_WIDTH + INDEX_SKIP)){
                                                 if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R){
-                                                    totalFile = totalFile - i;
-                                                    if(totalFile > 0){
+                                                    INDEX_TOTAL = INDEX_TOTAL - i;
+                                                    if(INDEX_TOTAL > 0){
                                                         i = 1;
-                                                        totalFile = totalFile + 1;
+                                                        INDEX_TOTAL = INDEX_TOTAL + 1;
                                                     }
                                                 }
                                             }
@@ -163,7 +164,7 @@ public class Actions {
 //                                            }
                                             Thread.sleep(1000);
                                         }
-                                        Thread.sleep(5000);
+                                        Thread.sleep(3000);
                                         Selector selectorBtnNext = selectors.share_video_image_to_feed();
                                         if(click(selectorBtnNext, 5)){ // Click button Next
                                             Thread.sleep(5000);
