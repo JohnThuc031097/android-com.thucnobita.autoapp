@@ -182,9 +182,9 @@ class Data {
         selectors.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setText("Choose from photos");
+        selector.setTextStartsWith("Choose from");
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/label");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXTSTARTSWITH | Selector.MASK_RESOURCEID);
         selectors.add(selector);
         return selectors;
     }
