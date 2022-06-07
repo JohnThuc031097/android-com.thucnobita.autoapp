@@ -230,24 +230,60 @@ class Data {
         return selector;
     }
 
-    public ArrayList<Selector> copy_remove_link_video_saved(){
-        ArrayList<Selector> selectors = new ArrayList<>();
+    public Selector get_media_group() {
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/media_group");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
-        selectors.add(selector);
-        selector = new Selector(mAutomatorService.getInstrumentation());
-        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/zoomable_view_container");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
-        selectors.add(selector);
-        selector = new Selector(mAutomatorService.getInstrumentation());
-        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/media_content_location");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
-        selectors.add(selector);
-        selector = new Selector(mAutomatorService.getInstrumentation());
+        ObjInfo[] objInfos = mAutomatorService.objInfoOfAllInstances(selector);
+        int tryAgain = 3;
+        while (tryAgain-- > 0 && objInfos.length == 0){
+            try {
+                Thread.sleep(1000);
+                objInfos = mAutomatorService.objInfoOfAllInstances(selector);
+            }catch (Exception e){
+                tryAgain = 0;
+            }
+        }
+        Selector selectorChild = null;
+        if(objInfos.length == 1){
+            selectorChild = new Selector(mAutomatorService.getInstrumentation());
+            selectorChild.setPackageName(objInfos[0].getPackageName());
+            selectorChild.setDescription(objInfos[0].getContentDescription());
+            selectorChild.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION);
+        }else if(objInfos.length == 2){
+            selectorChild = new Selector(mAutomatorService.getInstrumentation());
+            selectorChild.setPackageName(objInfos[1].getPackageName());
+            selectorChild.setDescription(objInfos[1].getContentDescription());
+            selectorChild.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION);
+        }
+        return selectorChild;
+    }
+
+    public ArrayList<Selector> copy_remove_link_video_saved(){
+        ArrayList<Selector> selectors = new ArrayList<>();
+        selectors.add(get_media_group());
+//        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+//        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+//        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/media_group");
+//        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+//        selectors.add(selector);
+//        selector = new Selector(mAutomatorService.getInstrumentation());
+//        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+//        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/video_attributes_location_for_tall_tower");
+//        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+//        selectors.add(selector);
+//        selector = new Selector(mAutomatorService.getInstrumentation());
+//        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+//        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/zoomable_view_container");
+//        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+//        selectors.add(selector);
+//        selector = new Selector(mAutomatorService.getInstrumentation());
+//        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+//        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/media_content_location");
+//        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+//        selectors.add(selector);
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/play_pause_button");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
