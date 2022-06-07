@@ -145,7 +145,7 @@ public class Actions {
                                                 if(i == 3){
                                                     isReset = true;
                                                     if(!automatorService.exist(arrSelector.get(5))){
-//                                                        INDEX_TOTAL = INDEX_TOTAL - i;// + 1
+                                                        INDEX_TOTAL = INDEX_TOTAL - 1;
                                                         i = 1;
                                                         continue;
                                                     }
