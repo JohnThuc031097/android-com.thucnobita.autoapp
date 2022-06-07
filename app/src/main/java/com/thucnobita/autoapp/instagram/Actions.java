@@ -127,7 +127,10 @@ public class Actions {
                             if(click(arrSelector.get(4), 5)){ // Select folder share
                                 Thread.sleep(3000);
 //                                int totalFile = selectors.get_total_video_image_to_post(); // Get all file in browse
-                                int INDEX_MODE = 1; // if test debug set mode = 0 else mode = 1
+                                // INDEX_MODE:
+                                // + Test = 0
+                                // + Build = 1
+                                int INDEX_MODE = 1;
                                 int INDEX_ADD = automatorService.exist(arrSelector.get(5)) ? 1 : 0;
                                 int INDEX_TOTAL = totalImage + INDEX_ADD + INDEX_MODE; // Get all file in browse
                                 int MAX_GIRD_WIDTH = 4;
@@ -140,12 +143,12 @@ public class Actions {
                                         for (int i = INDEX_START; i < INDEX_TOTAL; i++) {
                                             if(!isReset){
                                                 if(i == 3){
-                                                    if(!automatorService.exist(arrSelector.get(5))){
-                                                        INDEX_TOTAL = INDEX_TOTAL - i;// + 1
-                                                        i = 1;
-                                                    }
                                                     isReset = true;
-                                                    continue;
+                                                    if(!automatorService.exist(arrSelector.get(5))){
+//                                                        INDEX_TOTAL = INDEX_TOTAL - i;// + 1
+                                                        i = 1;
+                                                        continue;
+                                                    }
                                                 }
                                             }
                                             if(i == (MAX_GIRD_WIDTH + INDEX_SKIP)){
@@ -163,16 +166,8 @@ public class Actions {
                                             selector.setIndex(i);
                                             selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_INDEX);
                                             if(!click(selector, 5)){
-//                                                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R){
-//                                                    i = MAX_GIRD_WIDTH;
-//                                                    totalFile = i + 2;
-//                                                }
                                                 return false;
                                             }
-//                                            if(!click(selector,5)){
-//                                                totalFile = totalFile - i;
-//                                                i = 0;
-//                                            }
                                             Thread.sleep(2000);
                                         }
                                         Thread.sleep(3000);
