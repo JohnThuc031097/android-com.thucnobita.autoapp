@@ -139,10 +139,13 @@ public class Actions {
                                         Thread.sleep(2000);
                                         for (int i = INDEX_START; i < INDEX_TOTAL; i++) {
                                             if(!isReset){
-                                                if(i == 3 && INDEX_ADD == 1){
-                                                    i = 1;
-                                                    INDEX_TOTAL = (INDEX_TOTAL - 1) + INDEX_MODE;
+                                                if(i == 3){
+                                                    if(!automatorService.exist(arrSelector.get(5))){
+                                                        INDEX_TOTAL = INDEX_TOTAL - i;// + 1
+                                                        i = 1;
+                                                    }
                                                     isReset = true;
+                                                    continue;
                                                 }
                                             }
                                             if(i == (MAX_GIRD_WIDTH + INDEX_SKIP)){
