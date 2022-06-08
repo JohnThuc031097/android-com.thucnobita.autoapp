@@ -126,61 +126,103 @@ public class Actions {
                             Thread.sleep(2000);
                             if(click(arrSelector.get(4), 5)){ // Select folder share
                                 Thread.sleep(3000);
+                                if(click(selectors.btn_select_mutiple_file(), 5)){ // Click select check mutiple file
+                                    Thread.sleep(2000);
+                                    Selector selector = new Selector(automatorService.getInstrumentation());
+                                    selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+                                    selector.setClassName("android.widget.CheckBox");
+                                    selector.setDescriptionStartsWith("Photo thumbnail, Added on");
+                                    selector.setMask(Selector.MASK_PACKAGENAME
+                                            | Selector.MASK_CLASSNAME
+                                            | Selector.MASK_DESCRIPTIONSTARTSWITH);
+                                    int images = totalImage;// -1 for mode test
+                                    while (images > 0){
+                                        if(!click(selector, 5)){
+                                            return false;
+                                        }
+                                        images--;
+                                        Thread.sleep(2000);
+                                    }
+                                    Thread.sleep(3000);
+                                    Selector selectorBtnNext = selectors.share_video_image_to_feed();
+                                    if(click(selectorBtnNext, 5)){ // Click button Next
+                                        Thread.sleep(5000);
+                                        if(click(selectorBtnNext, 5)){  // Click button Next
+                                            Thread.sleep(5000);
+                                            return waitGone(selectorBtnNext, 60 * 5);
+                                        }
+                                    }
+                                }
 //                                int totalFile = selectors.get_total_video_image_to_post(); // Get all file in browse
                                 // INDEX_MODE:
                                 // + Test = 0
                                 // + Build = 1
-                                int INDEX_MODE = 1;
-                                int INDEX_ADD = automatorService.exist(arrSelector.get(5)) ? 1 : 0;
-                                int INDEX_TOTAL = totalImage + INDEX_ADD + INDEX_MODE; // Get all file in browse
-                                int MAX_GIRD_WIDTH = 4;
-                                int INDEX_SKIP = 1;
-                                int INDEX_START = 1 + INDEX_ADD;
-                                boolean isReset = INDEX_ADD != 1;
-                                if(INDEX_TOTAL > 0){
-                                    if(click(selectors.btn_select_mutiple_file(), 5)){ // Click select check mutiple file
-                                        Thread.sleep(2000);
-                                        for (int i = INDEX_START; i < INDEX_TOTAL; i++) {
-                                            if(!isReset){
-                                                if(i == 3){
-                                                    isReset = true;
-                                                    if(!automatorService.exist(arrSelector.get(5))){
-                                                        INDEX_TOTAL = INDEX_TOTAL - (i - 1);
-                                                        i = 1;
-                                                        continue;
-                                                    }
-                                                }
-                                            }
-                                            if(i == (MAX_GIRD_WIDTH + INDEX_SKIP)){
-                                                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R){
-                                                    INDEX_TOTAL = INDEX_TOTAL - i;
-                                                    if(INDEX_TOTAL > 0){
-                                                        i = 1;
-                                                        INDEX_TOTAL = INDEX_TOTAL + 1;
-                                                    }
-                                                }
-                                            }
-                                            Selector selector = new Selector(automatorService.getInstrumentation());
-                                            selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-                                            selector.setClassName("android.widget.CheckBox");
-                                            selector.setIndex(i);
-                                            selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_INDEX);
-                                            if(!click(selector, 5)){
-                                                return false;
-                                            }
-                                            Thread.sleep(2000);
-                                        }
-                                        Thread.sleep(3000);
-                                        Selector selectorBtnNext = selectors.share_video_image_to_feed();
-                                        if(click(selectorBtnNext, 5)){ // Click button Next
-                                            Thread.sleep(5000);
-                                            if(click(selectorBtnNext, 5)){  // Click button Next
-                                                Thread.sleep(5000);
-                                                return waitGone(selectorBtnNext, 60 * 5);
-                                            }
-                                        }
-                                    }
-                                }
+//                                int INDEX_MODE = 1;
+//                                int INDEX_ADD = automatorService.exist(arrSelector.get(5)) ? 1 : 0;
+//                                int INDEX_TOTAL = totalImage + INDEX_ADD + INDEX_MODE; // Get all file in browse
+//                                int MAX_GIRD_WIDTH = 4;
+//                                int INDEX_SKIP = 1;
+//                                int INDEX_START = 1 + INDEX_ADD;
+//                                boolean isReset = INDEX_ADD != 1;
+//                                if(INDEX_TOTAL > 0){
+//                                    if(click(selectors.btn_select_mutiple_file(), 5)){ // Click select check mutiple file
+//                                        Thread.sleep(2000);
+//                                        Selector selector = new Selector(automatorService.getInstrumentation());
+//                                        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+//                                        selector.setClassName("android.widget.CheckBox");
+//                                        selector.setDescriptionStartsWith("Photo thumbnail, Added on");
+//                                        selector.setMask(Selector.MASK_PACKAGENAME
+//                                                | Selector.MASK_CLASSNAME
+//                                                | Selector.MASK_DESCRIPTIONSTARTSWITH);
+//                                        int total = totalImage;// -1 for mode test
+//                                        while (total > 0){
+//                                            if(!click(selector, 5)){
+//                                                return false;
+//                                            }
+//                                            total--;
+//                                            Thread.sleep(2000);
+//                                        }
+//                                        for (int i = INDEX_START; i < INDEX_TOTAL; i++) {
+//                                            if(!isReset){
+//                                                if(i == 3){
+//                                                    isReset = true;
+//                                                    if(!automatorService.exist(arrSelector.get(5))){
+//                                                        INDEX_TOTAL = INDEX_TOTAL - (i - 1);
+//                                                        i = 1;
+//                                                        continue;
+//                                                    }
+//                                                }
+//                                            }
+//                                            if(i == (MAX_GIRD_WIDTH + INDEX_SKIP)){
+//                                                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R){
+//                                                    INDEX_TOTAL = INDEX_TOTAL - i;
+//                                                    if(INDEX_TOTAL > 0){
+//                                                        i = 1;
+//                                                        INDEX_TOTAL = INDEX_TOTAL + 1;
+//                                                    }
+//                                                }
+//                                            }
+//                                            Selector selector = new Selector(automatorService.getInstrumentation());
+//                                            selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+//                                            selector.setClassName("android.widget.CheckBox");
+//                                            selector.setIndex(i);
+//                                            selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_INDEX);
+//                                            if(!click(selector, 5)){
+//                                                return false;
+//                                            }
+//                                            Thread.sleep(2000);
+//                                        }
+//                                        Thread.sleep(3000);
+//                                        Selector selectorBtnNext = selectors.share_video_image_to_feed();
+//                                        if(click(selectorBtnNext, 5)){ // Click button Next
+//                                            Thread.sleep(5000);
+//                                            if(click(selectorBtnNext, 5)){  // Click button Next
+//                                                Thread.sleep(5000);
+//                                                return waitGone(selectorBtnNext, 60 * 5);
+//                                            }
+//                                        }
+//                                    }
+//                                }
                             }
                         }
                     }
@@ -251,8 +293,8 @@ public class Actions {
         Selector selectorSelectVideo = arrSelector.get(0);
         if(selectorSelectVideo != null){
             if (click(selectorSelectVideo, 5)) { // Select video
-            Thread.sleep(1000);
-            click(selectorSelectVideo, 5); // use for emulator
+//            Thread.sleep(1000);
+//            click(selectorSelectVideo, 5); // use for emulator
                 Thread.sleep(1000);
                 click(arrSelector.get(1), 1); // Pause video
                 Thread.sleep(1000);
