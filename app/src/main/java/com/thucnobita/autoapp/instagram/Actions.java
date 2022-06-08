@@ -145,7 +145,7 @@ public class Actions {
                                                 if(i == 3){
                                                     isReset = true;
                                                     if(!automatorService.exist(arrSelector.get(5))){
-                                                        INDEX_TOTAL = INDEX_TOTAL - 1;
+                                                        INDEX_TOTAL = INDEX_TOTAL - (i - 1);
                                                         i = 1;
                                                         continue;
                                                     }
@@ -246,12 +246,13 @@ public class Actions {
     }
 
     public boolean click_copy_link_video_saved() throws UiObjectNotFoundException, InterruptedException, RemoteException {
-        Thread.sleep(2000);
         ArrayList<Selector> arrSelector = selectors.copy_remove_link_video_saved();
-        if(arrSelector.get(0) != null){
-            if (click(arrSelector.get(0), 5)) { // Select video
-//            Thread.sleep(1000);
-//            click(selectorSelectVideo, 5); // use for emulator
+        Thread.sleep(2000);
+        Selector selectorSelectVideo = arrSelector.get(0);
+        if(selectorSelectVideo != null){
+            if (click(selectorSelectVideo, 5)) { // Select video
+            Thread.sleep(1000);
+            click(selectorSelectVideo, 5); // use for emulator
                 Thread.sleep(1000);
                 click(arrSelector.get(1), 1); // Pause video
                 Thread.sleep(1000);
@@ -267,6 +268,7 @@ public class Actions {
                             : arrSelector.get(6);
                     if (click(selectorCopyLink, 5)) { // 1.Copy link
                         Thread.sleep(3000);
+//                        return automatorService.pressKey("back");
                         if (click(arrSelector.get(7), 5)) { // Again Select video
                             Thread.sleep(3000);
                             if (click(selectorMore, 5)) { // Show More
