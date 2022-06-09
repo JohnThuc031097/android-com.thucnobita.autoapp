@@ -47,7 +47,8 @@ public class Actions {
             if(click(selectors.tab_feed(), 5)){
                 Thread.sleep(2000);
                 // Wait for process done (time wait default: 10 min)
-                return waitGone(selectors.post_wait_done_after_upload(), 60 * 10);
+                Selector selectorWaitDone = selectors.post_wait_done_after_upload();
+                return waitGone(selectorWaitDone, 60 * 10);
             }
         }
         return false;
