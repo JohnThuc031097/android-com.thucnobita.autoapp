@@ -1,6 +1,5 @@
 package com.thucnobita.autoapp.instagram;
 
-import android.os.Build;
 import android.os.RemoteException;
 
 import androidx.test.uiautomator.UiObjectNotFoundException;
@@ -10,7 +9,6 @@ import com.thucnobita.autoapp.utils.Utils;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 import com.thucnobita.uiautomator.Selector;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Actions {
@@ -114,6 +112,96 @@ public class Actions {
         return false;
     }
 
+    public boolean share_image_to_story(String folderShare, String linkSticker, int totalImage) throws UiObjectNotFoundException, InterruptedException {
+        ArrayList<Selector> arrSelector = selectors.share_story_select_folder(folderShare);
+        if(click(arrSelector.get(0), 5)){ // Choose mode create post
+            Thread.sleep(2000);
+            if(click(arrSelector.get(1), 5)){ // Select mode "Story"
+                Thread.sleep(2000);
+                if(click(arrSelector.get(2), 5)) { // Choose folder
+                    Thread.sleep(2000);
+                    if(click(arrSelector.get(3), 5)) { // Select folderShare
+                        Thread.sleep(2000);
+                        int images = totalImage;
+                        if(images > 0){
+                            if (click(selectors.share_story_btn_multiple_select(), 5)) {
+                                Thread.sleep(2000);
+                                for (int i = 1; i <= images ; i++) {
+                                    Selector selectorButton = new Selector(automatorService.getInstrumentation());
+                                    selectorButton.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+                                    selectorButton.setClassName("android.widget.Button");
+                                    selectorButton.setDescription("Photo thumbnail");
+                                    selectorButton.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/gallery_grid_item_thumbnail");
+                                    selectorButton.setMask(Selector.MASK_PACKAGENAME| Selector.MASK_CLASSNAME| Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
+                                    Selector selectorImageView = new Selector(automatorService.getInstrumentation());
+                                    selectorImageView.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+                                    selectorImageView.setClassName("android.widget.ImageView");
+                                    selectorImageView.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/gallery_grid_item_selection_circle");
+                                    selectorImageView.setMask(Selector.MASK_PACKAGENAME| Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID);
+                                    Selector selectorViewGroup = new Selector(automatorService.getInstrumentation());
+                                    selectorViewGroup.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+                                    selectorViewGroup.setClassName("android.view.ViewGroup");
+                                    selectorViewGroup.setIndex(i);
+                                    selectorViewGroup.setChildOrSiblingSelector(new Selector[] { selectorButton, selectorImageView });
+                                    selectorViewGroup.setMask(Selector.MASK_PACKAGENAME| Selector.MASK_CLASSNAME| Selector.MASK_INDEX);
+                                    click(selectorViewGroup, 5);
+//                                    if(!click(selectorViewGroup, 5)) return false;
+                                    Thread.sleep(2000);
+                                }
+                            }
+                        }
+                        Thread.sleep(3000);
+                        if(click(selectors.share_story_btn_next(), 5)){
+                            Thread.sleep(2000);
+                            if(click(selectors.share_story_select_type(), 5)){
+                                Thread.sleep(5000);
+                                if(click(selectors.share_story_select_type_sticker(), 5)){
+                                    Thread.sleep(2000);
+                                    if(automatorService.exist(selectors.share_story_search_sticker())){
+                                        Thread.sleep(2000);
+                                        if(automatorService.setText(selectors.share_story_search_sticker(), "link")){
+                                            Thread.sleep(5000);
+                                            if(click(selectors.share_story_select_type_link_sticker(), 5)){
+                                                Thread.sleep(2000);
+                                                if(automatorService.exist(selectors.share_story_add_link_sticker())){
+                                                    Thread.sleep(2000);
+                                                    if(automatorService.setText(selectors.share_story_add_link_sticker(), linkSticker)){
+                                                        Thread.sleep(5000);
+                                                        if(click(selectors.share_story_done_add_link_sticker(), 5)){
+                                                            Thread.sleep(2000);
+                                                            ArrayList<Selector> arrSelectorSharePost = selectors.share_story_share_post();
+                                                            if(click(arrSelectorSharePost.get(0), 5)){ // Click Share 1
+                                                                Thread.sleep(2000);
+                                                                if(click(arrSelectorSharePost.get(1), 5)){ // Click Share 2
+                                                                    Thread.sleep(2000);
+                                                                    if(waitGone(arrSelectorSharePost.get(1), 60 * 5)){
+                                                                        Thread.sleep(2000);
+                                                                        if(click(arrSelectorSharePost.get(2), 5)){
+                                                                            Thread.sleep(2000);
+                                                                            if(click(arrSelectorSharePost.get(3), 5)){
+                                                                                Thread.sleep(2000);
+                                                                                return waitGone(selectors.share_story_wait_done(), 60 * 10);
+                                                                            }
+                                                                        }
+                                                                    }
+                                                                }
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public boolean share_video_image_to_feed(String folderShare, int totalImage) throws UiObjectNotFoundException, InterruptedException {
         ArrayList<Selector> arrSelector = selectors.browse_select_video_image_to_post(folderShare);
         if(click_profile()){
@@ -128,9 +216,9 @@ public class Actions {
                             Thread.sleep(2000);
                             if(click(arrSelector.get(4), 5)){ // Select folder share
                                 Thread.sleep(3000);
-                                int images = totalImage;// -1 for mode test
+                                int images = totalImage - 1;// -1 for mode test
                                     if(images > 0) {
-                                        if (click(selectors.btn_select_mutiple_file(), 5)) { // Click select check mutiple file
+                                        if (click(selectors.btn_select_multiple_file(), 5)) { // Click select check mutiple file
                                             Selector selector = new Selector(automatorService.getInstrumentation());
                                             selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
                                             selector.setClassName("android.widget.CheckBox");
@@ -159,76 +247,6 @@ public class Actions {
                                             return waitGone(selectorBtnNext, 60 * 5);
                                         }
                                     }
-//                                int totalFile = selectors.get_total_video_image_to_post(); // Get all file in browse
-                                // INDEX_MODE:
-                                // + Test = 0
-                                // + Build = 1
-//                                int INDEX_MODE = 1;
-//                                int INDEX_ADD = automatorService.exist(arrSelector.get(5)) ? 1 : 0;
-//                                int INDEX_TOTAL = totalImage + INDEX_ADD + INDEX_MODE; // Get all file in browse
-//                                int MAX_GIRD_WIDTH = 4;
-//                                int INDEX_SKIP = 1;
-//                                int INDEX_START = 1 + INDEX_ADD;
-//                                boolean isReset = INDEX_ADD != 1;
-//                                if(INDEX_TOTAL > 0){
-//                                    if(click(selectors.btn_select_mutiple_file(), 5)){ // Click select check mutiple file
-//                                        Thread.sleep(2000);
-//                                        Selector selector = new Selector(automatorService.getInstrumentation());
-//                                        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-//                                        selector.setClassName("android.widget.CheckBox");
-//                                        selector.setDescriptionStartsWith("Photo thumbnail, Added on");
-//                                        selector.setMask(Selector.MASK_PACKAGENAME
-//                                                | Selector.MASK_CLASSNAME
-//                                                | Selector.MASK_DESCRIPTIONSTARTSWITH);
-//                                        int total = totalImage;// -1 for mode test
-//                                        while (total > 0){
-//                                            if(!click(selector, 5)){
-//                                                return false;
-//                                            }
-//                                            total--;
-//                                            Thread.sleep(2000);
-//                                        }
-//                                        for (int i = INDEX_START; i < INDEX_TOTAL; i++) {
-//                                            if(!isReset){
-//                                                if(i == 3){
-//                                                    isReset = true;
-//                                                    if(!automatorService.exist(arrSelector.get(5))){
-//                                                        INDEX_TOTAL = INDEX_TOTAL - (i - 1);
-//                                                        i = 1;
-//                                                        continue;
-//                                                    }
-//                                                }
-//                                            }
-//                                            if(i == (MAX_GIRD_WIDTH + INDEX_SKIP)){
-//                                                if(Build.VERSION.SDK_INT < Build.VERSION_CODES.R){
-//                                                    INDEX_TOTAL = INDEX_TOTAL - i;
-//                                                    if(INDEX_TOTAL > 0){
-//                                                        i = 1;
-//                                                        INDEX_TOTAL = INDEX_TOTAL + 1;
-//                                                    }
-//                                                }
-//                                            }
-//                                            Selector selector = new Selector(automatorService.getInstrumentation());
-//                                            selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-//                                            selector.setClassName("android.widget.CheckBox");
-//                                            selector.setIndex(i);
-//                                            selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_INDEX);
-//                                            if(!click(selector, 5)){
-//                                                return false;
-//                                            }
-//                                            Thread.sleep(2000);
-//                                        }
-//                                        Thread.sleep(3000);
-//                                        Selector selectorBtnNext = selectors.share_video_image_to_feed();
-//                                        if(click(selectorBtnNext, 5)){ // Click button Next
-//                                            Thread.sleep(5000);
-//                                            if(click(selectorBtnNext, 5)){  // Click button Next
-//                                                Thread.sleep(5000);
-//                                                return waitGone(selectorBtnNext, 60 * 5);
-//                                            }
-//                                        }
-//                                    }
-//                                }
                             }
                         }
                     }
@@ -316,22 +334,22 @@ public class Actions {
                             : arrSelector.get(6);
                     if (click(selectorCopyLink, 5)) { // 1.Copy link
                         Thread.sleep(3000);
-//                        return automatorService.pressKey("back");
-                        if (click(arrSelector.get(7), 5)) { // Again Select video
-                            Thread.sleep(3000);
-                            if (click(selectorMore, 5)) { // Show More
-                                Thread.sleep(3000);
-                                Selector selectorRemoveSaved = automatorService.exist(arrSelector.get(8))
-                                        ? arrSelector.get(8)
-                                        : automatorService.exist(arrSelector.get(9))
-                                        ? arrSelector.get(9)
-                                        : arrSelector.get(10);
-                                if (click(selectorRemoveSaved, 5)){ // 2.Remove video
-                                    Thread.sleep(3000);
-                                    return automatorService.pressKey("back");
-                                }
-                            }
-                        }
+                        return automatorService.pressKey("back");
+//                        if (click(arrSelector.get(7), 5)) { // Again Select video
+//                            Thread.sleep(3000);
+//                            if (click(selectorMore, 5)) { // Show More
+//                                Thread.sleep(3000);
+//                                Selector selectorRemoveSaved = automatorService.exist(arrSelector.get(8))
+//                                        ? arrSelector.get(8)
+//                                        : automatorService.exist(arrSelector.get(9))
+//                                        ? arrSelector.get(9)
+//                                        : arrSelector.get(10);
+//                                if (click(selectorRemoveSaved, 5)){ // 2.Remove video
+//                                    Thread.sleep(3000);
+//                                    return automatorService.pressKey("back");
+//                                }
+//                            }
+//                        }
                     }
                 }
             }

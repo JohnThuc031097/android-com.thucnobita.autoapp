@@ -12,6 +12,4 @@ public interface Constants {
     String FOLDER_NAME_UPLOAD = "Instagram";
     String FOLDER_NAME_IMAGE = "images";
 //    String FOLDER_NAME_CREDENTIAL = "credentials";
-    // Value default
-    int LIMIT_IMAGE_UPLOAD = 9;
 }

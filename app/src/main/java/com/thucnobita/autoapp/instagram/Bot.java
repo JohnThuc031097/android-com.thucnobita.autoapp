@@ -87,7 +87,7 @@ public class Bot {
         return result;
     }
 
-    public int copy_image(Context context, String account){
+    public int copy_image(Context context, String account, int countMaxImage){
         try{
             String pathFolderImage = String.format("%s/%s/%s/%s",
                     Constants.FOLDER_ROOT,
@@ -102,15 +102,15 @@ public class Bot {
             if(fileImages != null){
                 if(fileImages.length > 0){
                     Log.i(TAG_NAME, "=> Find " + fileImages.length + " file image in folder user ");
-                    int totalImage = Constants.LIMIT_IMAGE_UPLOAD;
-                    if(fileImages.length < Constants.LIMIT_IMAGE_UPLOAD){
-                        totalImage = fileImages.length;
+                    int totalImageUpload = countMaxImage;
+                    if(fileImages.length < countMaxImage){
+                        totalImageUpload = fileImages.length;
                     }
                     // Copy image from folder images/<user> to folder uploads
                     if(!new File(pathFolderUploads).exists()){
                         if(!new File(pathFolderUploads).mkdirs()) return 0;
                     }
-                    for (int i = 0; i < totalImage; i++) {
+                    for (int i = 0; i < totalImageUpload; i++) {
                         File pathImageNew = new File(pathFolderUploads, fileImages[i].getName());
                         if(fileImages[i].renameTo(pathImageNew)){
                             MediaUtils.updateMedia(context, pathImageNew);
@@ -119,8 +119,8 @@ public class Bot {
                             return 0;
                         }
                     }
-                    Log.i(TAG_NAME,"=> Copy " + totalImage + " file image to folder <Instagram> Ok");
-                    return totalImage;
+                    Log.i(TAG_NAME,"=> Copy " + totalImageUpload + " file image to folder <Instagram> Ok");
+                    return totalImageUpload;
                 }
             }
         }catch (Exception e){
@@ -221,7 +221,7 @@ public class Bot {
         boolean result = false;
         try{
             result = actions.share_video_to_reel(folderShare);
-            Log.i(TAG_NAME, "=> Click share video to reel => " + result);
+            Log.i(TAG_NAME, "=> Click share to reel => " + result);
         } catch (InterruptedException | UiObjectNotFoundException e) {
             e.printStackTrace();
         }
@@ -232,7 +232,7 @@ public class Bot {
         boolean result = false;
         try{
             result = actions.share_video_image_to_feed(folderShare, 0);
-            Log.i(TAG_NAME, "=> Click share video to reel => " + result);
+            Log.i(TAG_NAME, "=> Click share to reel => " + result);
         } catch (InterruptedException | UiObjectNotFoundException e) {
             e.printStackTrace();
         }
@@ -243,13 +243,35 @@ public class Bot {
         boolean result = false;
         try{
             result = actions.share_video_image_to_feed(folderShare, totalImage);
-            Log.i(TAG_NAME, "=> Click share video + image to post => " + result);
+            Log.i(TAG_NAME, "=> Click share to post => " + result);
         } catch (InterruptedException | UiObjectNotFoundException e) {
             e.printStackTrace();
         }
         return result;
     }
-    
+
+    public boolean share_image_to_feed(String folderShare, int totalImage){
+        boolean result = false;
+        try{
+            result = actions.share_video_image_to_feed(folderShare, totalImage);
+            Log.i(TAG_NAME, "=> Click share to post => " + result);
+        } catch (InterruptedException | UiObjectNotFoundException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
+    public boolean share_image_to_story(String folderShare, String linkSticker, int totalImage){
+        boolean result = false;
+        try{
+            result = actions.share_image_to_story(folderShare, linkSticker, totalImage);
+            Log.i(TAG_NAME, "=> Click share image to post => " + result);
+        } catch (InterruptedException | UiObjectNotFoundException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     public boolean login(Context context, String username, String password) {
         if(client == null){
             client = loadClientCookie(username);

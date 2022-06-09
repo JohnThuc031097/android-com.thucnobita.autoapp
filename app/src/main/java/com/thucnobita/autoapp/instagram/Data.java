@@ -112,6 +112,135 @@ class Data {
         return selectors;
     }
 
+    public ArrayList<Selector> share_story_select_folder(String folderShare){
+        ArrayList<Selector> arrSelector = new ArrayList<>();
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setDescription("Create a post, story, reel or live video.");
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/action_bar_left_button");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
+        arrSelector.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setText("Story");
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/overflow_menu_item_label");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
+        arrSelector.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/gallery_folder_menu");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        arrSelector.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setText(folderShare != null ? folderShare : "Instagram");
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/folder_picker_text_view");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
+        arrSelector.add(selector);
+        return arrSelector;
+    }
+
+    public Selector share_story_btn_multiple_select(){
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/gallery_menu_multi_select_button");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        return selector;
+    }
+
+    public Selector share_story_btn_next(){
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setText("Next");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT);
+        return selector;
+    }
+
+    public Selector share_story_select_type(){
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setText("Layout");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT);
+        return selector;
+    }
+
+    public Selector share_story_select_type_sticker(){
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setDescription("Emojis and stickers");
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/asset_button");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
+        return selector;
+    }
+
+    public Selector share_story_search_sticker(){
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/row_search_edit_text");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
+        return selector;
+    }
+
+    public Selector share_story_select_type_link_sticker(){
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setDescription("Link Sticker");
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/asset_item");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
+        return selector;
+    }
+
+    public Selector share_story_add_link_sticker(){
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/link_sticker_list_web_url_edit_text");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        return selector;
+    }
+
+    public Selector share_story_done_add_link_sticker(){
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/link_sticker_list_done_button");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        return selector;
+    }
+
+    public ArrayList<Selector> share_story_share_post(){
+        ArrayList<Selector> arrSelector = new ArrayList<>();
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/link_sticker_list_done_button");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        arrSelector.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/share_story_button");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        arrSelector.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setDescription("Done Button");
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/send_button");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
+        arrSelector.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/avatar_image_view");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        arrSelector.add(selector);
+        return arrSelector;
+    }
+
+    public Selector share_story_wait_done(){
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setText("Posting…");
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/toolbar_text");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
+        return selector;
+    }
+
     public ArrayList<Selector> share_video_image_to_feed(){
         ArrayList<Selector> selectors = new ArrayList<>();
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
@@ -169,33 +298,6 @@ class Data {
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_INDEX | Selector.MASK_RESOURCEID);
         selectors.add(selector);
         return selectors;
-    }
-
-    public int get_total_video_image_to_post() {
-        Selector selector = new Selector(mAutomatorService.getInstrumentation());
-        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setClassName("android.widget.CheckBox");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME);
-        ObjInfo[] objInfos = mAutomatorService.objInfoOfAllInstances(selector);
-        int tryAgain = 3;
-        while (tryAgain-- > 0 && objInfos.length == 0){
-            try {
-                Thread.sleep(1000L);
-                objInfos = mAutomatorService.objInfoOfAllInstances(selector);
-            }catch (Exception e){
-                tryAgain = 0;
-            }
-        }
-        return objInfos.length;
-    }
-
-    public Selector btn_select_mutiple_file(){
-        Selector selector = new Selector(mAutomatorService.getInstrumentation());
-        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setDescription("Select multiple");
-        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/multi_select_slide_button");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
-        return selector;
     }
 
     public Selector username_video_saved(){
@@ -365,6 +467,15 @@ class Data {
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID);
         selectors.add(selector);
         return selectors;
+    }
+
+    public Selector btn_select_multiple_file(){
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setDescription("Select multiple");
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/multi_select_slide_button");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
+        return selector;
     }
 
     public ArrayList<Selector> btn_continue(){
