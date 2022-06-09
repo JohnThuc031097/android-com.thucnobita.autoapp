@@ -153,7 +153,10 @@ public class Actions {
                                             ? selectorsBtnNext.get(0)
                                             : selectorsBtnNext.get(1);
                                     if(click(selectorBtnNext, 5)){ // Click button Next
-                                        Thread.sleep(5000);
+                                        Thread.sleep(2500);
+                                        Selector selectorBtnContinue = findSelector(selectors.btn_continue());
+                                        click(selectorBtnContinue, 5);
+                                        Thread.sleep(2500);
                                         selectorBtnNext = automatorService.exist(selectorsBtnNext.get(0))
                                                 ? selectorsBtnNext.get(0)
                                                 : selectorsBtnNext.get(1);

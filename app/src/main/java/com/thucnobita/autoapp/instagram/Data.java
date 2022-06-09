@@ -367,6 +367,21 @@ class Data {
         return selectors;
     }
 
+    public ArrayList<Selector> btn_continue(){
+        ArrayList<Selector> arrSelector = new ArrayList<>();
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setDescription("Continue");
+        selector.setMask(Selector.MASK_PACKAGENAME  | Selector.MASK_DESCRIPTION);
+        arrSelector.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setText("Continue");
+        selector.setMask(Selector.MASK_PACKAGENAME  | Selector.MASK_TEXT);
+        arrSelector.add(selector);
+        return arrSelector;
+    }
+
     public Selector btn_options(){
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
