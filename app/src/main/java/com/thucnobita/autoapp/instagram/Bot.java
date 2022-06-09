@@ -42,17 +42,6 @@ public class Bot {
         actions = new Actions(automatorService);
     }
 
-    public boolean recent_app() {
-        boolean result = false;
-        try{
-            result = actions.click_recent_app("Auto App");
-            Log.i(TAG_NAME, "=> Click recent app => " +  result);
-        }catch (RemoteException | UiObjectNotFoundException e){
-            e.printStackTrace();
-        }
-        return result;
-    }
-
     public boolean click_select_account(String username){
         boolean result = false;
         try{
@@ -193,12 +182,23 @@ public class Bot {
         return false;
     }
 
+    public boolean post_to_timeline(String content){
+        boolean result = false;
+        try{
+            result = actions.post_to_timeline(content);
+            Log.i(TAG_NAME, "=> Post feed => " + result);
+        } catch (UiObjectNotFoundException | InterruptedException | RemoteException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     public boolean post_reel(String content){
         boolean result = false;
         try{
             result = actions.click_profile();
             Log.i(TAG_NAME, "=> Click profile => " + result);
-            result = actions.post_reel(content);
+            result = actions.post_to_timeline(content);
             Log.i(TAG_NAME, "=> Post reel => " + result);
         } catch (UiObjectNotFoundException | InterruptedException | RemoteException e) {
             e.printStackTrace();
@@ -209,7 +209,7 @@ public class Bot {
     public boolean post_feed(String content){
         boolean result = false;
         try{
-            result = actions.post_feed(content);
+            result = actions.post_to_timeline(content);
             Log.i(TAG_NAME, "=> Post feed => " + result);
         } catch (UiObjectNotFoundException | InterruptedException | RemoteException e) {
             e.printStackTrace();
@@ -227,8 +227,19 @@ public class Bot {
         }
         return result;
     }
+
+    public boolean share_video_to_feed(String folderShare){
+        boolean result = false;
+        try{
+            result = actions.share_video_image_to_feed(folderShare, 0);
+            Log.i(TAG_NAME, "=> Click share video to reel => " + result);
+        } catch (InterruptedException | UiObjectNotFoundException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
     
-    public boolean share_video_to_feed(String folderShare, int totalImage){
+    public boolean share_tshirt_to_feed(String folderShare, int totalImage){
         boolean result = false;
         try{
             result = actions.share_video_image_to_feed(folderShare, totalImage);

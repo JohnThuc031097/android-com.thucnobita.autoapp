@@ -10,6 +10,7 @@ import com.thucnobita.autoapp.utils.Utils;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 import com.thucnobita.uiautomator.Selector;
 
+import java.lang.reflect.Array;
 import java.util.ArrayList;
 
 public class Actions {
@@ -21,57 +22,57 @@ public class Actions {
         this.selectors = new Data(automatorService);
     }
 
-    public boolean click_recent_app(String name) throws RemoteException, UiObjectNotFoundException {
-        return click(selectors.app_floating_view(), 5) || automatorService.pressKey("recent") && click(selectors.app_current(name), 5);
-    }
-
-    public boolean post_reel(String content) throws UiObjectNotFoundException, InterruptedException, RemoteException {
-        ArrayList<Selector> arrSelector = selectors.post_reel();
+    public boolean post_to_timeline(String content) throws UiObjectNotFoundException, InterruptedException, RemoteException {
+        Selector selectorInputContent = selectors.post_input_content();
         if(content != null){
-            automatorService.setText(arrSelector.get(0), content);
+            Thread.sleep(2000);
+            automatorService.setText(selectorInputContent, content);
         }
         Thread.sleep(2000);
         automatorService.pressKey("back"); // Hide keybroad
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         Selector selector = new Selector(automatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/tabs_viewpager");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
-        automatorService.swipe(selector, "u", 1000);
-        Thread.sleep(2000);
-        if(click(arrSelector.get(1), 5)){ // Click "Share" to begin post
-            Thread.sleep(1000);
-            if(click(arrSelector.get(2), 5)){ // Click return Home
-//                if(waitGone(arrSelector.get(4), 60 * 5)){ // Wait for process done (time wait default: 5 min)
-//                    return waitGone(arrSelector.get(5), 60 * 5);
-//                }
+        if(automatorService.exist(selector)){
+            automatorService.swipe(selector, "u", 1000);
+            Thread.sleep(2000);
+        }
+        // Click "Share" to begin post
+        Selector selectorClickUpload = findSelector(selectors.post_click_upload());
+        if(click(selectorClickUpload, 5)){
+            Thread.sleep(2000);
+            // Click return tab feed
+            if(click(selectors.tab_feed(), 5)){
                 Thread.sleep(2000);
-                return waitGone(arrSelector.get(3), 60 * 10); // Wait for process done (time wait default: 10 min)
+                // Wait for process done (time wait default: 10 min)
+                return waitGone(selectors.post_wait_done_after_upload(), 60 * 10);
             }
         }
         return false;
     }
 
-    public boolean post_feed(String content) throws UiObjectNotFoundException, InterruptedException, RemoteException {
-        ArrayList<Selector> arrSelector = selectors.post_feed();
-        if(content != null){
-            automatorService.setText(arrSelector.get(0), content);
-        }
-        Thread.sleep(2000);
-        automatorService.pressKey("back"); // Hide keybroad
-        Thread.sleep(1000);
-        if(click(arrSelector.get(1), 5)){ // Click "Share" to begin post
-            Thread.sleep(1000);
-            if(click(arrSelector.get(2), 5)){ // Click return Home
-//                if(waitGone(arrSelector.get(3), 60 * 5)){ // Wait for process done (time wait default: 5 min)
-//                    return waitGone(arrSelector.get(5), 60 * 5);
-//                }
-                Thread.sleep(2000);
-                return waitGone(arrSelector.get(3), 60 * 10); // Wait for process done (time wait default: 10 min)
-            }
-        }
-        return false;
-    }
+//    public boolean post_feed(String content) throws UiObjectNotFoundException, InterruptedException, RemoteException {
+//        ArrayList<Selector> arrSelector = selectors.post_feed();
+//        if(content != null){
+//            automatorService.setText(arrSelector.get(0), content);
+//        }
+//        Thread.sleep(2000);
+//        automatorService.pressKey("back"); // Hide keybroad
+//        Thread.sleep(1000);
+//        if(click(arrSelector.get(1), 5)){ // Click "Share" to begin post
+//            Thread.sleep(1000);
+//            if(click(arrSelector.get(2), 5)){ // Click return Home
+////                if(waitGone(arrSelector.get(3), 60 * 5)){ // Wait for process done (time wait default: 5 min)
+////                    return waitGone(arrSelector.get(5), 60 * 5);
+////                }
+//                Thread.sleep(2000);
+//                return waitGone(arrSelector.get(3), 60 * 10); // Wait for process done (time wait default: 10 min)
+//            }
+//        }
+//        return false;
+//    }
 
     public boolean share_video_to_reel(String folderShare) throws UiObjectNotFoundException, InterruptedException {
         ArrayList<Selector> arrSelector = selectors.share_video_to_reel(folderShare);
@@ -126,33 +127,41 @@ public class Actions {
                             Thread.sleep(2000);
                             if(click(arrSelector.get(4), 5)){ // Select folder share
                                 Thread.sleep(3000);
-                                if(click(selectors.btn_select_mutiple_file(), 5)){ // Click select check mutiple file
-                                    Thread.sleep(2000);
-                                    Selector selector = new Selector(automatorService.getInstrumentation());
-                                    selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-                                    selector.setClassName("android.widget.CheckBox");
-                                    selector.setDescriptionStartsWith("Photo thumbnail, Added on");
-                                    selector.setMask(Selector.MASK_PACKAGENAME
-                                            | Selector.MASK_CLASSNAME
-                                            | Selector.MASK_DESCRIPTIONSTARTSWITH);
-                                    int images = totalImage;// -1 for mode test
-                                    while (images > 0){
-                                        if(!click(selector, 5)){
-                                            return false;
+                                int images = totalImage;// -1 for mode test
+                                    if(images > 0) {
+                                        if (click(selectors.btn_select_mutiple_file(), 5)) { // Click select check mutiple file
+                                            Selector selector = new Selector(automatorService.getInstrumentation());
+                                            selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+                                            selector.setClassName("android.widget.CheckBox");
+                                            selector.setDescriptionStartsWith("Photo thumbnail, Added on");
+                                            selector.setMask(Selector.MASK_PACKAGENAME
+                                                    | Selector.MASK_CLASSNAME
+                                                    | Selector.MASK_DESCRIPTIONSTARTSWITH);
+                                            Thread.sleep(2000);
+                                            while (images != 0){
+                                                if(!click(selector, 5)){
+                                                    return false;
+                                                }
+                                                images--;
+                                                Thread.sleep(2000);
+                                            }
                                         }
-                                        images--;
-                                        Thread.sleep(2000);
                                     }
                                     Thread.sleep(3000);
-                                    Selector selectorBtnNext = selectors.share_video_image_to_feed();
+                                    ArrayList<Selector> selectorsBtnNext = selectors.share_video_image_to_feed();
+                                    Selector selectorBtnNext = automatorService.exist(selectorsBtnNext.get(0))
+                                            ? selectorsBtnNext.get(0)
+                                            : selectorsBtnNext.get(1);
                                     if(click(selectorBtnNext, 5)){ // Click button Next
                                         Thread.sleep(5000);
+                                        selectorBtnNext = automatorService.exist(selectorsBtnNext.get(0))
+                                                ? selectorsBtnNext.get(0)
+                                                : selectorsBtnNext.get(1);
                                         if(click(selectorBtnNext, 5)){  // Click button Next
                                             Thread.sleep(5000);
                                             return waitGone(selectorBtnNext, 60 * 5);
                                         }
                                     }
-                                }
 //                                int totalFile = selectors.get_total_video_image_to_post(); // Get all file in browse
                                 // INDEX_MODE:
                                 // + Test = 0
@@ -252,12 +261,12 @@ public class Actions {
 
     public boolean click_profile() throws UiObjectNotFoundException, InterruptedException {
         Thread.sleep(2000);
-        return click(selectors.profile(), 5);
+        return click(selectors.tab_profile(), 5);
     }
 
     public boolean click_options() throws UiObjectNotFoundException, InterruptedException {
         Thread.sleep(2000);
-        return click(selectors.options(), 5);
+        return click(selectors.btn_options(), 5);
     }
 
     public boolean click_saved() throws UiObjectNotFoundException, InterruptedException {
@@ -331,6 +340,13 @@ public class Actions {
             }
         }
         return false;
+    }
+
+    private Selector findSelector(ArrayList<Selector> arrSelector){
+        for (Selector selector: arrSelector) {
+            if(automatorService.exist(selector)) return selector;
+        }
+        return null;
     }
 
     private boolean click(Selector selector, long timeWaitExist) throws UiObjectNotFoundException {

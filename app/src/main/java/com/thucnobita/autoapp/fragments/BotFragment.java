@@ -50,7 +50,8 @@ public class BotFragment extends Fragment {
     private Button btnGetClipbroad;
     private RadioGroup grpRadModeUpload;
     private RadioButton radVideo;
-    private RadioButton radVideoImage;
+    private RadioButton radVideo2;
+    private RadioButton radTShirt;
     private LinearLayout grpCodeLogin;
     private EditText txtCodeLogin;
     private TextView txtLogBot;
@@ -96,7 +97,8 @@ public class BotFragment extends Fragment {
         btnStopBot = view.findViewById(R.id.btnStopBot);
         grpRadModeUpload = view.findViewById(R.id.grpRadModeUpload);
         radVideo = view.findViewById(R.id.radVideo);
-        radVideoImage = view.findViewById(R.id.radVideoImage);
+        radVideo2 = view.findViewById(R.id.radVideo2);
+        radTShirt = view.findViewById(R.id.radTShirt);
         txtCodeLogin = view.findViewById(R.id.txtCodeLogin);
         txtLogBot = view.findViewById(R.id.txtLogBot);
         txtLabelCodeLogin = view.findViewById(R.id.txtLabelCodeLogin);
@@ -233,7 +235,7 @@ public class BotFragment extends Fragment {
 
     private void botIG(View v){
         setLog("=>>>> START <<<<=");
-        setLog("+ [App] [Bot] [Instagram] [v3.000]");
+        setLog("+ [App] [Bot] [Instagram] [v3.500]");
         setLog("=> Total acc login:" + arrAccLogin.size());
         if(arrAccLogin.size() > 0 && isRunning){
             Account accLogin = arrAccLogin.size() > 1
@@ -251,7 +253,7 @@ public class BotFragment extends Fragment {
                         if(accountRun.isActived()){
                             try {
                                 int totalImage = 0;
-                                if(radVideoImage.isChecked()){
+                                if(radTShirt.isChecked()){
                                     totalImage = botIG.copy_image(v.getContext().getApplicationContext(),accountRun.getUsername());
                                     setLog("=> Total image for upload " + totalImage);
                                     if(totalImage == 0){
@@ -262,7 +264,7 @@ public class BotFragment extends Fragment {
 
 //                                setLog("=> Open app " + Constants.PACKAGE_NAME_INSTAGRAM);
 //                                Utils.openApp(v.getContext(), automatorService.getInstrumentation(), Constants.PACKAGE_NAME_INSTAGRAM, 10);
-//                                botIG.share_video_to_feed(Constants.FOLDER_NAME_UPLOAD, totalImage);
+//                                botIG.share_video_to_feed(Constants.FOLDER_NAME_UPLOAD);
 
                                 setLog("=> Begin remote click on app");
                                 Utils.openApp(v.getContext(), automatorService.getInstrumentation(), Constants.PACKAGE_NAME_INSTAGRAM, 10);
@@ -305,25 +307,40 @@ public class BotFragment extends Fragment {
                                                                     automatorService.getInstrumentation(),
                                                                     Constants.PACKAGE_NAME_INSTAGRAM,
                                                                     5);
-                                                            if (radVideo.isChecked()){
-                                                                if(botIG.share_video_to_reel(Constants.FOLDER_NAME_UPLOAD)){
+                                                            if (radVideo.isChecked()) {
+                                                                if (botIG.share_video_to_reel(Constants.FOLDER_NAME_UPLOAD)) {
                                                                     setLog("=> Share video Ok");
-                                                                    if(botIG.post_reel(content)){
+                                                                    if (botIG.post_to_timeline(content)) {
                                                                         clearCache(v.getContext());
                                                                         Thread.sleep(2000);
                                                                         setLog("=> Post Ok");
-                                                                    }else{
+                                                                    } else {
                                                                         setLog("=> Post Failed");
                                                                         isRunning = false;
                                                                     }
-                                                                }else{
+                                                                } else {
                                                                     setLog("=> Share video Failed");
                                                                     isRunning = false;
                                                                 }
-                                                            }else{ // Mode upload: Video + Image
-                                                                if(botIG.share_video_to_feed(Constants.FOLDER_NAME_UPLOAD, totalImage)){
+                                                            }else if (radVideo2.isChecked()){
+                                                                    if(botIG.share_video_to_feed(Constants.FOLDER_NAME_UPLOAD)){
+                                                                        setLog("=> Share video Ok");
+                                                                        if(botIG.post_to_timeline(content)){
+                                                                            clearCache(v.getContext());
+                                                                            Thread.sleep(2000);
+                                                                            setLog("=> Post Ok");
+                                                                        }else{
+                                                                            setLog("=> Post Failed");
+                                                                            isRunning = false;
+                                                                        }
+                                                                    }else{
+                                                                        setLog("=> Share video Failed");
+                                                                        isRunning = false;
+                                                                    }
+                                                            }else{ // Mode upload: TShirt
+                                                                if(botIG.share_tshirt_to_feed(Constants.FOLDER_NAME_UPLOAD, totalImage)){
                                                                     setLog("=> Share video Ok");
-                                                                    if(botIG.post_feed(content)){
+                                                                    if(botIG.post_to_timeline(content)){
                                                                         clearCache(v.getContext());
                                                                         Thread.sleep(2000);
                                                                         setLog("=> Post Ok");

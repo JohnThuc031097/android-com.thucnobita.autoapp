@@ -113,19 +113,33 @@
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:buttonTint="#040404"
-                android:text="Video"
+                android:text="Video (Reel)"
                 android:textColor="@color/black"
+                android:textSize="12sp"
                 android:textStyle="bold" />
 
             <RadioButton
-                android:id="@+id/radVideoImage"
+                android:id="@+id/radVideo2"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_margin="10dp"
+                android:layout_weight="1"
+                android:buttonTint="@color/black"
+                android:text="Video (Feed)"
+                android:textColor="@color/black"
+                android:textSize="12sp"
+                android:textStyle="bold" />
+
+            <RadioButton
+                android:id="@+id/radTShirt"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="10dp"
                 android:layout_weight="1"
                 android:buttonTint="#090909"
-                android:text="Video + Image"
+                android:text="TShirt (Feed)"
                 android:textColor="@color/black"
+                android:textSize="12sp"
                 android:textStyle="bold" />
         </RadioGroup>
 
