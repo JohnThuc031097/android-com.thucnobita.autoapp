@@ -148,18 +148,11 @@ public class Actions {
                                         }
                                     }
                                     Thread.sleep(3000);
-                                    ArrayList<Selector> selectorsBtnNext = selectors.share_video_image_to_feed();
-                                    Selector selectorBtnNext = automatorService.exist(selectorsBtnNext.get(0))
-                                            ? selectorsBtnNext.get(0)
-                                            : selectorsBtnNext.get(1);
-                                    if(click(selectorBtnNext, 5)){ // Click button Next
+                                    if(click(findSelector(selectors.share_video_image_to_feed()), 5)){ // Click button Next
                                         Thread.sleep(2500);
-                                        Selector selectorBtnContinue = findSelector(selectors.btn_continue());
-                                        click(selectorBtnContinue, 5);
+                                        click(findSelector(selectors.btn_continue()), 5);
                                         Thread.sleep(2500);
-                                        selectorBtnNext = automatorService.exist(selectorsBtnNext.get(0))
-                                                ? selectorsBtnNext.get(0)
-                                                : selectorsBtnNext.get(1);
+                                        Selector selectorBtnNext = findSelector(selectors.share_video_image_to_feed());
                                         if(click(selectorBtnNext, 5)){  // Click button Next
                                             Thread.sleep(5000);
                                             return waitGone(selectorBtnNext, 60 * 5);
@@ -353,7 +346,7 @@ public class Actions {
     }
 
     private boolean click(Selector selector, long timeWaitExist) throws UiObjectNotFoundException {
-        return waitExist(selector, timeWaitExist) && automatorService.click(selector);
+        return selector != null && (waitExist(selector, timeWaitExist) && automatorService.click(selector));
     }
 
     private boolean click(String obj, long timeWaitExist) throws UiObjectNotFoundException {
@@ -361,14 +354,14 @@ public class Actions {
     }
 
     private boolean waitExist(Selector selector, long timeWaitExist){
-        return automatorService.waitForExists(selector, timeWaitExist * 1000L);
+        return selector != null && (automatorService.waitForExists(selector, timeWaitExist * 1000));
     }
 
     private boolean waitExist(String obj, long waitTime) throws UiObjectNotFoundException {
-        return automatorService.waitForExists(obj, waitTime * 1000L);
+        return automatorService.waitForExists(obj, waitTime * 1000);
     }
 
     private boolean waitGone(Selector selector, long timeWaitGone){
-        return automatorService.waitUntilGone(selector, timeWaitGone * 1000L);
+        return selector != null && (automatorService.waitUntilGone(selector, timeWaitGone * 1000));
     }
 }
