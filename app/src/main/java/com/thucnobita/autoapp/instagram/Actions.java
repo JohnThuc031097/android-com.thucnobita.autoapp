@@ -1,12 +1,16 @@
 package com.thucnobita.autoapp.instagram;
 
+import android.content.Context;
 import android.os.RemoteException;
+import android.util.Log;
+import android.widget.Toast;
 
 import androidx.test.uiautomator.UiObjectNotFoundException;
 
 import com.thucnobita.autoapp.utils.Constants;
 import com.thucnobita.autoapp.utils.Utils;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
+import com.thucnobita.uiautomator.ObjInfo;
 import com.thucnobita.uiautomator.Selector;
 
 import java.util.ArrayList;
@@ -126,27 +130,13 @@ public class Actions {
                         if(images > 0){
                             if (click(selectors.share_story_btn_multiple_select(), 5)) {
                                 Thread.sleep(2000);
-                                for (int i = 1; i <= images ; i++) {
-                                    Selector selectorButton = new Selector(automatorService.getInstrumentation());
-                                    selectorButton.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-                                    selectorButton.setClassName("android.widget.Button");
-                                    selectorButton.setDescription("Photo thumbnail");
-                                    selectorButton.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/gallery_grid_item_thumbnail");
-                                    selectorButton.setMask(Selector.MASK_PACKAGENAME| Selector.MASK_CLASSNAME| Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
-                                    Selector selectorImageView = new Selector(automatorService.getInstrumentation());
-                                    selectorImageView.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-                                    selectorImageView.setClassName("android.widget.ImageView");
-                                    selectorImageView.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/gallery_grid_item_selection_circle");
-                                    selectorImageView.setMask(Selector.MASK_PACKAGENAME| Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID);
-                                    Selector selectorViewGroup = new Selector(automatorService.getInstrumentation());
-                                    selectorViewGroup.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-                                    selectorViewGroup.setClassName("android.view.ViewGroup");
-                                    selectorViewGroup.setIndex(i);
-                                    selectorViewGroup.setChildOrSiblingSelector(new Selector[] { selectorButton, selectorImageView });
-                                    selectorViewGroup.setMask(Selector.MASK_PACKAGENAME| Selector.MASK_CLASSNAME| Selector.MASK_INDEX);
-                                    click(selectorViewGroup, 5);
-//                                    if(!click(selectorViewGroup, 5)) return false;
-                                    Thread.sleep(2000);
+                                ObjInfo[] items = selectors.share_story_get_items();
+                                Thread.sleep(1000);
+                                if(items.length > 0){
+                                    for (ObjInfo item: items) {
+                                        if(!automatorService.click(item.getBounds().getLeft(), item.getBounds().getTop())) return false;
+                                        Thread.sleep(1500);
+                                    }
                                 }
                             }
                         }
@@ -174,12 +164,13 @@ public class Actions {
                                                                 Thread.sleep(2000);
                                                                 if(click(arrSelectorSharePost.get(1), 5)){ // Click Share 2
                                                                     Thread.sleep(2000);
-                                                                    if(waitGone(arrSelectorSharePost.get(1), 60 * 5)){
+                                                                    if(waitGone(arrSelectorSharePost.get(1), 60 * 5)){ // Wait for share 2
                                                                         Thread.sleep(2000);
-                                                                        if(click(arrSelectorSharePost.get(2), 5)){
+                                                                        if(click(arrSelectorSharePost.get(2), 5)){ // Click Done Share
                                                                             Thread.sleep(2000);
-                                                                            if(click(arrSelectorSharePost.get(3), 5)){
+                                                                            if(click(arrSelectorSharePost.get(3), 5)){ // Click your story
                                                                                 Thread.sleep(2000);
+                                                                                // Wait for share to story donw (default: 10 min)
                                                                                 return waitGone(selectors.share_story_wait_done(), 60 * 10);
                                                                             }
                                                                         }

@@ -34,7 +34,6 @@ public class MainActivity extends AppCompatActivity   {
     private ViewPagerAdapter viewPagerAdapter;
 
     private final ExecutorService executor = Executors.newFixedThreadPool(2);
-    private boolean checkPermission = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

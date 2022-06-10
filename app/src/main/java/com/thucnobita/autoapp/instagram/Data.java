@@ -148,6 +148,16 @@ class Data {
         return selector;
     }
 
+    public ObjInfo[] share_story_get_items(){
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setClassName("android.widget.Button");
+        selector.setDescription("Photo thumbnail");
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/gallery_grid_item_thumbnail");
+        selector.setMask(Selector.MASK_PACKAGENAME| Selector.MASK_CLASSNAME| Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
+        return mAutomatorService.objInfoOfAllInstances(selector);
+    }
+
     public Selector share_story_btn_next(){
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
@@ -177,7 +187,7 @@ class Data {
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/row_search_edit_text");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
         return selector;
     }
 
@@ -210,13 +220,14 @@ class Data {
         ArrayList<Selector> arrSelector = new ArrayList<>();
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/link_sticker_list_done_button");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        selector.setDescription("Share to");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION);
         arrSelector.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setDescription("Share Button");
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/share_story_button");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
         arrSelector.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);

@@ -89,11 +89,12 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="80dp"
+                        android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:text="Header"
                         android:textSize="20sp" />
@@ -108,25 +109,11 @@
                         android:textColor="@android:color/holo_orange_light"
                         android:textSize="20sp" />
 
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Split"
-                        android:textSize="15sp" />
-
                     <EditText
                         android:id="@+id/txtStrSplitHeader"
                         android:layout_width="5dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
                         android:layout_weight="1"
                         android:ems="10"
                         android:gravity="center"
@@ -173,11 +160,12 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="80dp"
+                        android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:text="Content"
                         android:textSize="20sp" />
@@ -191,25 +179,12 @@
                         android:text="0"
                         android:textColor="@android:color/holo_orange_light"
                         android:textSize="20sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Split"
-                        android:textSize="15sp" />
 
                     <EditText
                         android:id="@+id/txtStrSplitContent"
                         android:layout_width="5dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
                         android:layout_weight="1"
                         android:ems="10"
                         android:gravity="center"
@@ -256,11 +231,12 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
                     android:orientation="horizontal">
 
                     <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
+                        android:layout_width="80dp"
+                        android:layout_height="match_parent"
                         android:layout_margin="10dp"
                         android:text="Footer"
                         android:textSize="20sp" />
@@ -274,25 +250,12 @@
                         android:text="0"
                         android:textColor="@android:color/holo_orange_light"
                         android:textSize="20sp" />
-                </LinearLayout>
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_margin="10dp"
-                    android:orientation="horizontal">
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:text="Split"
-                        android:textSize="15sp" />
 
                     <EditText
                         android:id="@+id/txtStrSplitFooter"
                         android:layout_width="5dp"
                         android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
                         android:layout_weight="1"
                         android:ems="10"
                         android:gravity="center"
@@ -326,6 +289,148 @@
                     android:scrollbarStyle="insideInset"
                     android:scrollbars="vertical"
                     android:text="@{account.footer}"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/grpLink"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="80dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="10dp"
+                        android:text="Link"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/txtTotalLink"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_margin="10dp"
+                        android:layout_weight="1"
+                        android:text="0"
+                        android:textColor="@android:color/holo_orange_light"
+                        android:textSize="20sp" />
+
+                    <EditText
+                        android:id="@+id/txtStrSplitLink"
+                        android:layout_width="5dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:gravity="center"
+                        android:inputType="text"
+                        android:text="@{account.splitLink}" />
+
+                    <Button
+                        android:id="@+id/btnShowHideDataLink"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Expand"
+                        android:textAllCaps="false"
+                        android:textColor="@android:color/holo_orange_light" />
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/txtStrDataLink"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/border_bg"
+                    android:ems="10"
+                    android:gravity="start|top"
+                    android:hint="String data"
+                    android:inputType="textMultiLine"
+                    android:lines="30"
+                    android:minLines="1"
+                    android:overScrollMode="always"
+                    android:padding="10dp"
+                    android:scrollbarStyle="insideInset"
+                    android:scrollbars="vertical"
+                    android:text="@{account.link}"
+                    android:visibility="gone" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/grpCaption"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="80dp"
+                        android:layout_height="match_parent"
+                        android:layout_margin="10dp"
+                        android:text="Caption"
+                        android:textSize="20sp" />
+
+                    <TextView
+                        android:id="@+id/txtTotalCaption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="match_parent"
+                        android:layout_margin="10dp"
+                        android:layout_weight="1"
+                        android:text="0"
+                        android:textColor="@android:color/holo_orange_light"
+                        android:textSize="20sp" />
+
+                    <EditText
+                        android:id="@+id/txtStrSplitCaption"
+                        android:layout_width="5dp"
+                        android:layout_height="wrap_content"
+                        android:layout_marginRight="5dp"
+                        android:layout_weight="1"
+                        android:ems="10"
+                        android:gravity="center"
+                        android:inputType="text"
+                        android:text="@{account.splitCaption}" />
+
+                    <Button
+                        android:id="@+id/btnShowHideDataCaption"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Expand"
+                        android:textAllCaps="false"
+                        android:textColor="@android:color/holo_orange_light" />
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/txtStrDataCaption"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="10dp"
+                    android:background="@drawable/border_bg"
+                    android:ems="10"
+                    android:gravity="start|top"
+                    android:hint="String data"
+                    android:inputType="textMultiLine"
+                    android:lines="30"
+                    android:minLines="1"
+                    android:overScrollMode="always"
+                    android:padding="10dp"
+                    android:scrollbarStyle="insideInset"
+                    android:scrollbars="vertical"
+                    android:text="@{account.caption}"
                     android:visibility="gone" />
 
             </LinearLayout>

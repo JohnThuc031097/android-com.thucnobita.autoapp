@@ -13,6 +13,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.thucnobita.autoapp.R;
 import com.thucnobita.autoapp.activities.AccountActivity;
@@ -49,7 +51,24 @@ public class AccountFragment extends Fragment {
             if(fileAccounts != null){
                 for (File src : fileAccounts) {
                     try {
-                        Account account = Utils.file2Object(src, Account.class);
+                        // Check node if fiedname not exist then add into node
+                        JsonNode accountJson = Utils.file2Json(src);
+                        ObjectNode objectNode = ((ObjectNode)accountJson);
+                        if(accountJson.findPath("splitLink").isMissingNode()){
+                            objectNode.put("splitLink", "|");
+                        }
+                        if(accountJson.findPath("splitCaption").isMissingNode()){
+                            objectNode.put("splitCaption", "|");
+                        }
+                        if(accountJson.findPath("link").isMissingNode()){
+                            objectNode.put("link", "");
+                        }
+                        if(accountJson.findPath("caption").isMissingNode()){
+                            objectNode.put("caption", "");
+                        }
+//                            Account account = Utils.file2Object(src, Account.class);
+                        // Convert Node to Class Account
+                        Account account = Utils.objectNode2Object(objectNode, Account.class);
                         listAccount.add(account);
                     }catch (IOException e) {
                         e.printStackTrace();

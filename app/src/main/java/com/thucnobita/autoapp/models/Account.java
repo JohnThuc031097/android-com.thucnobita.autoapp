@@ -17,6 +17,10 @@ public class Account extends BaseObservable {
     private String content;
     private String splitFooter;
     private String footer;
+    private String splitLink;
+    private String link;
+    private String splitCaption;
+    private String caption;
 
     @JsonCreator
     public Account(
@@ -28,7 +32,12 @@ public class Account extends BaseObservable {
             @JsonProperty("splitContent") String splitContent,
             @JsonProperty("content") String content,
             @JsonProperty("splitFooter")String splitFooter,
-            @JsonProperty("footer")String footer)
+            @JsonProperty("footer")String footer,
+            @JsonProperty("splitLink")String splitLink,
+            @JsonProperty("link")String link,
+            @JsonProperty("splitCaption")String splitCaption,
+            @JsonProperty("caption")String caption
+    )
     {
         super();
         this.username = username;
@@ -40,6 +49,10 @@ public class Account extends BaseObservable {
         this.content = content;
         this.splitFooter = splitFooter;
         this.footer = footer;
+        this.splitLink = splitLink;
+        this.link = link;
+        this.splitCaption = splitCaption;
+        this.caption = caption;
     }
 
     @Bindable
@@ -130,5 +143,45 @@ public class Account extends BaseObservable {
     public void setFooter(String footer) {
         this.footer = footer;
         notifyPropertyChanged(BR.footer);
+    }
+
+    @Bindable
+    public String getSplitLink() {
+        return splitLink;
+    }
+
+    public void setSplitLink(String splitLink) {
+        this.splitLink = splitLink;
+        notifyPropertyChanged(BR.splitLink);
+    }
+
+    @Bindable
+    public String getLink() {
+        return link;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+        notifyPropertyChanged(BR.link);
+    }
+
+    @Bindable
+    public String getSplitCaption() {
+        return splitCaption;
+    }
+
+    public void setSplitCaption(String splitCaption) {
+        this.splitCaption = splitCaption;
+        notifyPropertyChanged(BR.splitCaption);
+    }
+
+    @Bindable
+    public String getCaption() {
+        return caption;
+    }
+
+    public void setCaption(String caption) {
+        this.caption = caption;
+        notifyPropertyChanged(BR.caption);
     }
 }
