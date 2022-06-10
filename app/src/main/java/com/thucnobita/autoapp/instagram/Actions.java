@@ -207,7 +207,7 @@ public class Actions {
                             Thread.sleep(2000);
                             if(click(arrSelector.get(4), 5)){ // Select folder share
                                 Thread.sleep(3000);
-                                int images = totalImage - 1;// -1 for mode test
+                                int images = totalImage;// -1 for mode test
                                     if(images > 0) {
                                         if (click(selectors.btn_select_multiple_file(), 5)) { // Click select check mutiple file
                                             Selector selector = new Selector(automatorService.getInstrumentation());
@@ -223,7 +223,7 @@ public class Actions {
                                                     return false;
                                                 }
                                                 images--;
-                                                Thread.sleep(2000);
+                                                Thread.sleep(1500);
                                             }
                                         }
                                     }
@@ -325,22 +325,22 @@ public class Actions {
                             : arrSelector.get(6);
                     if (click(selectorCopyLink, 5)) { // 1.Copy link
                         Thread.sleep(3000);
-                        return automatorService.pressKey("back");
-//                        if (click(arrSelector.get(7), 5)) { // Again Select video
-//                            Thread.sleep(3000);
-//                            if (click(selectorMore, 5)) { // Show More
-//                                Thread.sleep(3000);
-//                                Selector selectorRemoveSaved = automatorService.exist(arrSelector.get(8))
-//                                        ? arrSelector.get(8)
-//                                        : automatorService.exist(arrSelector.get(9))
-//                                        ? arrSelector.get(9)
-//                                        : arrSelector.get(10);
-//                                if (click(selectorRemoveSaved, 5)){ // 2.Remove video
-//                                    Thread.sleep(3000);
-//                                    return automatorService.pressKey("back");
-//                                }
-//                            }
-//                        }
+//                        return automatorService.pressKey("back");
+                        if (click(arrSelector.get(7), 5)) { // Again Select video
+                            Thread.sleep(3000);
+                            if (click(selectorMore, 5)) { // Show More
+                                Thread.sleep(3000);
+                                Selector selectorRemoveSaved = automatorService.exist(arrSelector.get(8))
+                                        ? arrSelector.get(8)
+                                        : automatorService.exist(arrSelector.get(9))
+                                        ? arrSelector.get(9)
+                                        : arrSelector.get(10);
+                                if (click(selectorRemoveSaved, 5)){ // 2.Remove video
+                                    Thread.sleep(3000);
+                                    return automatorService.pressKey("back");
+                                }
+                            }
+                        }
                     }
                 }
             }

@@ -61,10 +61,10 @@ public class AccountFragment extends Fragment {
                             objectNode.put("splitCaption", "|");
                         }
                         if(accountJson.findPath("link").isMissingNode()){
-                            objectNode.put("link", "");
+                            objectNode.put("link", (String) null);
                         }
                         if(accountJson.findPath("caption").isMissingNode()){
-                            objectNode.put("caption", "");
+                            objectNode.put("caption", (String) null);
                         }
 //                            Account account = Utils.file2Object(src, Account.class);
                         // Convert Node to Class Account
