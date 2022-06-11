@@ -3,6 +3,7 @@ package com.thucnobita.autoapp.fragments;
 import android.annotation.SuppressLint;
 import android.app.Instrumentation;
 import android.content.Context;
+import android.media.Image;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -15,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
@@ -56,6 +58,7 @@ public class BotFragment extends Fragment {
     private Button btnConfirmCodeLogin;
     private Button btnGetClipbroad;
     private Spinner spnTypeUpload;
+    private ImageView imgDropDownTypeUpload;
     private LinearLayout grpCodeLogin;
     private LinearLayout grpTypeUpload;
     private EditText txtCodeLogin;
@@ -101,6 +104,7 @@ public class BotFragment extends Fragment {
         btnStartBot = view.findViewById(R.id.btnStartBot);
         btnStopBot = view.findViewById(R.id.btnStopBot);
         spnTypeUpload = view.findViewById(R.id.spnTypeUpload);
+        imgDropDownTypeUpload = view.findViewById(R.id.imgDropDownTypeUpload);
         txtCodeLogin = view.findViewById(R.id.txtCodeLogin);
         txtLogBot = view.findViewById(R.id.txtLogBot);
         txtLabelCodeLogin = view.findViewById(R.id.txtLabelCodeLogin);
@@ -131,7 +135,11 @@ public class BotFragment extends Fragment {
             grpCodeLogin.setVisibility(View.GONE);
             txtLogBot.setText(null);
             String[] arraySpinner = new String[] {
-                    "Video (Reel)", "Video (Feed)", "Video + Image (Feed)", "Image (Story)", "Image (Feed)"
+                    "Video (Reel)",
+                    "Video (Feed)",
+                    "Video + Image (Feed)",
+                    "Image (Story)",
+                    "Image (Feed)"
             };
             ArrayAdapter<String> adapter = new ArrayAdapter<>(_contextApp, R.layout.spinner_item, arraySpinner);
             adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -210,13 +218,9 @@ public class BotFragment extends Fragment {
                 isConfirmCodeLogin = true;
             }
         });
-//        txtLogBot.setOnTouchListener((v, event) -> {
-//            v.getParent().getParent().requestDisallowInterceptTouchEvent(true);
-//            if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
-//                v.getParent().getParent().requestDisallowInterceptTouchEvent(false);
-//            }
-//            return false;
-//        });
+        imgDropDownTypeUpload.setOnClickListener(v -> {
+            spnTypeUpload.performClick();
+        });
     }
 
     private boolean initBot(){
