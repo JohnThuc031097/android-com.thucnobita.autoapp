@@ -44,10 +44,10 @@ public class Actions {
         // Click "Share" to begin post
         Selector selectorClickUpload = findSelector(selectors.post_click_upload());
         if(click(selectorClickUpload, 5)){
-            Thread.sleep(2000);
+            Thread.sleep(5000);
             // Click return tab feed
             if(click(selectors.tab_feed(), 5)){
-                Thread.sleep(2000);
+                Thread.sleep(5000);
                 // Wait for process done (time wait default: 10 min)
                 Selector selectorWaitDone = selectors.post_wait_done_after_upload();
                 return waitGone(selectorWaitDone, 60 * 10);
@@ -193,7 +193,7 @@ public class Actions {
         return false;
     }
 
-    public boolean share_video_image_to_feed(String folderShare, int totalImage) throws UiObjectNotFoundException, InterruptedException {
+    public boolean share_video_image_to_feed(String folderShare, int totalImage, boolean onlyImage) throws UiObjectNotFoundException, InterruptedException {
         ArrayList<Selector> arrSelector = selectors.browse_select_video_image_to_post(folderShare);
         if(click_profile()){
             Thread.sleep(2000);
@@ -207,7 +207,7 @@ public class Actions {
                             Thread.sleep(2000);
                             if(click(arrSelector.get(4), 5)){ // Select folder share
                                 Thread.sleep(3000);
-                                int images = totalImage;// -1 for mode test
+                                int images = onlyImage ? (totalImage - 1) : totalImage;
                                     if(images > 0) {
                                         if (click(selectors.btn_select_multiple_file(), 5)) { // Click select check mutiple file
                                             Selector selector = new Selector(automatorService.getInstrumentation());

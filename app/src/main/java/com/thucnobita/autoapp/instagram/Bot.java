@@ -231,7 +231,7 @@ public class Bot {
     public boolean share_video_to_feed(String folderShare){
         boolean result = false;
         try{
-            result = actions.share_video_image_to_feed(folderShare, 0);
+            result = actions.share_video_image_to_feed(folderShare, 0, false);
             Log.i(TAG_NAME, "=> Click share to reel => " + result);
         } catch (InterruptedException | UiObjectNotFoundException e) {
             e.printStackTrace();
@@ -242,7 +242,7 @@ public class Bot {
     public boolean share_tshirt_to_feed(String folderShare, int totalImage){
         boolean result = false;
         try{
-            result = actions.share_video_image_to_feed(folderShare, totalImage);
+            result = actions.share_video_image_to_feed(folderShare, totalImage, false);
             Log.i(TAG_NAME, "=> Click share to post => " + result);
         } catch (InterruptedException | UiObjectNotFoundException e) {
             e.printStackTrace();
@@ -253,7 +253,7 @@ public class Bot {
     public boolean share_image_to_feed(String folderShare, int totalImage){
         boolean result = false;
         try{
-            result = actions.share_video_image_to_feed(folderShare, totalImage);
+            result = actions.share_video_image_to_feed(folderShare, totalImage, true);
             Log.i(TAG_NAME, "=> Click share to post => " + result);
         } catch (InterruptedException | UiObjectNotFoundException e) {
             e.printStackTrace();
