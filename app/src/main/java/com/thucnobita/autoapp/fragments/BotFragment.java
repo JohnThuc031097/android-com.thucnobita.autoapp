@@ -353,6 +353,7 @@ public class BotFragment extends Fragment {
                                             isRunning = false;
                                         }
                                     }
+                                    if(!isRunning) break;
                                     Utils.openApp(
                                             _context,
                                             automatorService.getInstrumentation(),

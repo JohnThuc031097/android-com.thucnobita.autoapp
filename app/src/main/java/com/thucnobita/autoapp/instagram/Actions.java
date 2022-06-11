@@ -44,10 +44,10 @@ public class Actions {
         // Click "Share" to begin post
         Selector selectorClickUpload = findSelector(selectors.post_click_upload());
         if(click(selectorClickUpload, 5)){
-            Thread.sleep(5000);
+            Thread.sleep(2000);
             // Click return tab feed
             if(click(selectors.tab_feed(), 5)){
-                Thread.sleep(5000);
+                Thread.sleep(2000);
                 // Wait for process done (time wait default: 10 min)
                 Selector selectorWaitDone = selectors.post_wait_done_after_upload();
                 return waitGone(selectorWaitDone, 60 * 10);
@@ -308,8 +308,8 @@ public class Actions {
         Selector selectorSelectVideo = arrSelector.get(0);
         if(selectorSelectVideo != null){
             if (click(selectorSelectVideo, 5)) { // Select video
-//            Thread.sleep(1000);
-//            click(selectorSelectVideo, 5); // use for emulator
+//                Thread.sleep(1000);
+//                click(selectorSelectVideo, 5); // use for emulator
                 Thread.sleep(1000);
                 click(arrSelector.get(1), 1); // Pause video
                 Thread.sleep(1000);
