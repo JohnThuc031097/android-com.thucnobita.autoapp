@@ -15,7 +15,7 @@
         android:background="@color/black"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
-        app:title="AutoApp - Instagram - v4.100"
+        app:title="AutoApp - Instagram - v4.3"
         app:titleTextColor="@android:color/holo_orange_light" />
 
     <Switch
