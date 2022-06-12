@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 public class AccountActivity extends AppCompatActivity {
     private ActivityAccountBinding binding;
     private Account account;
+    private final String charSplit = Pattern.quote(String.valueOf("|".charAt(0)));
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,14 +42,12 @@ public class AccountActivity extends AppCompatActivity {
         if(bundle != null){
             if(bundle.getString("type").equals("create")){
                 account = new Account(
-                        "",
-                        null,
+                        null, null,
                         true,
-                        "|",null,
-                        "|", null,
-                        "|", null,
-                        "|", null,
-                        "|", null);
+                        null,
+                        null, null, null,
+                        null,
+                        null);
                 binding.setAccount(account);
             }else if(bundle.getString("type").equals("edit")){
                 if(bundle.getString("account") != null){
@@ -67,10 +66,10 @@ public class AccountActivity extends AppCompatActivity {
         binding.grpPasswordLogin.setVisibility(View.VISIBLE);
         binding.grpPostContent.setVisibility(View.GONE);
         binding.txtStrDataHeader.setVisibility(View.GONE);
-        binding.txtStrDataContent.setVisibility(View.GONE);
+        binding.txtStrDataContent1.setVisibility(View.GONE);
+        binding.txtStrDataContent2.setVisibility(View.GONE);
+        binding.txtStrDataContent3.setVisibility(View.GONE);
         binding.txtStrDataFooter.setVisibility(View.GONE);
-        binding.txtStrDataLink.setVisibility(View.GONE);
-        binding.txtStrDataCaption.setVisibility(View.GONE);
         runOnUiThread(() -> {
             if(account.getPassword() != null){
                 binding.ckbUserLogin.setChecked(true);
@@ -80,42 +79,42 @@ public class AccountActivity extends AppCompatActivity {
                 binding.ckbUserLogin.setChecked(false);
                 binding.grpPasswordLogin.setVisibility(View.GONE);
                 binding.grpPostContent.setVisibility(View.VISIBLE);
-                if(account.getSplitHeader() != null && account.getHeader() != null){
+                if(account.getHeader() != null){
                     try {
-                        String[] data = account.getHeader().split(Pattern.quote(String.valueOf(account.getSplitHeader().charAt(0))));
+                        String[] data = account.getHeader().split(charSplit);
                         binding.txtTotalHeader.setText(String.valueOf(data.length));
                     }catch (Exception e){
                         e.printStackTrace();
                     }
                 }
-                if(account.getSplitContent() != null && account.getContent() != null){
+                if(account.getContent1() != null){
                     try {
-                        String[] data = account.getContent().split(Pattern.quote(String.valueOf(account.getSplitContent().charAt(0))));
-                        binding.txtTotalContent.setText(String.valueOf(data.length));
+                        String[] data = account.getContent1().split(charSplit);
+                        binding.txtTotalContent1.setText(String.valueOf(data.length));
                     }catch (Exception e){
                         e.printStackTrace();
                     }
                 }
-                if(account.getSplitFooter() != null && account.getFooter() != null){
+                if(account.getContent2() != null){
                     try {
-                        String[] data = account.getFooter().split(Pattern.quote(String.valueOf(account.getSplitFooter().charAt(0))));
+                        String[] data = account.getContent2().split(charSplit);
+                        binding.txtTotalContent2.setText(String.valueOf(data.length));
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                if(account.getContent3() != null){
+                    try {
+                        String[] data = account.getContent3().split(charSplit);
+                        binding.txtTotalContent3.setText(String.valueOf(data.length));
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }
+                if(account.getFooter() != null){
+                    try {
+                        String[] data = account.getFooter().split(charSplit);
                         binding.txtTotalFooter.setText(String.valueOf(data.length));
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
-                if(account.getSplitLink() != null && account.getLink() != null){
-                    try {
-                        String[] data = account.getLink().split(Pattern.quote(String.valueOf(account.getSplitLink().charAt(0))));
-                        binding.txtTotalLink.setText(String.valueOf(data.length));
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }
-                if(account.getSplitCaption() != null && account.getCaption() != null){
-                    try {
-                        String[] data = account.getCaption().split(Pattern.quote(String.valueOf(account.getSplitCaption().charAt(0))));
-                        binding.txtTotalCaption.setText(String.valueOf(data.length));
                     }catch (Exception e){
                         e.printStackTrace();
                     }
@@ -126,6 +125,7 @@ public class AccountActivity extends AppCompatActivity {
 
     @SuppressLint({"SetTextI18n", "ClickableViewAccessibility"})
     private void initAction(){
+        // Handle click checkbox User login
         binding.ckbUserLogin.setOnClickListener(v -> {
             runOnUiThread(() -> {
                 if(binding.ckbUserLogin.isChecked()){
@@ -137,23 +137,24 @@ public class AccountActivity extends AppCompatActivity {
                 }
             });
         });
-
+        // Handle click button Show/Hidden
+        // Header
         binding.btnShowHideDataHeader.setOnClickListener(v -> {
             if(binding.btnShowHideDataHeader.getText().toString().equals("Expand")){
                 binding.btnShowHideDataHeader.setText("Collapse");
                 binding.grpUser.setVisibility(View.GONE);
-                binding.grpContent.setVisibility(View.GONE);
+                binding.grpContent1.setVisibility(View.GONE);
+                binding.grpContent2.setVisibility(View.GONE);
+                binding.grpContent3.setVisibility(View.GONE);
                 binding.grpFooter.setVisibility(View.GONE);
                 binding.grpLink.setVisibility(View.GONE);
-                binding.grpCaption.setVisibility(View.GONE);
                 binding.grpControl.setVisibility(View.GONE);
                 binding.txtStrDataHeader.setVisibility(View.VISIBLE);
             }else{
                 String strData = binding.txtStrDataHeader.getText().toString();
-                String charSplit = binding.txtStrSplitHeader.getText().toString();
-                if(!strData.isEmpty() && !charSplit.isEmpty()){
+                if(!strData.isEmpty()){
                     try {
-                        String[] data = strData.split(Pattern.quote(String.valueOf(charSplit.charAt(0))));
+                        String[] data = strData.split(charSplit);
                         binding.txtTotalHeader.setText(String.valueOf(data.length));
                     }catch (Exception e){
                         e.printStackTrace();
@@ -163,63 +164,137 @@ public class AccountActivity extends AppCompatActivity {
                 }
                 binding.btnShowHideDataHeader.setText("Expand");
                 binding.grpUser.setVisibility(View.VISIBLE);
-                binding.grpContent.setVisibility(View.VISIBLE);
+                binding.grpContent1.setVisibility(View.VISIBLE);
+                binding.grpContent2.setVisibility(View.VISIBLE);
+                binding.grpContent3.setVisibility(View.VISIBLE);
                 binding.grpFooter.setVisibility(View.VISIBLE);
                 binding.grpLink.setVisibility(View.VISIBLE);
-                binding.grpCaption.setVisibility(View.VISIBLE);
                 binding.grpControl.setVisibility(View.VISIBLE);
                 binding.txtStrDataHeader.setVisibility(View.GONE);
             }
         });
-        binding.btnShowHideDataContent.setOnClickListener(v -> {
-            if(binding.btnShowHideDataContent.getText().toString().equals("Expand")){
-                binding.btnShowHideDataContent.setText("Collapse");
+        // Content 1
+        binding.btnShowHideDataContent1.setOnClickListener(v -> {
+            if(binding.btnShowHideDataContent1.getText().toString().equals("Expand")){
+                binding.btnShowHideDataContent1.setText("Collapse");
                 binding.grpUser.setVisibility(View.GONE);
                 binding.grpHeader.setVisibility(View.GONE);
+                binding.grpContent2.setVisibility(View.GONE);
+                binding.grpContent3.setVisibility(View.GONE);
                 binding.grpFooter.setVisibility(View.GONE);
                 binding.grpLink.setVisibility(View.GONE);
-                binding.grpCaption.setVisibility(View.GONE);
                 binding.grpControl.setVisibility(View.GONE);
-                binding.txtStrDataContent.setVisibility(View.VISIBLE);
+                binding.txtStrDataContent1.setVisibility(View.VISIBLE);
             }else{
-                String strData = binding.txtStrDataContent.getText().toString();
-                String charSplit = binding.txtStrSplitContent.getText().toString();
-                if(!strData.isEmpty() && !charSplit.isEmpty()){
+                String strData = binding.txtStrDataContent1.getText().toString();
+                if(!strData.isEmpty()){
                     try {
-                        String[] data = strData.split(Pattern.quote(String.valueOf(charSplit.charAt(0))));
-                        binding.txtTotalContent.setText(String.valueOf(data.length));
+                        String[] data = strData.split(charSplit);
+                        binding.txtTotalContent1.setText(String.valueOf(data.length));
                     }catch (Exception e){
                         e.printStackTrace();
                     }
                 }else{
-                    binding.txtTotalContent.setText("0");
+                    binding.txtTotalContent1.setText("0");
                 }
-                binding.btnShowHideDataContent.setText("Expand");
+                binding.btnShowHideDataContent1.setText("Expand");
                 binding.grpUser.setVisibility(View.VISIBLE);
                 binding.grpHeader.setVisibility(View.VISIBLE);
+                binding.grpContent2.setVisibility(View.VISIBLE);
+                binding.grpContent3.setVisibility(View.VISIBLE);
                 binding.grpFooter.setVisibility(View.VISIBLE);
                 binding.grpLink.setVisibility(View.VISIBLE);
-                binding.grpCaption.setVisibility(View.VISIBLE);
                 binding.grpControl.setVisibility(View.VISIBLE);
-                binding.txtStrDataContent.setVisibility(View.GONE);
+                binding.txtStrDataContent1.setVisibility(View.GONE);
             }
         });
+        // Content 2
+        binding.btnShowHideDataContent2.setOnClickListener(v -> {
+            if(binding.btnShowHideDataContent2.getText().toString().equals("Expand")){
+                binding.btnShowHideDataContent2.setText("Collapse");
+                binding.grpUser.setVisibility(View.GONE);
+                binding.grpHeader.setVisibility(View.GONE);
+                binding.grpContent1.setVisibility(View.GONE);
+                binding.grpContent3.setVisibility(View.GONE);
+                binding.grpFooter.setVisibility(View.GONE);
+                binding.grpLink.setVisibility(View.GONE);
+                binding.grpControl.setVisibility(View.GONE);
+                binding.txtStrDataContent2.setVisibility(View.VISIBLE);
+            }else{
+                String strData = binding.txtStrDataContent2.getText().toString();
+                if(!strData.isEmpty()){
+                    try {
+                        String[] data = strData.split(charSplit);
+                        binding.txtTotalContent2.setText(String.valueOf(data.length));
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }else{
+                    binding.txtTotalContent2.setText("0");
+                }
+                binding.btnShowHideDataContent2.setText("Expand");
+                binding.grpUser.setVisibility(View.VISIBLE);
+                binding.grpHeader.setVisibility(View.VISIBLE);
+                binding.grpContent1.setVisibility(View.VISIBLE);
+                binding.grpContent3.setVisibility(View.VISIBLE);
+                binding.grpFooter.setVisibility(View.VISIBLE);
+                binding.grpLink.setVisibility(View.VISIBLE);
+                binding.grpControl.setVisibility(View.VISIBLE);
+                binding.txtStrDataContent2.setVisibility(View.GONE);
+            }
+        });
+        // Content 3
+        binding.btnShowHideDataContent3.setOnClickListener(v -> {
+            if(binding.btnShowHideDataContent3.getText().toString().equals("Expand")){
+                binding.btnShowHideDataContent3.setText("Collapse");
+                binding.grpUser.setVisibility(View.GONE);
+                binding.grpHeader.setVisibility(View.GONE);
+                binding.grpContent1.setVisibility(View.GONE);
+                binding.grpContent2.setVisibility(View.GONE);
+                binding.grpFooter.setVisibility(View.GONE);
+                binding.grpLink.setVisibility(View.GONE);
+                binding.grpControl.setVisibility(View.GONE);
+                binding.txtStrDataContent3.setVisibility(View.VISIBLE);
+            }else{
+                String strData = binding.txtStrDataContent3.getText().toString();
+                if(!strData.isEmpty()){
+                    try {
+                        String[] data = strData.split(charSplit);
+                        binding.txtTotalContent3.setText(String.valueOf(data.length));
+                    }catch (Exception e){
+                        e.printStackTrace();
+                    }
+                }else{
+                    binding.txtTotalContent3.setText("0");
+                }
+                binding.btnShowHideDataContent3.setText("Expand");
+                binding.grpUser.setVisibility(View.VISIBLE);
+                binding.grpHeader.setVisibility(View.VISIBLE);
+                binding.grpContent1.setVisibility(View.VISIBLE);
+                binding.grpContent2.setVisibility(View.VISIBLE);
+                binding.grpFooter.setVisibility(View.VISIBLE);
+                binding.grpLink.setVisibility(View.VISIBLE);
+                binding.grpControl.setVisibility(View.VISIBLE);
+                binding.txtStrDataContent3.setVisibility(View.GONE);
+            }
+        });
+        // Footer
         binding.btnShowHideDataFooter.setOnClickListener(v -> {
             if(binding.btnShowHideDataFooter.getText().toString().equals("Expand")){
                 binding.btnShowHideDataFooter.setText("Collapse");
                 binding.grpUser.setVisibility(View.GONE);
                 binding.grpHeader.setVisibility(View.GONE);
-                binding.grpContent.setVisibility(View.GONE);
+                binding.grpContent1.setVisibility(View.GONE);
+                binding.grpContent2.setVisibility(View.GONE);
+                binding.grpContent3.setVisibility(View.GONE);
                 binding.grpLink.setVisibility(View.GONE);
-                binding.grpCaption.setVisibility(View.GONE);
                 binding.grpControl.setVisibility(View.GONE);
                 binding.txtStrDataFooter.setVisibility(View.VISIBLE);
             }else{
                 String strData = binding.txtStrDataFooter.getText().toString();
-                String charSplit = binding.txtStrSplitFooter.getText().toString();
-                if(!strData.isEmpty() && !charSplit.isEmpty()){
+                if(!strData.isEmpty()){
                     try {
-                        String[] data = strData.split(Pattern.quote(String.valueOf(charSplit.charAt(0))));
+                        String[] data = strData.split(charSplit);
                         binding.txtTotalFooter.setText(String.valueOf(data.length));
                     }catch (Exception e){
                         e.printStackTrace();
@@ -230,85 +305,21 @@ public class AccountActivity extends AppCompatActivity {
                 binding.btnShowHideDataFooter.setText("Expand");
                 binding.grpUser.setVisibility(View.VISIBLE);
                 binding.grpHeader.setVisibility(View.VISIBLE);
-                binding.grpContent.setVisibility(View.VISIBLE);
+                binding.grpContent1.setVisibility(View.VISIBLE);
+                binding.grpContent2.setVisibility(View.VISIBLE);
+                binding.grpContent3.setVisibility(View.VISIBLE);
                 binding.grpLink.setVisibility(View.VISIBLE);
-                binding.grpCaption.setVisibility(View.VISIBLE);
                 binding.grpControl.setVisibility(View.VISIBLE);
                 binding.txtStrDataFooter.setVisibility(View.GONE);
             }
         });
-        binding.btnShowHideDataLink.setOnClickListener(v -> {
-            if(binding.btnShowHideDataLink.getText().toString().equals("Expand")){
-                binding.btnShowHideDataLink.setText("Collapse");
-                binding.grpUser.setVisibility(View.GONE);
-                binding.grpHeader.setVisibility(View.GONE);
-                binding.grpContent.setVisibility(View.GONE);
-                binding.grpFooter.setVisibility(View.GONE);
-                binding.grpCaption.setVisibility(View.GONE);
-                binding.grpControl.setVisibility(View.GONE);
-                binding.txtStrDataLink.setVisibility(View.VISIBLE);
-            }else{
-                String strData = binding.txtStrDataLink.getText().toString();
-                String charSplit = binding.txtStrSplitLink.getText().toString();
-                if(!strData.isEmpty() && !charSplit.isEmpty()){
-                    try {
-                        String[] data = strData.split(Pattern.quote(String.valueOf(charSplit.charAt(0))));
-                        binding.txtTotalLink.setText(String.valueOf(data.length));
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }else{
-                    binding.txtTotalLink.setText("0");
-                }
-                binding.btnShowHideDataLink.setText("Expand");
-                binding.grpUser.setVisibility(View.VISIBLE);
-                binding.grpHeader.setVisibility(View.VISIBLE);
-                binding.grpContent.setVisibility(View.VISIBLE);
-                binding.grpFooter.setVisibility(View.VISIBLE);
-                binding.grpCaption.setVisibility(View.VISIBLE);
-                binding.grpControl.setVisibility(View.VISIBLE);
-                binding.txtStrDataLink.setVisibility(View.GONE);
-            }
-        });
-        binding.btnShowHideDataCaption.setOnClickListener(v -> {
-            if(binding.btnShowHideDataCaption.getText().toString().equals("Expand")){
-                binding.btnShowHideDataCaption.setText("Collapse");
-                binding.grpUser.setVisibility(View.GONE);
-                binding.grpHeader.setVisibility(View.GONE);
-                binding.grpContent.setVisibility(View.GONE);
-                binding.grpFooter.setVisibility(View.GONE);
-                binding.grpLink.setVisibility(View.GONE);
-                binding.grpControl.setVisibility(View.GONE);
-                binding.txtStrDataCaption.setVisibility(View.VISIBLE);
-            }else{
-                String strData = binding.txtStrDataCaption.getText().toString();
-                String charSplit = binding.txtStrSplitCaption.getText().toString();
-                if(!strData.isEmpty() && !charSplit.isEmpty()){
-                    try {
-                        String[] data = strData.split(Pattern.quote(String.valueOf(charSplit.charAt(0))));
-                        binding.txtTotalCaption.setText(String.valueOf(data.length));
-                    }catch (Exception e){
-                        e.printStackTrace();
-                    }
-                }else{
-                    binding.txtTotalCaption.setText("0");
-                }
-                binding.btnShowHideDataCaption.setText("Expand");
-                binding.grpUser.setVisibility(View.VISIBLE);
-                binding.grpHeader.setVisibility(View.VISIBLE);
-                binding.grpContent.setVisibility(View.VISIBLE);
-                binding.grpFooter.setVisibility(View.VISIBLE);
-                binding.grpLink.setVisibility(View.VISIBLE);
-                binding.grpControl.setVisibility(View.VISIBLE);
-                binding.txtStrDataCaption.setVisibility(View.GONE);
-            }
-        });
-
+        // Handle click button Cancel
         binding.btnCancelAccount.setOnClickListener(v -> {
             Intent intent = new Intent(this, MainActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
             startActivity(intent);
         });
+        // Handle click button Save
         binding.btnSaveAccount.setOnClickListener(v -> {
             try {
                 String fileFolder = String.format("%s/%s/%s",
@@ -324,10 +335,11 @@ public class AccountActivity extends AppCompatActivity {
                         if(password.length() > 0){
                             binding.getAccount().setPassword(password);
                             binding.getAccount().setHeader(null);
-                            binding.getAccount().setContent(null);
+                            binding.getAccount().setContent1(null);
+                            binding.getAccount().setContent2(null);
+                            binding.getAccount().setContent3(null);
                             binding.getAccount().setFooter(null);
                             binding.getAccount().setLink(null);
-                            binding.getAccount().setCaption(null);
                             Utils.object2File(fileAccount, binding.getAccount());
                             Intent intent = new Intent(this, MainActivity.class);
                             startActivity(intent);
@@ -336,69 +348,30 @@ public class AccountActivity extends AppCompatActivity {
                             binding.txtPassword.forceLayout();
                         }
                     }else{
-                        String splitHeader = String.valueOf(binding.txtStrSplitHeader.getText().charAt(0));
-                        String splitContent = String.valueOf(binding.txtStrSplitContent.getText().charAt(0));
-                        String splitFooter = String.valueOf(binding.txtStrSplitFooter.getText().charAt(0));
-                        String splitLink = String.valueOf(binding.txtStrSplitLink.getText().charAt(0));
-                        String splitCaption = String.valueOf(binding.txtStrSplitCaption.getText().charAt(0));
                         String dataHeader = binding.txtStrDataHeader.getText().toString();
-                        String dataContent = binding.txtStrDataContent.getText().toString();
+                        String dataContent1 = binding.txtStrDataContent1.getText().toString();
+                        String dataContent2 = binding.txtStrDataContent2.getText().toString();
+                        String dataContent3 = binding.txtStrDataContent3.getText().toString();
                         String dataFooter = binding.txtStrDataFooter.getText().toString();
                         String dataLink = binding.txtStrDataLink.getText().toString();
-                        String dataCaption = binding.txtStrDataCaption.getText().toString();
-                        if(splitHeader.isEmpty()){
-                            Toast.makeText(v.getContext(), "Split header is required", Toast.LENGTH_SHORT).show();
-                            binding.txtStrSplitHeader.forceLayout();
-                        }else if(dataHeader.isEmpty()){
-                            Toast.makeText(v.getContext(), "Data header is required", Toast.LENGTH_SHORT).show();
-                            binding.txtStrDataHeader.forceLayout();
-                        }else if(splitContent.isEmpty()){
-                            Toast.makeText(v.getContext(), "Split content is required", Toast.LENGTH_SHORT).show();
-                            binding.txtStrSplitContent.forceLayout();
-                        }else if(dataContent.isEmpty()){
-                            Toast.makeText(v.getContext(), "Data content is required", Toast.LENGTH_SHORT).show();
-                            binding.txtStrDataContent.forceLayout();
-                        }else if(splitFooter.isEmpty()){
-                            Toast.makeText(v.getContext(), "Split footer is required", Toast.LENGTH_SHORT).show();
-                            binding.txtStrSplitFooter.forceLayout();
-                        }else if(dataFooter.isEmpty()) {
-                            Toast.makeText(v.getContext(), "Data footer is required", Toast.LENGTH_SHORT).show();
-                            binding.txtStrDataFooter.forceLayout();
-                        }else if(splitLink.isEmpty()){
-                            Toast.makeText(v.getContext(), "Split link is required", Toast.LENGTH_SHORT).show();
-                            binding.txtStrSplitLink.forceLayout();
-                        }else if(dataLink.isEmpty()) {
-                            Toast.makeText(v.getContext(), "Data link is required", Toast.LENGTH_SHORT).show();
-                            binding.txtStrDataLink.forceLayout();
-                        }else if(splitCaption.isEmpty()){
-                            Toast.makeText(v.getContext(), "Split caption is required", Toast.LENGTH_SHORT).show();
-                            binding.txtStrSplitCaption.forceLayout();
-                        }else if(dataCaption.isEmpty()) {
-                            Toast.makeText(v.getContext(), "Data caption is required", Toast.LENGTH_SHORT).show();
-                            binding.txtStrDataCaption.forceLayout();
-                        }else{
-                            binding.getAccount().setSplitHeader(splitHeader);
-                            binding.getAccount().setSplitContent(splitContent);
-                            binding.getAccount().setSplitFooter(splitFooter);
-                            binding.getAccount().setSplitLink(splitLink);
-                            binding.getAccount().setSplitCaption(splitCaption);
-                            binding.getAccount().setHeader(dataHeader);
-                            binding.getAccount().setContent(dataContent);
-                            binding.getAccount().setFooter(dataFooter);
-                            binding.getAccount().setLink(dataLink);
-                            binding.getAccount().setCaption(dataCaption);
-                            binding.getAccount().setPassword(null);
-                            Utils.object2File(fileAccount, binding.getAccount());
-                            Intent intent = new Intent(this, MainActivity.class);
-                            startActivity(intent);
-                        }
+                        binding.getAccount().setHeader(dataHeader.isEmpty() ? null : dataHeader);
+                        binding.getAccount().setContent1(dataContent1.isEmpty() ? null : dataContent1);
+                        binding.getAccount().setContent2(dataContent2.isEmpty() ? null : dataContent2);
+                        binding.getAccount().setContent3(dataContent3.isEmpty() ? null : dataContent3);
+                        binding.getAccount().setFooter(dataFooter.isEmpty() ? null : dataFooter);
+                        binding.getAccount().setLink(dataLink.isEmpty() ? null : dataLink);
+                        binding.getAccount().setPassword(null);
+                        Utils.object2File(fileAccount, binding.getAccount());
+                        Intent intent = new Intent(this, MainActivity.class);
+                        startActivity(intent);
                     }
                 }
             } catch (IOException e) {
                 e.printStackTrace();
             }
         });
-
+        // Handle scroll
+        // Header
         binding.txtStrDataHeader.setOnTouchListener((v, event) -> {
             v.getParent().getParent().requestDisallowInterceptTouchEvent(true);
             if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
@@ -406,28 +379,32 @@ public class AccountActivity extends AppCompatActivity {
             }
             return false;
         });
-        binding.txtStrDataContent.setOnTouchListener((v, event) -> {
+        // Content 1
+        binding.txtStrDataContent1.setOnTouchListener((v, event) -> {
             v.getParent().getParent().requestDisallowInterceptTouchEvent(true);
             if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
                 v.getParent().getParent().requestDisallowInterceptTouchEvent(false);
             }
             return false;
         });
+        // Content 2
+        binding.txtStrDataContent2.setOnTouchListener((v, event) -> {
+            v.getParent().getParent().requestDisallowInterceptTouchEvent(true);
+            if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
+                v.getParent().getParent().requestDisallowInterceptTouchEvent(false);
+            }
+            return false;
+        });
+        // Content 3
+        binding.txtStrDataContent3.setOnTouchListener((v, event) -> {
+            v.getParent().getParent().requestDisallowInterceptTouchEvent(true);
+            if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
+                v.getParent().getParent().requestDisallowInterceptTouchEvent(false);
+            }
+            return false;
+        });
+        // Footer
         binding.txtStrDataFooter.setOnTouchListener((v, event) -> {
-            v.getParent().getParent().requestDisallowInterceptTouchEvent(true);
-            if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
-                v.getParent().getParent().requestDisallowInterceptTouchEvent(false);
-            }
-            return false;
-        });
-        binding.txtStrDataLink.setOnTouchListener((v, event) -> {
-            v.getParent().getParent().requestDisallowInterceptTouchEvent(true);
-            if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
-                v.getParent().getParent().requestDisallowInterceptTouchEvent(false);
-            }
-            return false;
-        });
-        binding.txtStrDataCaption.setOnTouchListener((v, event) -> {
             v.getParent().getParent().requestDisallowInterceptTouchEvent(true);
             if ((event.getAction() & MotionEvent.ACTION_MASK) == MotionEvent.ACTION_UP) {
                 v.getParent().getParent().requestDisallowInterceptTouchEvent(false);

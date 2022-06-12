@@ -251,13 +251,15 @@ public class BotFragment extends Fragment {
 
     private void botIG(View v){
         setLog("=>>>> START <<<<=");
-        setLog("+ [App] [Bot] [Instagram] [v4.3]");
+        setLog("+ [App] [Bot] [Instagram] [v4.5]");
         setLog("=> Total acc login:" + arrAccLogin.size());
+        // Check total account run and account login
         if(arrAccLogin.size() > 0 && isRunning){
             Account accLogin = arrAccLogin.size() > 1
                     ? arrAccLogin.get(new Random().nextInt(arrAccLogin.size()-1))
                     : arrAccLogin.get(0);
             setLog("=> Login with username:" + accLogin.getUsername());
+            // Check account login
             boolean resultLogin = loginIG(accLogin.getUsername(), accLogin.getPassword());
             if(resultLogin){
                 setLog("=> Total acc run:" + arrAccRun.size());
@@ -266,28 +268,63 @@ public class BotFragment extends Fragment {
                         if(!isRunning) break;
                         setLog("=> Begin with username:" + accountRun.getUsername());
                         setLog("=> Actived:" + accountRun.isActived());
+                        // Check account is actived
                         if(accountRun.isActived()){
                             try {
-                                // Copy Image to folder Upload
                                 int countMaxImage = 0;
                                 int totalImageCanUpload = 0;
-                                if(spnTypeUpload.getSelectedItemPosition() == 2){       // Video + Image (Feed) - (9 Image)
-                                    countMaxImage = 9;
-                                }else if(spnTypeUpload.getSelectedItemPosition() == 3){ // Image (Story) - (6 Image)
-                                    countMaxImage = 6;
-                                }else if(spnTypeUpload.getSelectedItemPosition() == 4){ // Image (Feed) - (10 Image)
-                                    countMaxImage = 10;
+
+                                // Check input data and set value default
+                                if(spnTypeUpload.getSelectedItemPosition() == 0 || // Video (Reel)
+                                        spnTypeUpload.getSelectedItemPosition() == 1) {  // Video (Feed)
+                                    if (accountRun.getHeader() == null ||
+                                            accountRun.getContent1() == null ||
+                                            accountRun.getFooter() == null) {
+                                        isRunning = false;
+                                        setLog("=> Error input data: " + spnTypeUpload.getSelectedItem());
+                                    }
+                                }else if (spnTypeUpload.getSelectedItemPosition() == 2) {       // Video + Image (Feed) - (9 Image)
+                                    if (accountRun.getHeader() != null &&
+                                            accountRun.getContent2() != null &&
+                                            accountRun.getFooter() != null) {
+                                        countMaxImage = 9;
+                                    } else {
+                                        isRunning = false;
+                                        setLog("=> Error input data: " + spnTypeUpload.getSelectedItem());
+                                    }
+                                } else if (spnTypeUpload.getSelectedItemPosition() == 3) { // Image (Story) - (6 Image)
+                                    if(accountRun.getLink() != null){
+                                        countMaxImage = 6;
+                                    }else{
+                                        isRunning = false;
+                                        setLog("=> Error input data: " + spnTypeUpload.getSelectedItem());
+                                    }
+                                } else if (spnTypeUpload.getSelectedItemPosition() == 4) { // Image (Feed) - (10 Image)
+                                    if (accountRun.getContent3() != null &&
+                                            accountRun.getFooter() != null) {
+                                        countMaxImage = 10;
+                                    } else {
+                                        isRunning = false;
+                                        setLog("=> Error input data: " + spnTypeUpload.getSelectedItem());
+                                    }
                                 }
-                                if(countMaxImage > 0){
+                                // Check isRunning = true Then continue;
+                                if(!isRunning) break;
+                                if(spnTypeUpload.getSelectedItemPosition() == 2 ||
+                                        spnTypeUpload.getSelectedItemPosition() == 3 ||
+                                        spnTypeUpload.getSelectedItemPosition() == 4 ){
+                                    // Copy Image to folder Upload
+                                    setLog("=> Count max image: " + countMaxImage);
                                     totalImageCanUpload = botIG.copy_image(_contextApp,
                                             accountRun.getUsername(),
                                             countMaxImage);
-                                    setLog("=> Total image can upload " + totalImageCanUpload);
+                                    setLog("=> Total image can upload: " + totalImageCanUpload);
                                     if(totalImageCanUpload == 0){
                                         isRunning = false;
-                                        break;
                                     }
                                 }
+                                // Check isRunning = true Then continue;
+                                if(!isRunning) break;
 
 //                                setLog("=> Open app " + Constants.PACKAGE_NAME_INSTAGRAM);
 //                                Utils.openApp(_context, automatorService.getInstrumentation(), Constants.PACKAGE_NAME_INSTAGRAM, 10);
@@ -353,7 +390,9 @@ public class BotFragment extends Fragment {
                                             isRunning = false;
                                         }
                                     }
+                                    // Check isRunning = true Then continue;
                                     if(!isRunning) break;
+
                                     Utils.openApp(
                                             _context,
                                             automatorService.getInstrumentation(),
@@ -376,12 +415,12 @@ public class BotFragment extends Fragment {
                                                 isRunning = false;
                                             }
                                         } else {
-                                            setLog("=> Share video Failed");
+                                            setLog("=> Share Failed");
                                             isRunning = false;
                                         }
                                     }else if (spnTypeUpload.getSelectedItemPosition() == 1){ // Video (Feed)
                                         if(botIG.share_video_to_feed(Constants.FOLDER_NAME_UPLOAD)){
-                                            setLog("=> Share video Ok");
+                                            setLog("=> Share Ok");
                                             String content = randPost(0, captionVideoOfUser, userOfVideo, accountRun);
                                             if(content != null){
                                                 if(botIG.post_to_timeline(content)){
@@ -396,13 +435,13 @@ public class BotFragment extends Fragment {
                                                 isRunning = false;
                                             }
                                         }else{
-                                            setLog("=> Share video Failed");
+                                            setLog("=> Share Failed");
                                             isRunning = false;
                                         }
                                     }else if (spnTypeUpload.getSelectedItemPosition() == 2) { // Video + Image (Feed)
                                         if(botIG.share_tshirt_to_feed(Constants.FOLDER_NAME_UPLOAD, totalImageCanUpload)){
                                             setLog("=> Share video Ok");
-                                            String content = randPost(0, captionVideoOfUser, userOfVideo, accountRun);
+                                            String content = randPost(1, captionVideoOfUser, userOfVideo, accountRun);
                                             if(content != null){
                                                 if(botIG.post_to_timeline(content)){
                                                     clearCache(v.getContext());
@@ -416,20 +455,20 @@ public class BotFragment extends Fragment {
                                                 isRunning = false;
                                             }
                                         }else{
-                                            setLog("=> Share video Failed");
+                                            setLog("=> Share Failed");
                                             isRunning = false;
                                         }
                                     }else if (spnTypeUpload.getSelectedItemPosition() == 3) { // Image (Story)
-                                        String linkSticker = randPost(1, null, null, accountRun);
+                                        String linkSticker = accountRun.getLink();
                                         if(botIG.share_image_to_story(Constants.FOLDER_NAME_UPLOAD,linkSticker,totalImageCanUpload)){
-                                            setLog("=> Share video Ok");
+                                            setLog("=> Share Ok");
                                         }else{
-                                            setLog("=> Share video Failed");
+                                            setLog("=> Share Failed");
                                             isRunning = false;
                                         }
                                     }else if (spnTypeUpload.getSelectedItemPosition() == 4) { // Image (Feed)
                                         if(botIG.share_image_to_feed(Constants.FOLDER_NAME_UPLOAD, totalImageCanUpload)){
-                                            setLog("=> Share video Ok");
+                                            setLog("=> Share Ok");
                                             String captionPost = randPost(2, null, null, accountRun);
                                             if(botIG.post_to_timeline(captionPost)){
                                                 clearCache(v.getContext());
@@ -440,7 +479,7 @@ public class BotFragment extends Fragment {
                                                 isRunning = false;
                                             }
                                         }else{
-                                            setLog("=> Share video Failed");
+                                            setLog("=> Share Failed");
                                             isRunning = false;
                                         }
                                     }
@@ -470,44 +509,49 @@ public class BotFragment extends Fragment {
         }
     }
 
-    private String randPost(int type, String caption, String userOfVideo, Account account){
-        if(type == 0){ // Header + Content + Footer
+    private String randPost(int type, String contentOfVideo, String userOfVideo, Account account){
+        String charSplit = Pattern.quote(String.valueOf("|".charAt(0)));
+        String[] typeData = { "Header", "Content", "Footer" };
+        if(type == 0 || type == 1){ // Video (Reel) + Video (Feed)
             try {
-                String[] nameContents = { "Header", "Content", "Footer" };
-                String[] charSplits = { account.getSplitHeader(), account.getSplitContent(), account.getSplitFooter() };
-                String[] contents = { account.getHeader(), account.getContent(), account.getFooter() };
+                String[] contents = {
+                        account.getHeader(),
+                        type == 0 ? account.getContent1() : account.getContent2(),
+                        account.getFooter() };
                 HashMap<String, String> resultContent = new HashMap<>();
                 for (int i = 0; i < contents.length; i++) {
-                    String[] temp = contents[i].split(Pattern.quote(charSplits[i]));
+                    String[] temp = contents[i].split(charSplit);
                     String content = temp[Utils.randInt(0, temp.length-1)];
-                    resultContent.put(nameContents[i], content);
-                    setLog("=> Random " + nameContents[i] + " Ok");
+                    resultContent.put(typeData[i], content);
+                    setLog("=> Random " + typeData[i] + " Ok");
                 }
                 return String.format("%s @%s\n%s\n%s\n%s",
-                        resultContent.get(nameContents[0]), userOfVideo,
-                        caption,
-                        resultContent.get(nameContents[1]),
-                        resultContent.get(nameContents[2]));
+                        resultContent.get(typeData[0]), userOfVideo,
+                        contentOfVideo,
+                        resultContent.get(typeData[1]),
+                        resultContent.get(typeData[2]));
             }catch (Exception e){
                 e.printStackTrace();
                 setLog("=> Error [randPost]: " + e.getMessage());
             }
-        }else if(type == 1){ // Link
-            String[] links = account.getLink().split(Pattern.quote(account.getSplitLink()));
-            if(links.length > 0){
-                return links.length > 1
-                        ? links[Utils.randInt(0, links.length - 1)]
-                        : links[0];
-            }
-        }else if(type == 2){ // Caption
-            String[] captions = account.getCaption().split(Pattern.quote(account.getSplitCaption()));
-            if(captions.length > 0){
-                return captions.length > 1
-                        ? captions[Utils.randInt(0, captions.length - 1)]
-                        : captions[0];
+        }else if (type == 2){ // Image (Feed)
+            try {
+                String[] contents = { "", account.getContent3(), account.getFooter() };
+                HashMap<String, String> resultContent = new HashMap<>();
+                for (int i = 0; i < contents.length; i++) {
+                    String[] temp = contents[i].split(charSplit);
+                    String content = temp[Utils.randInt(0, temp.length-1)];
+                    resultContent.put(typeData[i], content);
+                    setLog("=> Random " + typeData[i] + " Ok");
+                }
+                return String.format("%s\n%s",
+                        resultContent.get(typeData[1]),
+                        resultContent.get(typeData[2]));
+            }catch (Exception e){
+                e.printStackTrace();
+                setLog("=> Error [randPost]: " + e.getMessage());
             }
         }
-
         return null;
     }
 
@@ -602,23 +646,41 @@ public class BotFragment extends Fragment {
                     arrAccRun = new ArrayList<>();
                     for (File src : fileAccounts) {
                         try {
-                            // Check node if fiedname not exist then add into node
+                            // Check node if fieldName not exist then add missing node
                             JsonNode accountJson = Utils.file2Json(src);
                             ObjectNode objectNode = ((ObjectNode)accountJson);
-                            if(accountJson.findPath("splitLink").isMissingNode()){
-                                objectNode.put("splitLink", "|");
-                            }
-                            if(accountJson.findPath("splitCaption").isMissingNode()){
-                                objectNode.put("splitCaption", "|");
-                            }
                             if(accountJson.findPath("link").isMissingNode()){
                                 objectNode.put("link", (String) null);
                             }
-                            if(accountJson.findPath("caption").isMissingNode()){
-                                objectNode.put("caption", (String) null);
+                            if(!accountJson.findPath("splitHeader").isMissingNode()){
+                                objectNode.remove("splitHeader");
+                            }
+                            if(!accountJson.findPath("splitContent").isMissingNode()){
+                                objectNode.remove("splitContent");
+                            }
+                            if(!accountJson.findPath("splitFooter").isMissingNode()){
+                                objectNode.remove("splitFooter");
+                            }
+                            if(!accountJson.findPath("splitLink").isMissingNode()){
+                                objectNode.remove("splitLink");
+                            }
+                            if(!accountJson.findPath("splitCaption").isMissingNode()){
+                                objectNode.remove("splitCaption");
+                            }
+                            if(!accountJson.findPath("caption").isMissingNode()){
+                                objectNode.remove("caption");
+                            }
+                            if(accountJson.findPath("content1").isMissingNode()){
+                                objectNode.put("content1", accountJson.get("content").textValue());
+                                objectNode.remove("content");
+                            }
+                            if(accountJson.findPath("content2").isMissingNode()){
+                                objectNode.put("content2", (String) null);
+                            }
+                            if(accountJson.findPath("content3").isMissingNode()){
+                                objectNode.put("content3", (String) null);
                             }
 //                            Account account = Utils.file2Object(src, Account.class);
-                            // Convert Node to Class Account
                             Account account = Utils.objectNode2Object(objectNode, Account.class);
                             if(account.getPassword() != null) {
                                 totalAccLogin++;

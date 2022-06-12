@@ -11,48 +11,36 @@ public class Account extends BaseObservable {
     private String username;
     private String password;
     private boolean isActived;
-    private String splitHeader;
     private String header;
-    private String splitContent;
-    private String content;
-    private String splitFooter;
+    private String content1;
+    private String content2;
+    private String content3;
     private String footer;
-    private String splitLink;
     private String link;
-    private String splitCaption;
-    private String caption;
 
     @JsonCreator
     public Account(
             @JsonProperty("username") String username,
             @JsonProperty("password") String password,
             @JsonProperty("isActived") boolean isActived,
-            @JsonProperty("splitHeader") String splitHeader,
             @JsonProperty("header") String header,
-            @JsonProperty("splitContent") String splitContent,
-            @JsonProperty("content") String content,
-            @JsonProperty("splitFooter")String splitFooter,
+            @JsonProperty("content1") String content1,
+            @JsonProperty("content2") String content2,
+            @JsonProperty("content3") String content3,
             @JsonProperty("footer")String footer,
-            @JsonProperty("splitLink")String splitLink,
-            @JsonProperty("link")String link,
-            @JsonProperty("splitCaption")String splitCaption,
-            @JsonProperty("caption")String caption
+            @JsonProperty("link")String link
     )
     {
         super();
         this.username = username;
         this.password = password;
         this.isActived = isActived;
-        this.splitHeader = splitHeader;
         this.header = header;
-        this.splitContent = splitContent;
-        this.content = content;
-        this.splitFooter = splitFooter;
+        this.content1 = content1;
+        this.content2 = content2;
+        this.content3 = content3;
         this.footer = footer;
-        this.splitLink = splitLink;
         this.link = link;
-        this.splitCaption = splitCaption;
-        this.caption = caption;
     }
 
     @Bindable
@@ -86,16 +74,6 @@ public class Account extends BaseObservable {
     }
 
     @Bindable
-    public String getSplitHeader() {
-        return splitHeader;
-    }
-
-    public void setSplitHeader(String splitHeader) {
-        this.splitHeader = splitHeader;
-        notifyPropertyChanged(BR.splitHeader);
-    }
-
-    @Bindable
     public String getHeader() {
         return header;
     }
@@ -106,33 +84,33 @@ public class Account extends BaseObservable {
     }
 
     @Bindable
-    public String getSplitContent() {
-        return splitContent;
+    public String getContent1() {
+        return content1;
     }
 
-    public void setSplitContent(String splitContent) {
-        this.splitContent = splitContent;
-        notifyPropertyChanged(BR.splitContent);
-    }
-
-    @Bindable
-    public String getContent() {
-        return content;
-    }
-
-    public void setContent(String content) {
-        this.content = content;
-        notifyPropertyChanged(BR.content);
+    public void setContent1(String content1) {
+        this.content1 = content1;
+        notifyPropertyChanged(BR.content1);
     }
 
     @Bindable
-    public String getSplitFooter() {
-        return splitFooter;
+    public String getContent2() {
+        return content2;
     }
 
-    public void setSplitFooter(String splitFooter) {
-        this.splitFooter = splitFooter;
-        notifyPropertyChanged(BR.splitFooter);
+    public void setContent2(String content2) {
+        this.content2 = content2;
+        notifyPropertyChanged(BR.content2);
+    }
+
+    @Bindable
+    public String getContent3() {
+        return content3;
+    }
+
+    public void setContent3(String content3) {
+        this.content3 = content3;
+        notifyPropertyChanged(BR.content3);
     }
 
     @Bindable
@@ -145,15 +123,6 @@ public class Account extends BaseObservable {
         notifyPropertyChanged(BR.footer);
     }
 
-    @Bindable
-    public String getSplitLink() {
-        return splitLink;
-    }
-
-    public void setSplitLink(String splitLink) {
-        this.splitLink = splitLink;
-        notifyPropertyChanged(BR.splitLink);
-    }
 
     @Bindable
     public String getLink() {
@@ -165,23 +134,4 @@ public class Account extends BaseObservable {
         notifyPropertyChanged(BR.link);
     }
 
-    @Bindable
-    public String getSplitCaption() {
-        return splitCaption;
-    }
-
-    public void setSplitCaption(String splitCaption) {
-        this.splitCaption = splitCaption;
-        notifyPropertyChanged(BR.splitCaption);
-    }
-
-    @Bindable
-    public String getCaption() {
-        return caption;
-    }
-
-    public void setCaption(String caption) {
-        this.caption = caption;
-        notifyPropertyChanged(BR.caption);
-    }
 }

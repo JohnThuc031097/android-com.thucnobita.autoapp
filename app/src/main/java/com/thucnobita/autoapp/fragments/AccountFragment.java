@@ -51,23 +51,41 @@ public class AccountFragment extends Fragment {
             if(fileAccounts != null){
                 for (File src : fileAccounts) {
                     try {
-                        // Check node if fiedname not exist then add into node
+                        // Check node if fieldName not exist then add missing node
                         JsonNode accountJson = Utils.file2Json(src);
                         ObjectNode objectNode = ((ObjectNode)accountJson);
-                        if(accountJson.findPath("splitLink").isMissingNode()){
-                            objectNode.put("splitLink", "|");
-                        }
-                        if(accountJson.findPath("splitCaption").isMissingNode()){
-                            objectNode.put("splitCaption", "|");
-                        }
                         if(accountJson.findPath("link").isMissingNode()){
                             objectNode.put("link", (String) null);
                         }
-                        if(accountJson.findPath("caption").isMissingNode()){
-                            objectNode.put("caption", (String) null);
+                        if(!accountJson.findPath("splitHeader").isMissingNode()){
+                            objectNode.remove("splitHeader");
                         }
-//                            Account account = Utils.file2Object(src, Account.class);
-                        // Convert Node to Class Account
+                        if(!accountJson.findPath("splitContent").isMissingNode()){
+                            objectNode.remove("splitContent");
+                        }
+                        if(!accountJson.findPath("splitFooter").isMissingNode()){
+                            objectNode.remove("splitFooter");
+                        }
+                        if(!accountJson.findPath("splitLink").isMissingNode()){
+                            objectNode.remove("splitLink");
+                        }
+                        if(!accountJson.findPath("splitCaption").isMissingNode()){
+                            objectNode.remove("splitCaption");
+                        }
+                        if(!accountJson.findPath("caption").isMissingNode()){
+                            objectNode.remove("caption");
+                        }
+                        if(accountJson.findPath("content1").isMissingNode()){
+                            objectNode.put("content1", accountJson.get("content").textValue());
+                            objectNode.remove("content");
+                        }
+                        if(accountJson.findPath("content2").isMissingNode()){
+                            objectNode.put("content2", (String) null);
+                        }
+                        if(accountJson.findPath("content3").isMissingNode()){
+                            objectNode.put("content3", (String) null);
+                        }
+//                      Account account = Utils.file2Object(src, Account.class);
                         Account account = Utils.objectNode2Object(objectNode, Account.class);
                         listAccount.add(account);
                     }catch (IOException e) {
