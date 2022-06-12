@@ -251,7 +251,7 @@ public class BotFragment extends Fragment {
 
     private void botIG(View v){
         setLog("=>>>> START <<<<=");
-        setLog("+ [App] [Bot] [Instagram] [v4.5]");
+        setLog("+ [App] [Bot] [Instagram] [v4.6]");
         setLog("=> Total acc login:" + arrAccLogin.size());
         // Check total account run and account login
         if(arrAccLogin.size() > 0 && isRunning){
@@ -638,7 +638,7 @@ public class BotFragment extends Fragment {
             File fileFolderImage = new File(pathFolderImage);
             if(!fileFolderImage.exists()) fileFolderImage.mkdirs();
             if(fileFolder.exists()){
-                File[] fileAccounts = fileFolder.listFiles(pathname -> pathname.getPath().endsWith(".json"));
+                File[] fileAccounts = fileFolder.listFiles(pathname -> pathname.getAbsolutePath().endsWith(".json"));
                 if(fileAccounts != null){
                     totalAccLogin = 0;
                     totalAccRun = 0;

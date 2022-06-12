@@ -47,7 +47,7 @@ public class AccountFragment extends Fragment {
         if(!fileFolder.exists()){
             fileFolder.mkdirs();
         }else{
-            File[] fileAccounts = fileFolder.listFiles(pathname -> pathname.getPath().endsWith(".json"));
+            File[] fileAccounts = fileFolder.listFiles(pathname -> pathname.getAbsolutePath().endsWith(".json"));
             if(fileAccounts != null){
                 for (File src : fileAccounts) {
                     try {

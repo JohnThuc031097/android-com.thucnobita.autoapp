@@ -216,31 +216,12 @@ class Data {
         return selector;
     }
 
-    public ArrayList<Selector> share_story_share_post(){
-        ArrayList<Selector> arrSelector = new ArrayList<>();
+    public Selector share_story_share(){
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setDescription("Share to");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION);
-        arrSelector.add(selector);
-        selector = new Selector(mAutomatorService.getInstrumentation());
-        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setDescription("Share Button");
-        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/share_story_button");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
-        arrSelector.add(selector);
-        selector = new Selector(mAutomatorService.getInstrumentation());
-        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setDescription("Done Button");
-        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/send_button");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
-        arrSelector.add(selector);
-        selector = new Selector(mAutomatorService.getInstrumentation());
-        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/avatar_image_view");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
-        arrSelector.add(selector);
-        return arrSelector;
+        selector.setText("Your story");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT);
+        return selector;
     }
 
     public Selector share_story_wait_done(){
@@ -509,6 +490,15 @@ class Data {
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
         selector.setDescription("Options");
         selector.setMask(Selector.MASK_PACKAGENAME  | Selector.MASK_DESCRIPTION);
+        return selector;
+    }
+
+    public Selector tab_your_story(){
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setText("Your story");
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/username");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
         return selector;
     }
 

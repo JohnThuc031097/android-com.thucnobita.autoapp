@@ -164,22 +164,12 @@ public class Actions {
                                                         Thread.sleep(5000);
                                                         if(click(selectors.share_story_done_add_link_sticker(), 5)){
                                                             Thread.sleep(2000);
-                                                            ArrayList<Selector> arrSelectorSharePost = selectors.share_story_share_post();
-                                                            if(click(arrSelectorSharePost.get(0), 5)){ // Click Share 1
-                                                                Thread.sleep(2000);
-                                                                if(click(arrSelectorSharePost.get(1), 5)){ // Click Share 2
+                                                            if(click(selectors.share_story_share(), 5)){ // Click share
+                                                                Thread.sleep(5000);
+                                                                if(click(selectors.tab_your_story(), 5)){ // Click tab your story
                                                                     Thread.sleep(2000);
-                                                                    if(waitGone(arrSelectorSharePost.get(1), 60 * 5)){ // Wait for share 2
-                                                                        Thread.sleep(2000);
-                                                                        if(click(arrSelectorSharePost.get(2), 5)){ // Click Done Share
-                                                                            Thread.sleep(2000);
-                                                                            if(click(arrSelectorSharePost.get(3), 5)){ // Click your story
-                                                                                Thread.sleep(2000);
-                                                                                // Wait for share to story donw (default: 10 min)
-                                                                                return waitGone(selectors.share_story_wait_done(), 60 * 10);
-                                                                            }
-                                                                        }
-                                                                    }
+                                                                    // Wait for share to story donw (default: 10 min)
+                                                                    return waitGone(selectors.share_story_wait_done(), 60 * 10);
                                                                 }
                                                             }
                                                         }
