@@ -157,34 +157,36 @@ public class Actions {
             Thread.sleep(2000);
             if(click(arrSelector.get(1), 5)){ // Select mode "Story"
                 Thread.sleep(2000);
-                if(click(findSelector(selectors.share_story_gallery_folder()), 5)) { // Choose folder
+                click(selectors.share_story_gallery_folder_for_camera(), 5); // Choose folder for camera if exist
+                Thread.sleep(2000);
+                if(click(selectors.share_story_gallery_folder(), 5)) { // Choose folder
                     Thread.sleep(2000);
                     if(click(selectors.share_story_select_folder(folderShare), 5)) { // Select folderShare
                         Thread.sleep(2000);
                         int images = totalImage;
                         if(images > 0){
-                            if (click(selectors.share_story_btn_multiple_select(), 5)) {
+                            if (click(selectors.share_story_btn_multiple_select(), 5)) { // Select multiple item
                                 Thread.sleep(2000);
-                                ObjInfo[] items = selectors.share_story_get_items();
+                                ObjInfo[] items = selectors.share_story_get_items(); // Get all item in folder
                                 Thread.sleep(1000);
                                 if(items.length > 0){
                                     for (ObjInfo item: items) {
-                                        if(!automatorService.click(item.getBounds().getLeft(), item.getBounds().getTop())) return false;
+                                        if(!automatorService.click(item.getBounds().getLeft(), item.getBounds().getTop())) return false; // Click item by x, y
                                         Thread.sleep(1500);
                                     }
                                 }
                             }
                         }
                         Thread.sleep(3000);
-                        if(click(selectors.share_story_btn_next(), 5)){
+                        if(click(selectors.share_story_btn_next(), 5)){ // Click button share
                             Thread.sleep(2000);
-                            if(click(selectors.share_story_select_type(), 5)){
+                            if(click(selectors.share_story_select_type(), 5)){ // Choose type upload
                                 Thread.sleep(5000);
-                                if(click(selectors.share_story_select_type_sticker(), 5)){
+                                if(click(selectors.share_story_select_type_sticker(), 5)){ // Choose type sticker
                                     Thread.sleep(2000);
-                                    if(automatorService.exist(selectors.share_story_search_sticker())){
+                                    if(automatorService.exist(selectors.share_story_search_sticker())){ // Search sticker
                                         Thread.sleep(2000);
-                                        if(automatorService.setText(selectors.share_story_search_sticker(), "link")){
+                                        if(automatorService.setText(selectors.share_story_search_sticker(), "link")){ // Input link into selector search
                                             Thread.sleep(5000);
                                             if(click(selectors.share_story_select_type_link_sticker(), 5)){
                                                 Thread.sleep(2000);
@@ -212,8 +214,6 @@ public class Actions {
                             }
                         }
                     }
-                }else{
-
                 }
             }
         }

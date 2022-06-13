@@ -150,19 +150,20 @@ class Data {
         return arrSelector;
     }
 
-    public ArrayList<Selector> share_story_gallery_folder(){
-        ArrayList<Selector> arrSelector = new ArrayList<>();
+    public Selector share_story_gallery_folder_for_camera(){
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/gallery_preview_button");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        return selector;
+    }
+
+    public Selector share_story_gallery_folder(){
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/gallery_folder_menu");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
-        arrSelector.add(selector);
-        selector = new Selector(mAutomatorService.getInstrumentation());
-        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/gallery_preview_button");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
-        arrSelector.add(selector);
-        return arrSelector;
+        return selector;
     }
 
     public Selector share_story_select_folder(String folderShare){
