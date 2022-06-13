@@ -152,14 +152,14 @@ public class Actions {
     }
 
     public boolean share_image_to_story(String folderShare, String linkSticker, int totalImage) throws UiObjectNotFoundException, InterruptedException {
-        ArrayList<Selector> arrSelector = selectors.share_story_select_folder(folderShare);
+        ArrayList<Selector> arrSelector = selectors.share_story();
         if(click(arrSelector.get(0), 5)){ // Choose mode create post
             Thread.sleep(2000);
             if(click(arrSelector.get(1), 5)){ // Select mode "Story"
                 Thread.sleep(2000);
-                if(click(arrSelector.get(2), 5)) { // Choose folder
+                if(click(findSelector(selectors.share_story_gallery_folder()), 5)) { // Choose folder
                     Thread.sleep(2000);
-                    if(click(arrSelector.get(3), 5)) { // Select folderShare
+                    if(click(selectors.share_story_select_folder(folderShare), 5)) { // Select folderShare
                         Thread.sleep(2000);
                         int images = totalImage;
                         if(images > 0){
@@ -212,6 +212,8 @@ public class Actions {
                             }
                         }
                     }
+                }else{
+
                 }
             }
         }

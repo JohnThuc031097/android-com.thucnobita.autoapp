@@ -133,7 +133,7 @@ class Data {
         return selectors;
     }
 
-    public ArrayList<Selector> share_story_select_folder(String folderShare){
+    public ArrayList<Selector> share_story(){
         ArrayList<Selector> arrSelector = new ArrayList<>();
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
@@ -147,18 +147,31 @@ class Data {
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/overflow_menu_item_label");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
         arrSelector.add(selector);
-        selector = new Selector(mAutomatorService.getInstrumentation());
+        return arrSelector;
+    }
+
+    public ArrayList<Selector> share_story_gallery_folder(){
+        ArrayList<Selector> arrSelector = new ArrayList<>();
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/gallery_folder_menu");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
         arrSelector.add(selector);
         selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/gallery_preview_button");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        arrSelector.add(selector);
+        return arrSelector;
+    }
+
+    public Selector share_story_select_folder(String folderShare){
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
         selector.setText(folderShare != null ? folderShare : "Instagram");
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/folder_picker_text_view");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
-        arrSelector.add(selector);
-        return arrSelector;
+        return selector;
     }
 
     public Selector share_story_btn_multiple_select(){
