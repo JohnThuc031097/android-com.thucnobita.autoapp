@@ -24,6 +24,57 @@ public class Actions {
         this.selectors = new Data(automatorService);
     }
 
+    public boolean comment_post(String username, String data) throws UiObjectNotFoundException, RemoteException, InterruptedException {
+        if(click(selectors.btn_view_posts(), 5)){
+            Selector selectorPostsRow1 = new Selector(automatorService.getInstrumentation());
+            selectorPostsRow1.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+            selectorPostsRow1.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/media_set_row_content_identifier");
+            selectorPostsRow1.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+            ObjInfo[] objInfoPosts = automatorService.objInfoOfAllInstances(selectorPostsRow1);
+            Thread.sleep(2000);
+            if(objInfoPosts.length > 0){
+                ObjInfo objInfoPost1 = objInfoPosts[0];
+                if(!automatorService.click(objInfoPost1.getBounds().getLeft(), objInfoPost1.getBounds().getTop())) return false;
+                Thread.sleep(5000);
+                String dataValidateComment = String.format("%s %s", username, data);
+                boolean findSelectorComment = false;
+                Selector selectorCommentInputData;
+                Selector selectorCommentValidateData;
+                Thread.sleep(2000);
+                if(!click(findSelector(selectors.btn_comment_post()), 5)){
+                    Thread.sleep(2000);
+                    if(click(selectors.get_media_group(), 5)){
+                        Thread.sleep(2000);
+                        if(click(findSelector(selectors.btn_comment_post()), 5)){
+                            findSelectorComment = true;
+                        }
+                    }
+                }
+                Thread.sleep(5000);
+                if(findSelectorComment){
+                    selectorCommentInputData = selectors.comment_input_data();
+                    if(automatorService.exist(selectorCommentInputData)){
+                        Thread.sleep(2000);
+                        if(automatorService.setText(selectorCommentInputData, data)){
+                            Thread.sleep(5000);
+                            if(automatorService.pressKey("enter")){
+                                Thread.sleep(5000);
+                                selectorCommentValidateData = selectors.comment_validate_data(null);
+                                if(automatorService.exist(selectorCommentValidateData)){
+                                    Thread.sleep(2000);
+                                    automatorService.setText(selectorCommentValidateData, dataValidateComment);
+                                    Thread.sleep(5000);
+                                    return automatorService.exist(selectors.comment_validate_data(dataValidateComment));
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
     public boolean post_to_timeline(String content) throws UiObjectNotFoundException, InterruptedException, RemoteException {
         Selector selectorInputContent = selectors.post_input_content();
         if(content != null){
@@ -60,27 +111,6 @@ public class Actions {
         }
         return false;
     }
-
-//    public boolean post_feed(String content) throws UiObjectNotFoundException, InterruptedException, RemoteException {
-//        ArrayList<Selector> arrSelector = selectors.post_feed();
-//        if(content != null){
-//            automatorService.setText(arrSelector.get(0), content);
-//        }
-//        Thread.sleep(2000);
-//        automatorService.pressKey("back"); // Hide keybroad
-//        Thread.sleep(1000);
-//        if(click(arrSelector.get(1), 5)){ // Click "Share" to begin post
-//            Thread.sleep(1000);
-//            if(click(arrSelector.get(2), 5)){ // Click return Home
-////                if(waitGone(arrSelector.get(3), 60 * 5)){ // Wait for process done (time wait default: 5 min)
-////                    return waitGone(arrSelector.get(5), 60 * 5);
-////                }
-//                Thread.sleep(2000);
-//                return waitGone(arrSelector.get(3), 60 * 10); // Wait for process done (time wait default: 10 min)
-//            }
-//        }
-//        return false;
-//    }
 
     public boolean share_video_to_reel(String folderShare) throws UiObjectNotFoundException, InterruptedException {
         ArrayList<Selector> arrSelector = selectors.share_video_to_reel(folderShare);

@@ -313,8 +313,8 @@ public class BotFragment extends Fragment {
                                 if(spnTypeUpload.getSelectedItemPosition() == 2 ||
                                         spnTypeUpload.getSelectedItemPosition() == 3 ||
                                         spnTypeUpload.getSelectedItemPosition() == 4 ){
-                                    // Copy Image to folder Upload
                                     setLog("=> Count max image: " + countMaxImage);
+                                    // Copy Image to folder Upload
                                     totalImageCanUpload = botIG.copy_image(_contextApp,
                                             accountRun.getUsername(),
                                             countMaxImage);
@@ -461,6 +461,8 @@ public class BotFragment extends Fragment {
                                     }else if (spnTypeUpload.getSelectedItemPosition() == 3) { // Image (Story)
                                         String linkSticker = accountRun.getLink();
                                         if(botIG.share_image_to_story(Constants.FOLDER_NAME_UPLOAD,linkSticker,totalImageCanUpload)){
+                                            clearCache(v.getContext());
+                                            Thread.sleep(2000);
                                             setLog("=> Share Ok");
                                         }else{
                                             setLog("=> Share Failed");

@@ -14,6 +14,27 @@ class Data {
         this.mAutomatorService = automatorService;
     }
 
+    public Selector comment_input_data() {
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/layout_comment_thread_edittext");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        return selector;
+    }
+
+    public Selector comment_validate_data(String data){
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/row_comment_textview_comment");
+        if(data != null){
+            selector.setText(data);
+            selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID | Selector.MASK_TEXT);
+        }else{
+            selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        }
+        return selector;
+    }
+
     public Selector post_input_content(){
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
@@ -459,6 +480,29 @@ class Data {
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_CLASSNAME | Selector.MASK_RESOURCEID);
         selectors.add(selector);
         return selectors;
+    }
+
+    public ArrayList<Selector> btn_comment_post(){
+        ArrayList<Selector> arrSelector = new ArrayList<>();
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/row_feed_button_comment");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        arrSelector.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setDescription("Comment");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION);
+        arrSelector.add(selector);
+        return arrSelector;
+    }
+
+    public Selector btn_view_posts(){
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/row_profile_header_post_count_container");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        return selector;
     }
 
     public Selector btn_select_multiple_file(){
