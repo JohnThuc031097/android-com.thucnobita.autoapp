@@ -164,6 +164,7 @@ public class Actions {
                     if(click(selectors.share_story_select_folder(folderShare), 5)) { // Select folderShare
                         Thread.sleep(2000);
                         int images = totalImage;
+                        boolean clickImage = false;
                         if(images > 0){
                             if (click(selectors.share_story_btn_multiple_select(), 5)) { // Select multiple item
                                 Thread.sleep(2000);
@@ -174,9 +175,11 @@ public class Actions {
                                         if(!automatorService.click(item.getBounds().getLeft(), item.getBounds().getTop())) return false; // Click item by x, y
                                         Thread.sleep(1500);
                                     }
+                                    clickImage = true;
                                 }
                             }
                         }
+                        if(!clickImage) return false;
                         Thread.sleep(3000);
                         if(click(selectors.share_story_btn_next(), 5)){ // Click button share
                             Thread.sleep(2000);
