@@ -11,6 +11,7 @@ import com.thucnobita.autoapp.utils.Constants;
 import com.thucnobita.autoapp.utils.Utils;
 import com.thucnobita.uiautomator.AutomatorServiceImpl;
 import com.thucnobita.uiautomator.ObjInfo;
+import com.thucnobita.uiautomator.Rect;
 import com.thucnobita.uiautomator.Selector;
 
 import java.util.ArrayList;
@@ -152,6 +153,78 @@ public class Actions {
     }
 
     public boolean share_image_to_story(String folderShare, String linkSticker, int totalImage) throws UiObjectNotFoundException, InterruptedException {
+        ArrayList<Selector> arrSelector = selectors.share_story_2();
+        if(click(arrSelector.get(0), 5)){ // Click your story
+            Thread.sleep(2000);
+            if(!automatorService.exist(selectors.share_story_gallery_folder())) click(arrSelector.get(1), 5); // Click username if not exist
+            Thread.sleep(2000);
+            if(click(selectors.share_story_gallery_folder(), 5)) { // Choose folder
+                Thread.sleep(2000);
+                if(click(selectors.share_story_select_folder(folderShare), 5)) { // Select folderShare
+                    Thread.sleep(2000);
+                    int images = totalImage;
+                    boolean clickImage = false;
+                    if(images > 0){
+                        if (click(selectors.share_story_btn_multiple_select(), 5)) { // Select multiple item
+                            Thread.sleep(2000);
+                            ObjInfo[] items = selectors.share_story_get_items(); // Get all item in folder
+                            Thread.sleep(1000);
+                            if(items.length > 0){
+                                for (ObjInfo item: items) {
+                                    if(images == 0) break;
+                                    Rect rect = item.getVisibleBounds();
+                                    if(!automatorService.click(rect.getLeft(), rect.getTop())) return false; // Click item by x, y
+                                    images--;
+                                    Thread.sleep(1500);
+                                }
+                                clickImage = true;
+                            }
+                        }
+                    }
+                    if(!clickImage) return false;
+                    Thread.sleep(3000);
+                    if(click(selectors.share_story_btn_next(), 5)){ // Click button share
+                        Thread.sleep(2000);
+                        if(click(selectors.share_story_select_type(), 5)){ // Choose type upload
+                            Thread.sleep(5000);
+                            if(click(selectors.share_story_select_type_sticker(), 5)){ // Choose type sticker
+                                Thread.sleep(2000);
+                                if(automatorService.exist(selectors.share_story_search_sticker())){ // Search sticker
+                                    Thread.sleep(2000);
+                                    if(automatorService.setText(selectors.share_story_search_sticker(), "link")){ // Input link into selector search
+                                        Thread.sleep(5000);
+                                        if(click(selectors.share_story_select_type_link_sticker(), 5)){
+                                            Thread.sleep(2000);
+                                            if(automatorService.exist(selectors.share_story_add_link_sticker())){
+                                                Thread.sleep(2000);
+                                                if(automatorService.setText(selectors.share_story_add_link_sticker(), linkSticker)){
+                                                    Thread.sleep(5000);
+                                                    if(click(selectors.share_story_done_add_link_sticker(), 5)){
+                                                        Thread.sleep(2000);
+                                                        if(click(selectors.share_story_share(), 5)){ // Click share
+                                                            Thread.sleep(5000);
+                                                            if(click(selectors.tab_your_story(), 5)){ // Click tab your story
+                                                                Thread.sleep(2000);
+                                                                // Wait for share to story donw (default: 10 min)
+                                                                return waitGone(selectors.share_story_wait_done(), 60 * 10);
+                                                            }
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public boolean share_image_to_story_old(String folderShare, String linkSticker, int totalImage) throws UiObjectNotFoundException, InterruptedException {
         ArrayList<Selector> arrSelector = selectors.share_story();
         if(click(arrSelector.get(0), 5)){ // Choose mode create post
             Thread.sleep(2000);
@@ -172,7 +245,10 @@ public class Actions {
                                 Thread.sleep(1000);
                                 if(items.length > 0){
                                     for (ObjInfo item: items) {
-                                        if(!automatorService.click(item.getBounds().getLeft(), item.getBounds().getTop())) return false; // Click item by x, y
+                                        if(images == 0) break;
+                                        Rect rect = item.getVisibleBounds();
+                                        if(!automatorService.click(rect.getLeft(), rect.getTop())) return false; // Click item by x, y
+                                        images--;
                                         Thread.sleep(1500);
                                     }
                                     clickImage = true;

@@ -150,6 +150,22 @@ class Data {
         return arrSelector;
     }
 
+    public ArrayList<Selector> share_story_2(){
+        ArrayList<Selector> arrSelector = new ArrayList<>();
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setText("Your story");
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/username");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT | Selector.MASK_RESOURCEID);
+        arrSelector.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/reel_viewer_title");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        arrSelector.add(selector);
+        return arrSelector;
+    }
+
     public Selector share_story_gallery_folder_for_camera(){
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
@@ -186,10 +202,9 @@ class Data {
     public ObjInfo[] share_story_get_items(){
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setClassName("android.widget.Button");
         selector.setDescription("Photo thumbnail");
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/gallery_grid_item_thumbnail");
-        selector.setMask(Selector.MASK_PACKAGENAME| Selector.MASK_CLASSNAME| Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
+        selector.setMask(Selector.MASK_PACKAGENAME| Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
         return mAutomatorService.objInfoOfAllInstances(selector);
     }
 
