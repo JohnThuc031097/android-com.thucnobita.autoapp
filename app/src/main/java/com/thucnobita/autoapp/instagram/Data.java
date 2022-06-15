@@ -202,10 +202,20 @@ class Data {
     public ObjInfo[] share_story_get_items(){
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-//        selector.setDescription("Photo thumbnail");
+        selector.setDescription("Photo thumbnail");
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/gallery_grid_item_thumbnail");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
-        return mAutomatorService.objInfoOfAllInstances(selector);
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
+        ObjInfo[] objInfos = mAutomatorService.objInfoOfAllInstances(selector);
+        int tryAgain = 3;
+        while (tryAgain-- > 0 && objInfos.length == 0){
+            try {
+                Thread.sleep(1500);
+                objInfos = mAutomatorService.objInfoOfAllInstances(selector);
+            }catch (Exception e){
+                tryAgain = 0;
+            }
+        }
+        return objInfos;
     }
 
     public Selector share_story_btn_next(){

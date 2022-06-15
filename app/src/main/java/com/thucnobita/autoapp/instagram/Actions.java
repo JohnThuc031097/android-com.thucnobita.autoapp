@@ -224,7 +224,7 @@ public class Actions {
         return false;
     }
 
-    public boolean share_image_to_story(Context context, String folderShare, String linkSticker, int totalImage) throws UiObjectNotFoundException, InterruptedException {
+    public boolean share_image_to_story(String folderShare, String linkSticker, int totalImage) throws UiObjectNotFoundException, InterruptedException {
         ArrayList<Selector> arrSelector = selectors.share_story();
         if(click(arrSelector.get(0), 5)){ // Choose mode create post
             Thread.sleep(2000);
@@ -243,14 +243,11 @@ public class Actions {
                                 Thread.sleep(2000);
                                 ObjInfo[] items = selectors.share_story_get_items(); // Get all item in folder
                                 Thread.sleep(1000);
-                                Toast.makeText(context, items.length, Toast.LENGTH_SHORT).show();
                                 if(items.length > 0){
                                     for (ObjInfo item: items) {
                                         if(images == 0) break;
                                         Rect rect = item.getVisibleBounds();
-                                        Toast.makeText(context, rect.getLeft() + " - " + rect.getTop(), Toast.LENGTH_SHORT).show();
                                         if(!automatorService.click(rect.getLeft(), rect.getTop())) return false; // Click item by x, y
-                                        Toast.makeText(context, "Click Ok !", Toast.LENGTH_SHORT).show();
                                         images--;
                                         Thread.sleep(1500);
                                     }

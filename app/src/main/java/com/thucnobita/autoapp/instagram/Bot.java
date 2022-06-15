@@ -261,10 +261,10 @@ public class Bot {
         return result;
     }
 
-    public boolean share_image_to_story(Context context, String folderShare, String linkSticker, int totalImage){
+    public boolean share_image_to_story(String folderShare, String linkSticker, int totalImage){
         boolean result = false;
         try{
-            result = actions.share_image_to_story(context, folderShare, linkSticker, totalImage);
+            result = actions.share_image_to_story(folderShare, linkSticker, totalImage);
             Log.i(TAG_NAME, "=> Click share image to post => " + result);
         } catch (InterruptedException | UiObjectNotFoundException e) {
             e.printStackTrace();

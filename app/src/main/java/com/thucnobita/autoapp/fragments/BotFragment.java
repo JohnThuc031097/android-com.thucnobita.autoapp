@@ -460,7 +460,7 @@ public class BotFragment extends Fragment {
                                         }
                                     }else if (spnTypeUpload.getSelectedItemPosition() == 3) { // Image (Story)
                                         String linkSticker = accountRun.getLink();
-                                        if(botIG.share_image_to_story(_contextApp, Constants.FOLDER_NAME_UPLOAD,linkSticker,totalImageCanUpload)){
+                                        if(botIG.share_image_to_story(Constants.FOLDER_NAME_UPLOAD,linkSticker,totalImageCanUpload)){
                                             clearCache(v.getContext());
                                             Thread.sleep(2000);
                                             setLog("=> Share Ok");
