@@ -202,9 +202,9 @@ class Data {
     public ObjInfo[] share_story_get_items(){
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setDescription("Photo thumbnail");
+//        selector.setDescription("Photo thumbnail");
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/gallery_grid_item_thumbnail");
-        selector.setMask(Selector.MASK_PACKAGENAME| Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
         return mAutomatorService.objInfoOfAllInstances(selector);
     }
 
