@@ -186,14 +186,7 @@ public class BotFragment extends Fragment {
 //                        setLog("Error:" + e.getMessage());
 //                    }
                     if(initBot()){
-                        if(clearCache(v.getContext())){
-                            try {
-                                Thread.sleep(2000);
-                            }catch (Exception e){
-                                Log.i(TAG_NAME , e.toString());
-                            }
-                            botIG(v);
-                        }
+                        botIG(v);
                     }
                     requireActivity().runOnUiThread(() -> {
                         setLog("\n");
@@ -251,7 +244,7 @@ public class BotFragment extends Fragment {
 
     private void botIG(View v){
         setLog("=>>>> START <<<<=");
-        setLog("+ [App] [Bot] [Instagram] [v4.7]");
+        setLog("+ [App] [Bot] [Instagram] [v4.8]");
         setLog("=> Total acc login:" + arrAccLogin.size());
         // Check total account run and account login
         if(arrAccLogin.size() > 0 && isRunning){
@@ -271,6 +264,11 @@ public class BotFragment extends Fragment {
                         // Check account is actived
                         if(accountRun.isActived()){
                             try {
+                                // Remove folder upload before start
+                                if(!clearCache(v.getContext())) isRunning = false;
+                                if(!isRunning) break;
+                                Thread.sleep(2000);
+
                                 int countMaxImage = 0;
                                 int totalImageCanUpload = 0;
 
@@ -404,9 +402,17 @@ public class BotFragment extends Fragment {
                                             String content = randPost(0, captionVideoOfUser, userOfVideo, accountRun);
                                             if(content != null){
                                                 if (botIG.post_to_timeline(content)) {
-                                                    clearCache(v.getContext());
-                                                    Thread.sleep(2000);
                                                     setLog("=> Post Ok");
+                                                    Thread.sleep(2000);
+                                                    String comment = randComment(accountRun.getFooter());
+                                                    if(comment != null){
+                                                        if(botIG.comment_post(accountRun.getUsername(), comment)){
+                                                            setLog("=> Comment Ok");
+                                                        }else{
+                                                            setLog("=> Comment Failed");
+                                                            isRunning = false;
+                                                        }
+                                                    }
                                                 } else {
                                                     setLog("=> Post Failed");
                                                     isRunning = false;
@@ -424,9 +430,17 @@ public class BotFragment extends Fragment {
                                             String content = randPost(0, captionVideoOfUser, userOfVideo, accountRun);
                                             if(content != null){
                                                 if(botIG.post_to_timeline(content)){
-                                                    clearCache(v.getContext());
-                                                    Thread.sleep(2000);
                                                     setLog("=> Post Ok");
+                                                    Thread.sleep(2000);
+                                                    String comment = randComment(accountRun.getFooter());
+                                                    if(comment != null){
+                                                        if(botIG.comment_post(accountRun.getUsername(), comment)){
+                                                            setLog("=> Comment Ok");
+                                                        }else{
+                                                            setLog("=> Comment Failed");
+                                                            isRunning = false;
+                                                        }
+                                                    }
                                                 }else{
                                                     setLog("=> Post Failed");
                                                     isRunning = false;
@@ -444,9 +458,17 @@ public class BotFragment extends Fragment {
                                             String content = randPost(1, captionVideoOfUser, userOfVideo, accountRun);
                                             if(content != null){
                                                 if(botIG.post_to_timeline(content)){
-                                                    clearCache(v.getContext());
-                                                    Thread.sleep(2000);
                                                     setLog("=> Post Ok");
+                                                    Thread.sleep(2000);
+                                                    String comment = randComment(accountRun.getFooter());
+                                                    if(comment != null){
+                                                        if(botIG.comment_post(accountRun.getUsername(), comment)){
+                                                            setLog("=> Comment Ok");
+                                                        }else{
+                                                            setLog("=> Comment Failed");
+                                                            isRunning = false;
+                                                        }
+                                                    }
                                                 }else{
                                                     setLog("=> Post Failed");
                                                     isRunning = false;
@@ -461,8 +483,6 @@ public class BotFragment extends Fragment {
                                     }else if (spnTypeUpload.getSelectedItemPosition() == 3) { // Image (Story)
                                         String linkSticker = accountRun.getLink();
                                         if(botIG.share_image_to_story(Constants.FOLDER_NAME_UPLOAD,linkSticker,totalImageCanUpload)){
-                                            clearCache(v.getContext());
-                                            Thread.sleep(2000);
                                             setLog("=> Share Ok");
                                         }else{
                                             setLog("=> Share Failed");
@@ -473,8 +493,6 @@ public class BotFragment extends Fragment {
                                             setLog("=> Share Ok");
                                             String captionPost = randPost(2, null, null, accountRun);
                                             if(botIG.post_to_timeline(captionPost)){
-                                                clearCache(v.getContext());
-                                                Thread.sleep(2000);
                                                 setLog("=> Post Ok");
                                             }else{
                                                 setLog("=> Post Failed");
@@ -553,6 +571,18 @@ public class BotFragment extends Fragment {
                 e.printStackTrace();
                 setLog("=> Error [randPost]: " + e.getMessage());
             }
+        }
+        return null;
+    }
+
+    private String randComment(String data){
+        String charSplit = Pattern.quote(String.valueOf("|".charAt(0)));
+        try {
+            String[] temp = data.split(charSplit);
+            return temp[Utils.randInt(0, temp.length-1)];
+        }catch (Exception e){
+            e.printStackTrace();
+            setLog("=> Error [randComment]: " + e.getMessage());
         }
         return null;
     }

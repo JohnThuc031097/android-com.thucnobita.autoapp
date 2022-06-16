@@ -217,6 +217,20 @@ public class Bot {
         return result;
     }
 
+    public boolean comment_post(String username, String content){
+        boolean result = false;
+        try{
+            result = actions.click_profile();
+            Log.i(TAG_NAME, "=> Click profile => " + result);
+            Thread.sleep(5000);
+            result = actions.comment_post(username, content);
+            Log.i(TAG_NAME, "=> Comment post => " + result);
+        } catch (UiObjectNotFoundException | InterruptedException | RemoteException e) {
+            e.printStackTrace();
+        }
+        return result;
+    }
+
     public boolean share_video_to_reel(String folderShare){
         boolean result = false;
         try{

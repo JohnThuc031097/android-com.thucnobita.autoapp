@@ -37,10 +37,9 @@ public class Actions {
                 ObjInfo objInfoPost1 = objInfoPosts[0];
                 if(!automatorService.click(objInfoPost1.getBounds().getLeft(), objInfoPost1.getBounds().getTop())) return false;
                 Thread.sleep(5000);
-                String dataValidateComment = String.format("%s %s", username, data);
+                String dataValidateComment = String.format("%s said %s", username, data);
                 boolean findSelectorComment = false;
                 Selector selectorCommentInputData;
-                Selector selectorCommentValidateData;
                 Thread.sleep(2000);
                 if(!click(findSelector(selectors.btn_comment_post()), 5)){
                     Thread.sleep(2000);
@@ -50,22 +49,25 @@ public class Actions {
                             findSelectorComment = true;
                         }
                     }
+                }else{
+                    findSelectorComment = true;
                 }
                 Thread.sleep(5000);
                 if(findSelectorComment){
-                    selectorCommentInputData = selectors.comment_input_data();
-                    if(automatorService.exist(selectorCommentInputData)){
+                    selectorCommentInputData = selectors.comment_input_data(null);
+                    if(automatorService.exist(selectorCommentInputData)){ // Check selector input data exist
                         Thread.sleep(2000);
-                        if(automatorService.setText(selectorCommentInputData, data)){
+                        if(automatorService.setText(selectorCommentInputData, data)){ // If exist then set text
                             Thread.sleep(5000);
-                            if(automatorService.pressKey("enter")){
-                                Thread.sleep(5000);
-                                selectorCommentValidateData = selectors.comment_validate_data(null);
-                                if(automatorService.exist(selectorCommentValidateData)){
+                            selectorCommentInputData = selectors.comment_input_data(data);
+                            if(waitExist(selectorCommentInputData, 60)){ // Wait for selector input appear data
+                                Thread.sleep(2000);
+                                if(click(selectors.comment_enter_post(), 5)){ // Enter post
                                     Thread.sleep(2000);
-                                    automatorService.setText(selectorCommentValidateData, dataValidateComment);
-                                    Thread.sleep(5000);
-                                    return automatorService.exist(selectors.comment_validate_data(dataValidateComment));
+                                    if(waitGone(selectors.comment_waiting_post(), 60)){ // Waiting post
+                                        Thread.sleep(2000);
+                                        return automatorService.exist(selectors.comment_validate_data(dataValidateComment));
+                                    }
                                 }
                             }
                         }
@@ -431,22 +433,22 @@ public class Actions {
                             : arrSelector.get(6);
                     if (click(selectorCopyLink, 5)) { // 1.Copy link
                         Thread.sleep(3000);
-//                        return automatorService.pressKey("back");
-                        if (click(arrSelector.get(7), 5)) { // Again Select video
-                            Thread.sleep(3000);
-                            if (click(selectorMore, 5)) { // Show More
-                                Thread.sleep(3000);
-                                Selector selectorRemoveSaved = automatorService.exist(arrSelector.get(8))
-                                        ? arrSelector.get(8)
-                                        : automatorService.exist(arrSelector.get(9))
-                                        ? arrSelector.get(9)
-                                        : arrSelector.get(10);
-                                if (click(selectorRemoveSaved, 5)){ // 2.Remove video
-                                    Thread.sleep(3000);
-                                    return automatorService.pressKey("back");
-                                }
-                            }
-                        }
+                        return automatorService.pressKey("back");
+//                        if (click(arrSelector.get(7), 5)) { // Again Select video
+//                            Thread.sleep(3000);
+//                            if (click(selectorMore, 5)) { // Show More
+//                                Thread.sleep(3000);
+//                                Selector selectorRemoveSaved = automatorService.exist(arrSelector.get(8))
+//                                        ? arrSelector.get(8)
+//                                        : automatorService.exist(arrSelector.get(9))
+//                                        ? arrSelector.get(9)
+//                                        : arrSelector.get(10);
+//                                if (click(selectorRemoveSaved, 5)){ // 2.Remove video
+//                                    Thread.sleep(3000);
+//                                    return automatorService.pressKey("back");
+//                                }
+//                            }
+//                        }
                     }
                 }
             }

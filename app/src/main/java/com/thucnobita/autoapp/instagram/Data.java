@@ -14,24 +14,42 @@ class Data {
         this.mAutomatorService = automatorService;
     }
 
-    public Selector comment_input_data() {
+    public Selector comment_input_data(String data) {
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/layout_comment_thread_edittext");
-        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
-        return selector;
-    }
-
-    public Selector comment_validate_data(String data){
-        Selector selector = new Selector(mAutomatorService.getInstrumentation());
-        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/row_comment_textview_comment");
         if(data != null){
             selector.setText(data);
             selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID | Selector.MASK_TEXT);
         }else{
             selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
         }
+        return selector;
+    }
+
+    public Selector comment_enter_post() {
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setDescription("Post");
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/layout_comment_thread_post_button_click_area");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
+        return selector;
+    }
+
+    public Selector comment_waiting_post() {
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setText("Posting…");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT);
+        return selector;
+    }
+
+    public Selector comment_validate_data(String comment){
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setDescription(comment);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/row_comment_textview_comment");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
         return selector;
     }
 
@@ -205,17 +223,17 @@ class Data {
         selector.setDescription("Photo thumbnail");
         selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/gallery_grid_item_thumbnail");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION | Selector.MASK_RESOURCEID);
-        ObjInfo[] objInfos = mAutomatorService.objInfoOfAllInstances(selector);
+        ObjInfo[] objInfo = mAutomatorService.objInfoOfAllInstances(selector);
         int tryAgain = 3;
-        while (tryAgain-- > 0 && objInfos.length == 0){
+        while (tryAgain-- > 0 && objInfo.length == 0){
             try {
                 Thread.sleep(1500);
-                objInfos = mAutomatorService.objInfoOfAllInstances(selector);
+                objInfo = mAutomatorService.objInfoOfAllInstances(selector);
             }catch (Exception e){
                 tryAgain = 0;
             }
         }
-        return objInfos;
+        return objInfo;
     }
 
     public Selector share_story_btn_next(){
