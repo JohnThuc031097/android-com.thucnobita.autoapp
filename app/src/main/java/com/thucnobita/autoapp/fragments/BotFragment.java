@@ -244,7 +244,7 @@ public class BotFragment extends Fragment {
 
     private void botIG(View v){
         setLog("=>>>> START <<<<=");
-        setLog("+ [App] [Bot] [Instagram] [v4.8]");
+        setLog("+ [App] [Bot] [Instagram] [v5.0]");
         setLog("=> Total acc login:" + arrAccLogin.size());
         // Check total account run and account login
         if(arrAccLogin.size() > 0 && isRunning){
@@ -494,6 +494,16 @@ public class BotFragment extends Fragment {
                                             String captionPost = randPost(2, null, null, accountRun);
                                             if(botIG.post_to_timeline(captionPost)){
                                                 setLog("=> Post Ok");
+                                                Thread.sleep(2000);
+                                                String comment = randComment(accountRun.getFooter());
+                                                if(comment != null){
+                                                    if(botIG.comment_post(accountRun.getUsername(), comment)){
+                                                        setLog("=> Comment Ok");
+                                                    }else{
+                                                        setLog("=> Comment Failed");
+                                                        isRunning = false;
+                                                    }
+                                                }
                                             }else{
                                                 setLog("=> Post Failed");
                                                 isRunning = false;
@@ -537,7 +547,7 @@ public class BotFragment extends Fragment {
                 String[] contents = {
                         account.getHeader(),
                         type == 0 ? account.getContent1() : account.getContent2(),
-                        account.getFooter() };
+                        "" };
                 HashMap<String, String> resultContent = new HashMap<>();
                 for (int i = 0; i < contents.length; i++) {
                     String[] temp = contents[i].split(charSplit);
@@ -556,7 +566,7 @@ public class BotFragment extends Fragment {
             }
         }else if (type == 2){ // Image (Feed)
             try {
-                String[] contents = { "", account.getContent3(), account.getFooter() };
+                String[] contents = { "", account.getContent3(), "" };
                 HashMap<String, String> resultContent = new HashMap<>();
                 for (int i = 0; i < contents.length; i++) {
                     String[] temp = contents[i].split(charSplit);
