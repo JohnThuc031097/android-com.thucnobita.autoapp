@@ -251,13 +251,15 @@ public class Actions {
                                     for (ObjInfo item: items) {
                                         if(images == 0) break;
                                         Rect rect = item.getVisibleBounds();
-                                        log.append("\n[Rect]: " + "\n\tLeft = ").append(rect.getLeft())
+                                        log.append("\n[Rect]: ")
+                                                .append("\n\tLeft = ").append(rect.getLeft())
                                                 .append("\n\tTop = ").append(rect.getTop())
                                                 .append("\n\tRight = ").append(rect.getRight())
                                                 .append("\n\tBottom = ").append(rect.getBottom());
-                                        boolean isClick = automatorService.click(rect.getLeft(), rect.getTop());
+                                        // Click item by x, y
+                                        boolean isClick = automatorService.click(rect.getLeft(), rect.getTop(), 5);
                                         log.append("\n[Click]: ").append(isClick);
-                                        if(!isClick){ // Click item by x, y
+                                        if(!isClick){
                                             Utils.writeLog(log.toString());
                                             return false;
                                         }
