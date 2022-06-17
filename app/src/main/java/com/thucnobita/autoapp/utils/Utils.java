@@ -24,7 +24,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.thucnobita.autoapp.activities.MainActivity;
 
+import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Parameter;
 import java.util.ArrayList;
@@ -34,6 +36,7 @@ import java.util.Random;
 import java.util.regex.Pattern;
 
 public class Utils {
+    private static final String TAG_NAME = "Utils";
     private Utils(){
 
     }
@@ -94,6 +97,25 @@ public class Utils {
             }
         }
         return true;
+    }
+
+    public static void writeLog(String text)
+    {
+        File logFile = new File(Constants.FOLDER_ROOT + "/" + Constants.FOLDER_NAME_APP, "autoapp.log");
+        try
+        {
+            logFile.delete();
+            logFile.createNewFile();
+            BufferedWriter buf = new BufferedWriter(new FileWriter(logFile, true));
+            buf.append(text);
+            buf.newLine();
+            buf.close();
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
+            Log.i(TAG_NAME, e.getMessage());
+        }
     }
 
     static Uri file2Uri(Context context, File file){

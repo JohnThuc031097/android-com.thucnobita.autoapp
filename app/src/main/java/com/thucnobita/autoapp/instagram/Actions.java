@@ -227,6 +227,7 @@ public class Actions {
     }
 
     public boolean share_image_to_story(String folderShare, String linkSticker, int totalImage) throws UiObjectNotFoundException, InterruptedException {
+        StringBuilder log = new StringBuilder();
         ArrayList<Selector> arrSelector = selectors.share_story();
         if(click(arrSelector.get(0), 5)){ // Choose mode create post
             Thread.sleep(2000);
@@ -244,15 +245,26 @@ public class Actions {
                             if (click(selectors.share_story_btn_multiple_select(), 5)) { // Select multiple item
                                 Thread.sleep(2000);
                                 ObjInfo[] items = selectors.share_story_get_items(); // Get all item in folder
+                                log.append("\n[Total items]: ").append(items.length);
                                 Thread.sleep(1000);
                                 if(items.length > 0){
                                     for (ObjInfo item: items) {
                                         if(images == 0) break;
                                         Rect rect = item.getVisibleBounds();
-                                        if(!automatorService.click(rect.getLeft(), rect.getTop())) return false; // Click item by x, y
+                                        log.append("\n[Rect]: " + "\n\tLeft = ").append(rect.getLeft())
+                                                .append("\n\tTop = ").append(rect.getTop())
+                                                .append("\n\tRight = ").append(rect.getRight())
+                                                .append("\n\tBottom = ").append(rect.getBottom());
+                                        boolean isClick = automatorService.click(rect.getLeft(), rect.getTop());
+                                        log.append("\n[Click]: ").append(isClick);
+                                        if(!isClick){ // Click item by x, y
+                                            Utils.writeLog(log.toString());
+                                            return false;
+                                        }
                                         images--;
                                         Thread.sleep(1500);
                                     }
+                                    Utils.writeLog(log.toString());
                                     clickImage = true;
                                 }
                             }
