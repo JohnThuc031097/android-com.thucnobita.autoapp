@@ -112,12 +112,14 @@ public class Bot {
                     }
                     for (int i = 0; i < totalImageUpload; i++) {
                         File pathImageNew = new File(pathFolderUploads, fileImages[i].getName());
-                        if(fileImages[i].renameTo(pathImageNew)){
-                            MediaUtils.updateMedia(context, pathImageNew);
-                        }else{
-                            Log.i(TAG_NAME,"=> Copy file " + fileImages[i].getName() + " to folder <Instagram> Failed");
-                            return 0;
-                        }
+                        Utils.copyFile(fileImages[i], pathImageNew);
+                        MediaUtils.updateMedia(context, pathImageNew);
+//                        if(fileImages[i].renameTo(pathImageNew)){
+//                            MediaUtils.updateMedia(context, pathImageNew);
+//                        }else{
+//                            Log.i(TAG_NAME,"=> Copy file " + fileImages[i].getName() + " to folder <Instagram> Failed");
+//                            return 0;
+//                        }
                     }
                     Log.i(TAG_NAME,"=> Copy " + totalImageUpload + " file image to folder <Instagram> Ok");
                     return totalImageUpload;

@@ -26,12 +26,19 @@ public class Actions {
     }
 
     public boolean comment_post(String username, String data) throws UiObjectNotFoundException, RemoteException, InterruptedException {
+        ArrayList<Selector> arrRefreshPost = selectors.refresh_post();
+        for (int i = 0; i < 5; i++) {
+            if(automatorService.flingBackward(arrRefreshPost.get(0), true)){ //If the swipe direction is set to vertical, then the swipe will be performed from top to bottom
+                if(!waitGone(arrRefreshPost.get(1), 60 * 2)) return false;
+            }
+            Thread.sleep(2000);
+        }
         if(click(selectors.btn_view_posts(), 5)){
-            Selector selectorPostsRow1 = new Selector(automatorService.getInstrumentation());
-            selectorPostsRow1.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
-            selectorPostsRow1.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/media_set_row_content_identifier");
-            selectorPostsRow1.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
-            ObjInfo[] objInfoPosts = automatorService.objInfoOfAllInstances(selectorPostsRow1);
+            Selector selectorPostsRow = new Selector(automatorService.getInstrumentation());
+            selectorPostsRow.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+            selectorPostsRow.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/media_set_row_content_identifier");
+            selectorPostsRow.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+            ObjInfo[] objInfoPosts = automatorService.objInfoOfAllInstances(selectorPostsRow);
             Thread.sleep(2000);
             if(objInfoPosts.length > 0){
                 ObjInfo objInfoPost1 = objInfoPosts[0];
@@ -245,22 +252,22 @@ public class Actions {
                             if (click(selectors.share_story_btn_multiple_select(), 5)) { // Select multiple item
                                 Thread.sleep(2000);
                                 ObjInfo[] items = selectors.share_story_get_items(); // Get all item in folder
-                                log.append("\n[Total items]: ").append(items.length);
+//                                log.append("\n[Total items]: ").append(items.length);
                                 Thread.sleep(1000);
                                 if(items.length > 0){
                                     for (ObjInfo item: items) {
                                         if(images == 0) break;
                                         Rect rect = item.getVisibleBounds();
-                                        log.append("\n[Rect]: ")
-                                                .append("\n\tLeft = ").append(rect.getLeft())
-                                                .append("\n\tTop = ").append(rect.getTop())
-                                                .append("\n\tRight = ").append(rect.getRight())
-                                                .append("\n\tBottom = ").append(rect.getBottom());
+//                                        log.append("\n[Rect]: ")
+//                                                .append("\n\tLeft = ").append(rect.getLeft())
+//                                                .append("\n\tTop = ").append(rect.getTop())
+//                                                .append("\n\tRight = ").append(rect.getRight())
+//                                                .append("\n\tBottom = ").append(rect.getBottom());
                                         // Click item by x, y
                                         boolean isClick = automatorService.click(rect.getLeft(), rect.getTop(), 5);
-                                        log.append("\n[Click]: ").append(isClick);
+//                                        log.append("\n[Click]: ").append(isClick);
                                         if(!isClick){
-                                            Utils.writeLog(log.toString());
+//                                            Utils.writeLog(log.toString());
                                             return false;
                                         }
                                         images--;

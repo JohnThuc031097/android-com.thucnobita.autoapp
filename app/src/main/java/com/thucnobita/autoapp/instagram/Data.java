@@ -14,6 +14,21 @@ class Data {
         this.mAutomatorService = automatorService;
     }
 
+    public ArrayList<Selector> refresh_post() {
+        ArrayList<Selector> arrSelector = new ArrayList<>();
+        Selector selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/coordinator_root_layout");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        arrSelector.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/swipe_refresh_animated_progressbar_container");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
+        arrSelector.add(selector);
+        return arrSelector;
+    }
+
     public Selector comment_input_data(String data) {
         Selector selector = new Selector(mAutomatorService.getInstrumentation());
         selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
