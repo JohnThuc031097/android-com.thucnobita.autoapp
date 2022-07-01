@@ -163,6 +163,11 @@ class Data {
         selector.setText("Next");
         selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_TEXT);
         selectors.add(selector);
+        selector = new Selector(mAutomatorService.getInstrumentation());
+        selector.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
+        selector.setDescription("Next");
+        selector.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_DESCRIPTION);
+        selectors.add(selector);
         return selectors;
     }
 

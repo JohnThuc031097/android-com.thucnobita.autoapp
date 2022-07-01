@@ -27,19 +27,20 @@ public class Actions {
 
     public boolean comment_post(String username, String data) throws UiObjectNotFoundException, RemoteException, InterruptedException {
         ArrayList<Selector> arrRefreshPost = selectors.refresh_post();
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 3; i++) {
             if(automatorService.flingBackward(arrRefreshPost.get(0), true)){ //If the swipe direction is set to vertical, then the swipe will be performed from top to bottom
                 if(!waitGone(arrRefreshPost.get(1), 60 * 2)) return false;
             }
-            Thread.sleep(2000);
+            Thread.sleep(3000);
         }
         if(click(selectors.btn_view_posts(), 5)){
+            Thread.sleep(3000);
             Selector selectorPostsRow = new Selector(automatorService.getInstrumentation());
             selectorPostsRow.setPackageName(Constants.PACKAGE_NAME_INSTAGRAM);
             selectorPostsRow.setResourceId(Constants.PACKAGE_NAME_INSTAGRAM + ":id/media_set_row_content_identifier");
             selectorPostsRow.setMask(Selector.MASK_PACKAGENAME | Selector.MASK_RESOURCEID);
             ObjInfo[] objInfoPosts = automatorService.objInfoOfAllInstances(selectorPostsRow);
-            Thread.sleep(2000);
+            Thread.sleep(3000);
             if(objInfoPosts.length > 0){
                 ObjInfo objInfoPost1 = objInfoPosts[0];
                 if(!automatorService.click(objInfoPost1.getBounds().getLeft(), objInfoPost1.getBounds().getTop())) return false;
@@ -138,16 +139,17 @@ public class Actions {
                                 Thread.sleep(2000);
                                 if(click(arrSelector.get(5), 5)){ // Select video index "0" (default)
                                     Thread.sleep(3000);
-                                    if(click(arrSelector.get(6), 5)){ // Click "Add"
+                                    if(!click(arrSelector.get(6), 10)){ // Click "Add"
+                                        if(!click(arrSelector.get(7), 10)) return false;
+                                    }
+                                    Thread.sleep(3000);
+                                    if(waitGone(arrSelector.get(6), 60 * 2)){
                                         Thread.sleep(3000);
-                                        if(waitGone(arrSelector.get(6), 60 * 2)){
+                                        if(click(arrSelector.get(7), 5)){ // Click "Preview"
                                             Thread.sleep(3000);
-                                            if(click(arrSelector.get(7), 5)){ // Click "Preview"
+                                            if(waitGone(arrSelector.get(7), 60 * 2)){
                                                 Thread.sleep(3000);
-                                                if(waitGone(arrSelector.get(7), 60 * 2)){
-                                                    Thread.sleep(3000);
-                                                    return click(arrSelector.get(8), 5); // Click "Next" to the end share video
-                                                }
+                                                return click(arrSelector.get(8), 5); // Click "Next" to the end share video
                                             }
                                         }
                                     }
