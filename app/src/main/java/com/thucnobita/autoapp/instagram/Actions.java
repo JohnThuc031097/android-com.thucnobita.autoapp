@@ -115,9 +115,9 @@ public class Actions {
 //            }
             click(selectors.tab_feed(), 5); // Click return tab feed
             Thread.sleep(2000);
-            // Wait for process done (time wait default: 10 min)
+            // Wait for process done (time wait default: 15 min)
             Selector selectorWaitDone = selectors.post_wait_done_after_upload();
-            return waitGone(selectorWaitDone, 60 * 10);
+            return waitGone(selectorWaitDone, 60 * 15);
 
         }
         return false;
@@ -259,15 +259,14 @@ public class Actions {
                                 if(items.length > 0){
                                     for (ObjInfo item: items) {
                                         if(images == 0) break;
-                                        Rect rect = item.getVisibleBounds();
+                                        android.graphics.Rect rect = item.getBounds().toRect();
 //                                        log.append("\n[Rect]: ")
 //                                                .append("\n\tLeft = ").append(rect.getLeft())
 //                                                .append("\n\tTop = ").append(rect.getTop())
 //                                                .append("\n\tRight = ").append(rect.getRight())
 //                                                .append("\n\tBottom = ").append(rect.getBottom());
                                         // Click item by x, y
-                                        boolean isClick = automatorService.click(rect.getLeft(), rect.getTop(), 5);
-//                                        log.append("\n[Click]: ").append(isClick);
+                                        boolean isClick = automatorService.click(rect.centerX(), rect.centerY());
                                         if(!isClick){
 //                                            Utils.writeLog(log.toString());
                                             return false;
