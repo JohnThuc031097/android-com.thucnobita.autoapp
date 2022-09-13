@@ -378,6 +378,11 @@ public class Bot {
         return true;
     }
 
+    public boolean loginWithCookie(String username) {
+        client = loadClientCookie(username);
+        return client != null;
+    }
+
     public void login(String username, String password, Callback.Login callback) {
         if(client != null){
             callback.success("Ok");

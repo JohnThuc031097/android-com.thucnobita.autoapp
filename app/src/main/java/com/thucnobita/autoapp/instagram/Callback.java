@@ -9,7 +9,7 @@ public interface Callback {
         void fail(String message);
     }
     interface Media{
-        void success(String linkVideo);
+        void success(String linkMedia);
         void fail(String message);
     }
 }

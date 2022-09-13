@@ -22,6 +22,7 @@ import com.thucnobita.autoapp.R;
 import com.thucnobita.autoapp.adapters.ViewPagerAdapter;
 import com.thucnobita.autoapp.fragments.AccountFragment;
 import com.thucnobita.autoapp.fragments.BotFragment;
+import com.thucnobita.autoapp.fragments.HandmadeFragment;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
@@ -44,11 +45,12 @@ public class MainActivity extends AppCompatActivity   {
         viewPager = findViewById(R.id.viewPagerMain);
 
         viewPagerAdapter = new ViewPagerAdapter(this);
+        viewPagerAdapter.addFragment(new HandmadeFragment());
         viewPagerAdapter.addFragment(new BotFragment());
         viewPagerAdapter.addFragment(new AccountFragment());
         viewPager.setAdapter(viewPagerAdapter);
 
-        String[] arrTabName = { "Bot", "Account" };
+        String[] arrTabName = { "Handmade", "Bot", "Account"};
         new TabLayoutMediator(tabLayout, viewPager,
                 (tab, position) -> tab.setText(arrTabName[position])
         ).attach();
@@ -92,7 +94,10 @@ public class MainActivity extends AppCompatActivity   {
             public void onPageSelected(int position) {
                 super.onPageSelected(position);
                 executor.submit(() -> {
-                    if(position == 0){
+                    if(position == 0){ // 0 = HandmadeFragment
+                        HandmadeFragment fragmentCrr = (HandmadeFragment) getSupportFragmentManager().getFragments().get(position);
+                        fragmentCrr.loadData();
+                    }else if(position == 1){ // 1 = BotFragment
                         BotFragment fragmentCrr = (BotFragment) getSupportFragmentManager().getFragments().get(position);
                         fragmentCrr.loadData();
 //                        for (Fragment fragment : getSupportFragmentManager().getFragments()) {
