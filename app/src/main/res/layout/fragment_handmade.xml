@@ -70,6 +70,19 @@
         android:textColor="@color/black"
         android:textColorLink="@color/purple_700" />
 
+    <CheckBox
+        android:id="@+id/ckbRandomImage"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="10dp"
+        android:background="@drawable/border_black_bg"
+        android:checked="true"
+        android:duplicateParentState="false"
+        android:text="Random Image"
+        android:textColor="@color/black"
+        android:textSize="22sp"
+        android:textStyle="bold" />
+
     <Button
         android:id="@+id/btnGetHandmade"
         android:layout_width="match_parent"
@@ -78,7 +91,7 @@
         android:background="@color/black"
         android:text="GET"
         android:textColor="@android:color/holo_orange_light"
-        android:textSize="25dp" />
+        android:textSize="25sp" />
 
     <TextView
         android:id="@+id/textView5"
@@ -98,7 +111,8 @@
         android:background="@color/black"
         android:text="COPY"
         android:textColor="@android:color/holo_orange_light"
-        android:textSize="25dp" />
+        android:textSize="25dp"
+        android:visibility="gone" />
 
     <ScrollView
         android:id="@+id/scrollViewResult"

@@ -244,7 +244,7 @@ public class BotFragment extends Fragment {
 
     private void botIG(View v){
         setLog("=>>>> START <<<<=");
-        setLog("+ [App] [Bot] [Instagram] [v6.0]");
+        setLog("+ [App] [Bot] [Instagram] [v7.0]");
         setLog("=> Total acc login:" + arrAccLogin.size());
         // Check total account run and account login
         if(arrAccLogin.size() > 0 && isRunning){
@@ -402,18 +402,20 @@ public class BotFragment extends Fragment {
                                             setLog("=> Share video Ok");
                                             String content = randPost(0, captionVideoOfUser, userOfVideo, accountRun);
                                             if(content != null){
+                                                automatorService.setClipboard("Content", content);
+                                                setLog("=> Set content to clipboard Ok");
                                                 if (botIG.post_to_timeline(content)) {
                                                     setLog("=> Post Ok");
                                                     Thread.sleep(2000);
-                                                    String comment = randComment(accountRun.getFooter());
-                                                    if(comment != null){
-                                                        if(botIG.comment_post(accountRun.getUsername(), comment)){
-                                                            setLog("=> Comment Ok");
-                                                        }else{
-                                                            setLog("=> Comment Failed");
-                                                            isRunning = false;
-                                                        }
-                                                    }
+//                                                    String comment = randComment(accountRun.getFooter());
+//                                                    if(comment != null){
+//                                                        if(botIG.comment_post(accountRun.getUsername(), comment)){
+//                                                            setLog("=> Comment Ok");
+//                                                        }else{
+//                                                            setLog("=> Comment Failed");
+//                                                            isRunning = false;
+//                                                        }
+//                                                    }
                                                 } else {
                                                     setLog("=> Post Failed");
                                                     isRunning = false;
@@ -430,18 +432,20 @@ public class BotFragment extends Fragment {
                                             setLog("=> Share Ok");
                                             String content = randPost(0, captionVideoOfUser, userOfVideo, accountRun);
                                             if(content != null){
+                                                automatorService.setClipboard("Content", content);
+                                                setLog("=> Set content to clipboard Ok");
                                                 if(botIG.post_to_timeline(content)){
                                                     setLog("=> Post Ok");
                                                     Thread.sleep(2000);
-                                                    String comment = randComment(accountRun.getFooter());
-                                                    if(comment != null){
-                                                        if(botIG.comment_post(accountRun.getUsername(), comment)){
-                                                            setLog("=> Comment Ok");
-                                                        }else{
-                                                            setLog("=> Comment Failed");
-                                                            isRunning = false;
-                                                        }
-                                                    }
+//                                                    String comment = randComment(accountRun.getFooter());
+//                                                    if(comment != null){
+//                                                        if(botIG.comment_post(accountRun.getUsername(), comment)){
+//                                                            setLog("=> Comment Ok");
+//                                                        }else{
+//                                                            setLog("=> Comment Failed");
+//                                                            isRunning = false;
+//                                                        }
+//                                                    }
                                                 }else{
                                                     setLog("=> Post Failed");
                                                     isRunning = false;
@@ -458,18 +462,20 @@ public class BotFragment extends Fragment {
                                             setLog("=> Share video Ok");
                                             String content = randPost(1, captionVideoOfUser, userOfVideo, accountRun);
                                             if(content != null){
+                                                automatorService.setClipboard("Content", content);
+                                                setLog("=> Set content to clipboard Ok");
                                                 if(botIG.post_to_timeline(content)){
                                                     setLog("=> Post Ok");
                                                     Thread.sleep(2000);
-                                                    String comment = randComment(accountRun.getFooter());
-                                                    if(comment != null){
-                                                        if(botIG.comment_post(accountRun.getUsername(), comment)){
-                                                            setLog("=> Comment Ok");
-                                                        }else{
-                                                            setLog("=> Comment Failed");
-                                                            isRunning = false;
-                                                        }
-                                                    }
+//                                                    String comment = randComment(accountRun.getFooter());
+//                                                    if(comment != null){
+//                                                        if(botIG.comment_post(accountRun.getUsername(), comment)){
+//                                                            setLog("=> Comment Ok");
+//                                                        }else{
+//                                                            setLog("=> Comment Failed");
+//                                                            isRunning = false;
+//                                                        }
+//                                                    }
                                                 }else{
                                                     setLog("=> Post Failed");
                                                     isRunning = false;
@@ -483,7 +489,7 @@ public class BotFragment extends Fragment {
                                         }
                                     }else if (spnTypeUpload.getSelectedItemPosition() == 3) { // Image (Story)
                                         String linkSticker = accountRun.getLink();
-                                        if(botIG.share_image_to_story(Constants.FOLDER_NAME_UPLOAD,linkSticker,totalImageCanUpload)){
+                                        if(botIG.share_image_to_story(Constants.FOLDER_NAME_UPLOAD, linkSticker,totalImageCanUpload)){
                                             setLog("=> Share Ok");
                                         }else{
                                             setLog("=> Share Failed");
@@ -492,22 +498,26 @@ public class BotFragment extends Fragment {
                                     }else if (spnTypeUpload.getSelectedItemPosition() == 4) { // Image (Feed)
                                         if(botIG.share_image_to_feed(Constants.FOLDER_NAME_UPLOAD, totalImageCanUpload)){
                                             setLog("=> Share Ok");
-                                            String captionPost = randPost(2, null, null, accountRun);
-                                            if(botIG.post_to_timeline(captionPost)){
-                                                setLog("=> Post Ok");
-                                                Thread.sleep(2000);
-                                                String comment = randComment(accountRun.getFooter());
-                                                if(comment != null){
-                                                    if(botIG.comment_post(accountRun.getUsername(), comment)){
-                                                        setLog("=> Comment Ok");
-                                                    }else{
-                                                        setLog("=> Comment Failed");
-                                                        isRunning = false;
-                                                    }
+                                            String content = randPost(2, null, null, accountRun);
+                                            if(content != null){
+                                                automatorService.setClipboard("Content", content);
+                                                setLog("=> Set content to clipboard Ok");
+                                                if(botIG.post_to_timeline(content)){
+                                                    setLog("=> Post Ok");
+                                                    Thread.sleep(2000);
+//                                                String comment = randComment(accountRun.getFooter());
+//                                                if(comment != null){
+//                                                    if(botIG.comment_post(accountRun.getUsername(), comment)){
+//                                                        setLog("=> Comment Ok");
+//                                                    }else{
+//                                                        setLog("=> Comment Failed");
+//                                                        isRunning = false;
+//                                                    }
+//                                                }
+                                                }else{
+                                                    setLog("=> Post Failed");
+                                                    isRunning = false;
                                                 }
-                                            }else{
-                                                setLog("=> Post Failed");
-                                                isRunning = false;
                                             }
                                         }else{
                                             setLog("=> Share Failed");
@@ -543,12 +553,12 @@ public class BotFragment extends Fragment {
     private String randPost(int type, String contentOfVideo, String userOfVideo, Account account){
         String charSplit = Pattern.quote(String.valueOf("|".charAt(0)));
         String[] typeData = { "Header", "Content", "Footer" };
-        if(type == 0 || type == 1){ // Video (Reel) + Video (Feed)
+        if(type == 0 || type == 1){ // 0 = Video (Reel) + Video (Feed) | 1 = Video + Image
             try {
                 String[] contents = {
                         account.getHeader(),
                         type == 0 ? account.getContent1() : account.getContent2(),
-                        "" };
+                        account.getFooter() };
                 HashMap<String, String> resultContent = new HashMap<>();
                 for (int i = 0; i < contents.length; i++) {
                     String[] temp = contents[i].split(charSplit);
@@ -567,7 +577,7 @@ public class BotFragment extends Fragment {
             }
         }else if (type == 2){ // Image (Feed)
             try {
-                String[] contents = { "", account.getContent3(), "" };
+                String[] contents = { "", account.getContent3(), account.getFooter() };
                 HashMap<String, String> resultContent = new HashMap<>();
                 for (int i = 0; i < contents.length; i++) {
                     String[] temp = contents[i].split(charSplit);

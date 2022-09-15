@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.ScrollView;
@@ -46,6 +47,7 @@ public class HandmadeFragment extends Fragment {
     private ImageView imgDropDownAccount;
     private ScrollView scrollViewResult;
     private TextView txtGetResult;
+    private CheckBox ckbRandomImage;
     private Button btnGetHandmade;
     private Button btnCopyTextGetResult;
 
@@ -69,6 +71,7 @@ public class HandmadeFragment extends Fragment {
                 Constants.FOLDER_NAME_ACCOUNT));
         executor = Executors.newFixedThreadPool(5);
         botIG = new Bot(null);
+        textSaveClipbroad = null;
     }
 
     @Override
@@ -81,6 +84,7 @@ public class HandmadeFragment extends Fragment {
         imgDropDownAccount = view.findViewById(R.id.imgDropDownAccount);
         scrollViewResult = view.findViewById(R.id.scrollViewResult);
         txtGetResult = view.findViewById(R.id.txtGetResult);
+        ckbRandomImage = view.findViewById(R.id.ckbRandomImage);
         btnGetHandmade = view.findViewById(R.id.btnGetHandmade);
         btnCopyTextGetResult = view.findViewById(R.id.btnCopyTextGetResult);
 
@@ -102,7 +106,6 @@ public class HandmadeFragment extends Fragment {
                 ArrayList<String> arrAccount = new ArrayList<>();
                 arrAccRun = new ArrayList<>();
                 arrAccLogin = new ArrayList<>();
-                arrAccount.add("None");
                 for (File src : fileAccounts) {
                     try {
                         JsonNode accountJson = Utils.file2Json(src);
@@ -152,10 +155,12 @@ public class HandmadeFragment extends Fragment {
                     }
                 }
                 requireActivity().runOnUiThread(() -> {
-                    ArrayAdapter<String> adapter = new ArrayAdapter<>(_context, R.layout.spinner_item, arrAccount);
-                    adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-                    spnAccount.setAdapter(adapter);
-                    spnAccount.setSelection(0);
+                    if(arrAccount.size() > 0){
+                        ArrayAdapter<String> adapter = new ArrayAdapter<>(_context, R.layout.spinner_item, arrAccount);
+                        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                        spnAccount.setAdapter(adapter);
+                        spnAccount.setSelection(0);
+                    }
                 });
             }
         }
@@ -179,31 +184,61 @@ public class HandmadeFragment extends Fragment {
         });
         btnGetHandmade.setOnClickListener(v -> {
             setLock(true);
+            requireActivity().runOnUiThread(() -> {
+                txtGetResult.setText(null);
+            });
             if(arrAccRun.size() > 0){
                 if(arrAccLogin.size() > 0){
                     setLog("Clear folder upload...");
                     if(clearCache(_context)){
-                        String usernameGetMedia = spnAccount.getSelectedItem().toString().trim();
-                        Account userGetMedia = arrAccRun.get((int)spnAccount.getSelectedItemPosition());
-                        String linkMedia = txtLinkMedia.getText().toString().trim();
-                        String usernameLogin = arrAccLogin.size() > 1
-                                ? arrAccLogin.get(Utils.randInt(arrAccLogin.size() - 1)).getUsername()
-                                : arrAccLogin.get(0).getUsername();
-                        int countMaxImage = 10;
-                        textSaveClipbroad = "";
+                        if(spnAccount.getCount() > 0){
+                            String usernameRun = spnAccount.getSelectedItem().toString().trim();
+                            Account account = arrAccRun.get((int)spnAccount.getSelectedItemPosition());
+                            String linkMedia = txtLinkMedia.getText().toString().trim();
+                            String usernameLogin = arrAccLogin.size() > 1
+                                    ? arrAccLogin.get(Utils.randInt(arrAccLogin.size() - 1)).getUsername()
+                                    : arrAccLogin.get(0).getUsername();
+                            int countMaxImage = 10;
+                            textSaveClipbroad = "";
 
-                        if(spnAccount.getSelectedItemPosition() > 0 && !linkMedia.isEmpty()){
-                            setLog("Type: Get media + image");
-                            executor.submit(() -> {
-                                processGetMedia(usernameLogin, userGetMedia, linkMedia);
-                                processGetImage(false, usernameGetMedia, userGetMedia, countMaxImage);
-                            });
-                        }else if(spnAccount.getSelectedItemPosition() > 0){
-                            setLog("Type: Get image");
-                            executor.submit(() -> processGetImage(true, usernameGetMedia, userGetMedia, countMaxImage));
-                        }else {
-                            setLog("Type: Get media");
-                            executor.submit(() -> processGetMedia(usernameLogin, userGetMedia, linkMedia));
+                            if(!linkMedia.isEmpty() && ckbRandomImage.isChecked()){
+                                setLog("Type: Get media + image");
+                                executor.submit(() -> {
+                                    String[] result = processGetMediaAndGetImage(usernameLogin, linkMedia, usernameRun, countMaxImage);
+                                    if(result != null){
+                                        setLog("Create random content to upload...");
+                                        textSaveClipbroad = randContent(1, result[0] , result[1], account);
+                                        setLog(textSaveClipbroad);
+                                    }
+                                    setLock(false);
+                                });
+                            }else if(!linkMedia.isEmpty() && !ckbRandomImage.isChecked()){
+                                setLog("Type: Get media");
+                                executor.submit(() -> {
+                                    String[] result = processGetMedia(usernameLogin, linkMedia);
+                                    if(result != null){
+                                        setLog("Create random content to upload...");
+                                        textSaveClipbroad = randContent(0, result[0] , result[1], account);
+                                        setLog(textSaveClipbroad);
+                                    }
+                                    setLock(false);
+                                });
+                            }else if(linkMedia.isEmpty() && ckbRandomImage.isChecked()) {
+                                setLog("Type: Get image");
+                                executor.submit(() -> {
+                                    processGetImage(usernameRun, countMaxImage);
+                                    setLog("Create post random to upload...");
+                                    textSaveClipbroad = randContent(2, null, null, account);
+                                    setLog(textSaveClipbroad);
+                                    setLock(false);
+                                });
+                            }else{
+                                setLog("Type: Unknown");
+                                setLock(false);
+                            }
+                        }else{
+                            setLog("Not found account for get");
+                            setLock(false);
                         }
                     }else{
                         setLog("Clear folder upload failed");
@@ -220,24 +255,20 @@ public class HandmadeFragment extends Fragment {
         });
     }
 
-    private void processGetImage(boolean createPost, String usernameGetMedia, Account userGetMedia, int countMaxImage){
+    private boolean processGetImage(String usernameRun, int countMaxImage){
         setLog("Get image...");
-        int totalImage = botIG.copy_image(_context, usernameGetMedia, countMaxImage);
+        int totalImage = botIG.copy_image(_context, usernameRun, countMaxImage);
         if(totalImage > 0){
             setLog("Copy " + totalImage + " file image success");
-            if(createPost){
-                setLog("Create post random to upload...");
-                textSaveClipbroad = randPost(1, null, null, userGetMedia);
-                setLog(textSaveClipbroad);
-            }
+            return true;
         }else{
             setLog("Copy file image failed");
         }
-        setLock(false);
+        return false;
     }
 
-    private void processGetMedia(String userLogin, Account userGetMedia, String linkMedia){
-        if(botIG.loginWithCookie(userLogin)){
+    private String[] processGetMedia(String usernameLogin, String linkMedia){
+        if(botIG.loginWithCookie(usernameLogin)){
             setLog("Login account success");
             String urlLink = linkMedia.split("\\?")[0];
             String[] codeVideo = urlLink.split(Pattern.quote("/"));
@@ -259,10 +290,8 @@ public class HandmadeFragment extends Fragment {
                         }else{
                             captionVideoOfUser = "";
                         }
+                        return new String[] { captionVideoOfUser, usernameOfMedia };
                     }
-                    setLog("Create post random to upload...");
-                    textSaveClipbroad = randPost(0, captionVideoOfUser, usernameOfMedia, userGetMedia);
-                    setLog(textSaveClipbroad);
                 }else{
                     setLog("Download media Failed");
                 }
@@ -272,7 +301,15 @@ public class HandmadeFragment extends Fragment {
         }else{
             setLog("Login account failed");
         }
-        setLock(false);
+        return null;
+    }
+
+    private String[] processGetMediaAndGetImage(String usernameLogin, String linkMedia, String usernameRun, int count){
+        String[] result = processGetMedia(usernameLogin, linkMedia);
+        if(result != null){
+            return processGetImage(usernameRun, count) ? result : null;
+        }
+        return null;
     }
 
     private void setLock(boolean isLock){
@@ -280,8 +317,9 @@ public class HandmadeFragment extends Fragment {
             spnAccount.setEnabled(!isLock);
             txtLinkMedia.setEnabled(!isLock);
             imgDropDownAccount.setEnabled(!isLock);
+            ckbRandomImage.setEnabled(!isLock);
             btnGetHandmade.setEnabled(!isLock);
-            btnCopyTextGetResult.setEnabled(!isLock);
+            btnCopyTextGetResult.setVisibility(isLock ? View.GONE : View.VISIBLE);
         });
     }
 
@@ -309,15 +347,12 @@ public class HandmadeFragment extends Fragment {
         return true;
     }
 
-    private String randPost(int type, String contentOfVideo, String usernameOfVideo, Account account){
+    private String randContent(int type, String contentOfVideo, String usernameOfVideo, Account account){
         String charSplit = Pattern.quote(String.valueOf("|".charAt(0)));
         String[] typeData = { "Header", "Content", "Footer" };
-        if(type == 0){ // Video (Reel) + Video (Feed)
+        if(type == 0 || type == 1){ // 0  = Video | 1 = Video = Image
             try {
-                String[] contents = {
-                        account.getHeader(),
-                        type == 0 ? account.getContent1() : account.getContent2(),
-                        "" };
+                String[] contents = { account.getHeader(), type == 0 ? account.getContent1() : account.getContent2(), account.getFooter() };
                 HashMap<String, String> resultContent = new HashMap<>();
                 for (int i = 0; i < contents.length; i++) {
                     String[] temp = contents[i].split(charSplit);
@@ -334,9 +369,9 @@ public class HandmadeFragment extends Fragment {
                 e.printStackTrace();
                 setLog("=> Error [randPost]: " + e.getMessage());
             }
-        }else if (type == 1){ // Image
+        }else { // Image
             try {
-                String[] contents = { "", account.getContent3(), "" };
+                String[] contents = { "", account.getContent3(), account.getFooter() };
                 HashMap<String, String> resultContent = new HashMap<>();
                 for (int i = 0; i < contents.length; i++) {
                     String[] temp = contents[i].split(charSplit);
