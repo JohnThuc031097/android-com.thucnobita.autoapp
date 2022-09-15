@@ -244,7 +244,7 @@ public class BotFragment extends Fragment {
 
     private void botIG(View v){
         setLog("=>>>> START <<<<=");
-        setLog("+ [App] [Bot] [Instagram] [v5.5]");
+        setLog("+ [App] [Bot] [Instagram] [v6.0]");
         setLog("=> Total acc login:" + arrAccLogin.size());
         // Check total account run and account login
         if(arrAccLogin.size() > 0 && isRunning){

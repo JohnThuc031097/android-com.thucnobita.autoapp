@@ -111,8 +111,16 @@ public class Bot {
                         if(!new File(pathFolderUploads).mkdirs()) return 0;
                     }
                     for (int i = 0; i < totalImageUpload; i++) {
-                        File pathImageNew = new File(pathFolderUploads, fileImages[i].getName());
-                        Utils.copyFile(fileImages[i], pathImageNew);
+//                        File pathImageNew = new File(pathFolderUploads, fileImages[i].getName());
+//                        Utils.copyFile(fileImages[i], pathImageNew);
+//                        MediaUtils.updateMedia(context, pathImageNew);
+                        int rand = Utils.randInt(fileImages.length - 1);
+                        File pathImageNew = new File(pathFolderUploads, fileImages[rand].getName());
+                        while(pathImageNew.exists()){
+                            rand = Utils.randInt(fileImages.length - 1);
+                            pathImageNew = new File(pathFolderUploads, fileImages[rand].getName());
+                        }
+                        Utils.copyFile(fileImages[rand], pathImageNew);
                         MediaUtils.updateMedia(context, pathImageNew);
 //                        if(fileImages[i].renameTo(pathImageNew)){
 //                            MediaUtils.updateMedia(context, pathImageNew);
@@ -416,6 +424,11 @@ public class Bot {
                 .thenAccept(mediaInfoResponse -> {
                     try {
                         JsonNode jsonMedia = Utils.string2Json(Utils.object2String(mediaInfoResponse));
+                        JsonNode usernameOfVideo = jsonMedia
+                                .get("items").get(0)
+                                .get("user")
+                                .get("username");
+                        result.put("username_of_media", usernameOfVideo.textValue());
                         JsonNode linkVideo = jsonMedia
                                 .get("items").get(0)
                                 .get("video_versions").get(0)

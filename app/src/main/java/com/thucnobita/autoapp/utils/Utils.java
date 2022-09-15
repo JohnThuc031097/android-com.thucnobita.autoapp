@@ -75,6 +75,10 @@ public class Utils {
         return new Random().nextInt((max - min) + 1) + min;
     }
 
+    public static int randInt(int num) {
+        return new Random().nextInt(num);
+    }
+
     public static boolean deleteDir(Context context, File dir) {
         if(dir.exists()){
             if (dir.isDirectory()) {

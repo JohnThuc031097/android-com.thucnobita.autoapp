@@ -1,5 +1,7 @@
 package com.thucnobita.autoapp.fragments;
 
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.Context;
 import android.os.Bundle;
 
@@ -31,6 +33,7 @@ import com.thucnobita.autoapp.utils.Utils;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -52,6 +55,7 @@ public class HandmadeFragment extends Fragment {
     private ArrayList<Account> arrAccLogin;
     private Context _context;
     private Bot botIG;
+    private String textSaveClipbroad;
 
     public HandmadeFragment() {
     }
@@ -63,7 +67,7 @@ public class HandmadeFragment extends Fragment {
                 Constants.FOLDER_ROOT,
                 Constants.FOLDER_NAME_APP,
                 Constants.FOLDER_NAME_ACCOUNT));
-        executor = Executors.newFixedThreadPool(2);
+        executor = Executors.newFixedThreadPool(5);
         botIG = new Bot(null);
     }
 
@@ -161,44 +165,124 @@ public class HandmadeFragment extends Fragment {
         imgDropDownAccount.setOnClickListener(v -> {
             spnAccount.performClick();
         });
+        btnCopyTextGetResult.setOnClickListener(v -> {
+            try {
+                ClipboardManager clipboard = (ClipboardManager) _context.getSystemService(Context.CLIPBOARD_SERVICE);
+                ClipData clip = ClipData.newPlainText("auto-app", textSaveClipbroad);
+                clipboard.setPrimaryClip(clip);
+                setLog("Copy post to clipboard success");
+            }catch (Exception ex){
+                ex.printStackTrace();
+                setLog("Copy post to clipboard failed");
+                setLog(ex.getMessage());
+            }
+        });
         btnGetHandmade.setOnClickListener(v -> {
-            String username = spnAccount.getSelectedItem().toString().trim();
-            String linkMedia = txtLinkMedia.getText().toString().trim();
-            Account accLogin = arrAccLogin.size() > 1
-                    ? arrAccLogin.get(new Random().nextInt(arrAccLogin.size()-1))
-                    : arrAccLogin.get(0);
-            if(!username.equals("None")){
-                setLog("Type: Account");
-            }else if (!linkMedia.isEmpty()){
-                setLog("Type: Link Media");
-                executor.submit(() -> process(accLogin.getUsername(), linkMedia));
+            setLock(true);
+            if(arrAccRun.size() > 0){
+                if(arrAccLogin.size() > 0){
+                    setLog("Clear folder upload...");
+                    if(clearCache(_context)){
+                        String usernameGetMedia = spnAccount.getSelectedItem().toString().trim();
+                        Account userGetMedia = arrAccRun.get((int)spnAccount.getSelectedItemPosition());
+                        String linkMedia = txtLinkMedia.getText().toString().trim();
+                        String usernameLogin = arrAccLogin.size() > 1
+                                ? arrAccLogin.get(Utils.randInt(arrAccLogin.size() - 1)).getUsername()
+                                : arrAccLogin.get(0).getUsername();
+                        int countMaxImage = 10;
+                        textSaveClipbroad = "";
+
+                        if(spnAccount.getSelectedItemPosition() > 0 && !linkMedia.isEmpty()){
+                            setLog("Type: Get media + image");
+                            executor.submit(() -> {
+                                processGetMedia(usernameLogin, userGetMedia, linkMedia);
+                                processGetImage(false, usernameGetMedia, userGetMedia, countMaxImage);
+                            });
+                        }else if(spnAccount.getSelectedItemPosition() > 0){
+                            setLog("Type: Get image");
+                            executor.submit(() -> processGetImage(true, usernameGetMedia, userGetMedia, countMaxImage));
+                        }else {
+                            setLog("Type: Get media");
+                            executor.submit(() -> processGetMedia(usernameLogin, userGetMedia, linkMedia));
+                        }
+                    }else{
+                        setLog("Clear folder upload failed");
+                        setLock(false);
+                    }
+                }else{
+                    setLog("Account list is empty [arrAccLogin]");
+                    setLock(false);
+                }
             }else{
-                setLog("Type: Account + Link Media");
-                executor.submit(() -> process(accLogin.getUsername(), linkMedia));
+                setLog("Account list is empty [arrAccRun]");
+                setLock(false);
             }
         });
     }
 
-    private void process(String username, String linkMedia){
-        if(botIG.loginWithCookie(username)){
-            setLog("Login Ok");
+    private void processGetImage(boolean createPost, String usernameGetMedia, Account userGetMedia, int countMaxImage){
+        setLog("Get image...");
+        int totalImage = botIG.copy_image(_context, usernameGetMedia, countMaxImage);
+        if(totalImage > 0){
+            setLog("Copy " + totalImage + " file image success");
+            if(createPost){
+                setLog("Create post random to upload...");
+                textSaveClipbroad = randPost(1, null, null, userGetMedia);
+                setLog(textSaveClipbroad);
+            }
+        }else{
+            setLog("Copy file image failed");
+        }
+        setLock(false);
+    }
+
+    private void processGetMedia(String userLogin, Account userGetMedia, String linkMedia){
+        if(botIG.loginWithCookie(userLogin)){
+            setLog("Login account success");
             String urlLink = linkMedia.split("\\?")[0];
             String[] codeVideo = urlLink.split(Pattern.quote("/"));
             String textCodeVideo = codeVideo[codeVideo.length-1];
-            botIG.getLinkVideoByCode(textCodeVideo, new Callback.Media() {
-                @Override
-                public void success(String linkMedia) {
-                    setLog(linkMedia);
+            setLog("Get link media...");
+            HashMap<String, Object> jsonData = botIG.getDataByCodeVideo(textCodeVideo);
+            String linkDownload  = (String) jsonData.get("link_video");
+            if(linkDownload != null){
+                setLog("Get username of media...");
+                String usernameOfMedia = String.valueOf(jsonData.get("username_of_media"));
+                setLog("Download media...");
+                File fileVideo = botIG.download_video(_context, linkDownload, textCodeVideo);
+                if(fileVideo.exists()){
+                    setLog("Get caption media...");
+                    String captionVideoOfUser = String.valueOf(jsonData.get("caption"));
+                    if(!captionVideoOfUser.isEmpty()){
+                        if(!captionVideoOfUser.startsWith("#")){
+                            captionVideoOfUser = captionVideoOfUser.split(Pattern.quote("#"))[0];
+                        }else{
+                            captionVideoOfUser = "";
+                        }
+                    }
+                    setLog("Create post random to upload...");
+                    textSaveClipbroad = randPost(0, captionVideoOfUser, usernameOfMedia, userGetMedia);
+                    setLog(textSaveClipbroad);
+                }else{
+                    setLog("Download media Failed");
                 }
-
-                @Override
-                public void fail(String message) {
-                    setLog(message);
-                }
-            });
+            }else{
+                setLog("Link media is null");
+            }
         }else{
-            setLog("Login failed");
+            setLog("Login account failed");
         }
+        setLock(false);
+    }
+
+    private void setLock(boolean isLock){
+        requireActivity().runOnUiThread(() -> {
+            spnAccount.setEnabled(!isLock);
+            txtLinkMedia.setEnabled(!isLock);
+            imgDropDownAccount.setEnabled(!isLock);
+            btnGetHandmade.setEnabled(!isLock);
+            btnCopyTextGetResult.setEnabled(!isLock);
+        });
     }
 
     private void setLog(String text){
@@ -210,4 +294,64 @@ public class HandmadeFragment extends Fragment {
         });
     }
 
+    private boolean clearCache(Context context){
+        String[] listNameFolder = { Constants.FOLDER_NAME_APP, "Download", "Movies", "Pictures", "Music", "Documents" };
+        for (String nameFolder: listNameFolder) {
+            String pathFolderApp = String.format("%s/%s/%s",
+                    Constants.FOLDER_ROOT,
+                    nameFolder,
+                    Constants.FOLDER_NAME_UPLOAD);
+            File fileFolderApp = new File(pathFolderApp);
+            if(!Utils.deleteDir(context, fileFolderApp)){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private String randPost(int type, String contentOfVideo, String usernameOfVideo, Account account){
+        String charSplit = Pattern.quote(String.valueOf("|".charAt(0)));
+        String[] typeData = { "Header", "Content", "Footer" };
+        if(type == 0){ // Video (Reel) + Video (Feed)
+            try {
+                String[] contents = {
+                        account.getHeader(),
+                        type == 0 ? account.getContent1() : account.getContent2(),
+                        "" };
+                HashMap<String, String> resultContent = new HashMap<>();
+                for (int i = 0; i < contents.length; i++) {
+                    String[] temp = contents[i].split(charSplit);
+                    String content = temp[Utils.randInt(0, temp.length-1)];
+                    resultContent.put(typeData[i], content);
+                    setLog("=> Random " + typeData[i] + " Ok");
+                }
+                return String.format("%s @%s\n%s\n%s\n%s",
+                        resultContent.get(typeData[0]), usernameOfVideo,
+                        contentOfVideo,
+                        resultContent.get(typeData[1]),
+                        resultContent.get(typeData[2]));
+            }catch (Exception e){
+                e.printStackTrace();
+                setLog("=> Error [randPost]: " + e.getMessage());
+            }
+        }else if (type == 1){ // Image
+            try {
+                String[] contents = { "", account.getContent3(), "" };
+                HashMap<String, String> resultContent = new HashMap<>();
+                for (int i = 0; i < contents.length; i++) {
+                    String[] temp = contents[i].split(charSplit);
+                    String content = temp[Utils.randInt(0, temp.length-1)];
+                    resultContent.put(typeData[i], content);
+                    setLog("=> Random " + typeData[i] + " Ok");
+                }
+                return String.format("%s\n%s",
+                        resultContent.get(typeData[1]),
+                        resultContent.get(typeData[2]));
+            }catch (Exception e){
+                e.printStackTrace();
+                setLog("=> Error [randPost]: " + e.getMessage());
+            }
+        }
+        return null;
+    }
 }
