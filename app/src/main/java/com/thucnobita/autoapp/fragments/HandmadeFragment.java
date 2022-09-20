@@ -48,6 +48,7 @@ public class HandmadeFragment extends Fragment {
     private ScrollView scrollViewResult;
     private TextView txtGetResult;
     private CheckBox ckbRandomImage;
+    private Button btnClearLink;
     private Button btnGetHandmade;
     private Button btnCopyTextGetResult;
 
@@ -85,6 +86,7 @@ public class HandmadeFragment extends Fragment {
         scrollViewResult = view.findViewById(R.id.scrollViewResult);
         txtGetResult = view.findViewById(R.id.txtGetResult);
         ckbRandomImage = view.findViewById(R.id.ckbRandomImage);
+        btnClearLink = view.findViewById(R.id.btnClearLink);
         btnGetHandmade = view.findViewById(R.id.btnGetHandmade);
         btnCopyTextGetResult = view.findViewById(R.id.btnCopyTextGetResult);
 
@@ -167,6 +169,11 @@ public class HandmadeFragment extends Fragment {
     }
 
     private void addHandle(){
+        btnClearLink.setOnClickListener(v -> {
+            requireActivity().runOnUiThread(() -> {
+                txtLinkMedia.setText(null);
+            });
+        });
         imgDropDownAccount.setOnClickListener(v -> {
             spnAccount.performClick();
         });
@@ -318,6 +325,7 @@ public class HandmadeFragment extends Fragment {
             txtLinkMedia.setEnabled(!isLock);
             imgDropDownAccount.setEnabled(!isLock);
             ckbRandomImage.setEnabled(!isLock);
+            btnClearLink.setEnabled(!isLock);
             btnGetHandmade.setEnabled(!isLock);
             btnCopyTextGetResult.setVisibility(isLock ? View.GONE : View.VISIBLE);
         });
