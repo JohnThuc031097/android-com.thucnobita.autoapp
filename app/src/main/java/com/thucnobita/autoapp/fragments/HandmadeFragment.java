@@ -278,29 +278,59 @@ public class HandmadeFragment extends Fragment {
         if(botIG.loginWithCookie(usernameLogin)){
             setLog("Login account success");
             String urlLink = linkMedia.split("\\?")[0];
-            String[] codeVideo = urlLink.split(Pattern.quote("/"));
-            String textCodeVideo = codeVideo[codeVideo.length-1];
+            String[] linkMediaSplit = urlLink.split(Pattern.quote("/"));
+            String textCodeMedia = linkMediaSplit[linkMediaSplit.length-1];
             setLog("Get link media...");
-            HashMap<String, Object> jsonData = botIG.getDataByCodeVideo(textCodeVideo);
-            String linkDownload  = (String) jsonData.get("link_video");
-            if(linkDownload != null){
+            HashMap<String, Object> jsonData = botIG.getDataByCode(textCodeMedia);
+
+            boolean isDownloadVideo = false;
+            String urlDownloadVideo  = (String) jsonData.get("link_video");
+            if(urlDownloadVideo != null){
+                setLog("Download video...");
+                setLog("Download video " + textCodeMedia + "...");
+                File fileVideo = botIG.download_media(true, _context, urlDownloadVideo, textCodeMedia);
+                if(fileVideo.exists()){
+                    isDownloadVideo = true;
+                }else{
+                    setLog("Download video failed");
+                }
+            }else{
+                setLog("Url video is null");
+            }
+
+            boolean isDownloadImage = false;
+            ArrayList<String> urlDownloadImage  = (ArrayList<String>) jsonData.get("link_image");
+            if(urlDownloadImage != null){
+                setLog("Download image...");
+                setLog("Total image: " + urlDownloadImage.size());
+                int index = 0;
+                for (String urlImage : urlDownloadImage) {
+                    String nameFile = textCodeMedia + "_" + (index++);
+                    setLog("Download image " + nameFile + "...");
+                    File fileVideo = botIG.download_media(false, _context, urlImage, nameFile);
+                    if(!fileVideo.exists()){
+                        setLog("Download image failed");
+                        isDownloadImage = false;
+                        break;
+                    }
+                    isDownloadImage = true;
+                }
+            }else{
+                setLog("Url image is null");
+            }
+
+            if(isDownloadVideo && !isDownloadImage || !isDownloadVideo && isDownloadImage){
                 setLog("Get username of media...");
                 String usernameOfMedia = String.valueOf(jsonData.get("username_of_media"));
-                setLog("Download media...");
-                File fileVideo = botIG.download_video(_context, linkDownload, textCodeVideo);
-                if(fileVideo.exists()){
-                    setLog("Get caption media...");
-                    String captionVideoOfUser = String.valueOf(jsonData.get("caption"));
-                    if(!captionVideoOfUser.isEmpty()){
-                        if(!captionVideoOfUser.startsWith("#")){
-                            captionVideoOfUser = captionVideoOfUser.split(Pattern.quote("#"))[0];
-                        }else{
-                            captionVideoOfUser = "";
-                        }
-                        return new String[] { captionVideoOfUser, usernameOfMedia };
+                setLog("Get caption media...");
+                String captionVideoOfUser = String.valueOf(jsonData.get("caption"));
+                if(!captionVideoOfUser.isEmpty()){
+                    if(!captionVideoOfUser.startsWith("#")){
+                        captionVideoOfUser = captionVideoOfUser.split(Pattern.quote("#"))[0];
+                    }else{
+                        captionVideoOfUser = "";
                     }
-                }else{
-                    setLog("Download media Failed");
+                    return new String[] { captionVideoOfUser, usernameOfMedia };
                 }
             }else{
                 setLog("Link media is null");
@@ -326,7 +356,7 @@ public class HandmadeFragment extends Fragment {
             imgDropDownAccount.setEnabled(!isLock);
             ckbRandomImage.setEnabled(!isLock);
             btnClearLink.setEnabled(!isLock);
-            btnGetHandmade.setEnabled(!isLock);
+            btnGetHandmade.setVisibility(isLock ? View.GONE : View.VISIBLE);
             btnCopyTextGetResult.setVisibility(isLock ? View.GONE : View.VISIBLE);
         });
     }

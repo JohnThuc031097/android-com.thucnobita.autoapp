@@ -29,7 +29,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class Bot {
@@ -140,12 +142,12 @@ public class Bot {
         return 0;
     }
 
-    public File download_video(Context context, String link, String nameFile) {
+    public File download_media(boolean isVideo, Context context, String link, String nameFile) {
         String pathFolderDownload = String.format("%s/%s/%s",
                 Constants.FOLDER_ROOT,
                 Constants.FOLDER_NAME_APP,
                 Constants.FOLDER_NAME_UPLOAD);
-        File pathFile = new File(pathFolderDownload, nameFile + ".mp4");
+        File pathFile = new File(pathFolderDownload, nameFile + (isVideo ? ".mp4" : ".jpg"));
         if (!new File(pathFolderDownload).exists()) {
             if(!new File(pathFolderDownload).mkdirs()) return null;
         }
@@ -163,7 +165,7 @@ public class Bot {
             // Update file on system
             MediaScannerConnection.scanFile(context,
                     new String[] { pathFile.getAbsolutePath() },
-                    new String[] { "video/*" },
+                    new String[] { (isVideo ? "video/*" : "image/*") },
                     null);
             return pathFile;
         }catch (IOException e){
@@ -417,7 +419,7 @@ public class Bot {
         }
     }
 
-    public HashMap<String, Object> getDataByCodeVideo(String code){
+    public HashMap<String, Object> getDataByCode(String code){
         HashMap<String, Object> result = new HashMap<>();
         new MediaInfoRequest(String.valueOf(IGUtils.fromCode(code)))
                 .execute(client)
@@ -429,15 +431,39 @@ public class Bot {
                                 .get("user")
                                 .get("username");
                         result.put("username_of_media", usernameOfVideo.textValue());
-                        JsonNode linkVideo = jsonMedia
-                                .get("items").get(0)
-                                .get("video_versions").get(0)
-                                .get("url");
-                        result.put("link_video", linkVideo.textValue());
+
                         JsonNode captionText = jsonMedia
                                 .get("items").get(0)
                                 .get("caption");
                         result.put("caption", captionText.isEmpty() ? "" : captionText.get("text").textValue());
+
+                        result.put("link_video", null);
+                        JsonNode linkVideo = jsonMedia
+                                .get("items").get(0)
+                                .findPath("video_versions");
+                        if(!linkVideo.isMissingNode()){
+                            String link = linkVideo.get(0).get("url").textValue();
+                            result.put("link_video", link);
+                        }
+
+                        result.put("link_image", null);
+                        JsonNode countImage = jsonMedia
+                                .get("items").get(0)
+                                .findPath("carousel_media_count");
+                        if(!countImage.isMissingNode()){
+                            ArrayList<String> urlImage = new ArrayList<>();
+                            int totalImage = countImage.intValue();
+                            JsonNode linkImage = jsonMedia
+                                    .get("items").get(0)
+                                    .get("carousel_media");
+                            for (int i = 0; i < totalImage; i++) {
+                                JsonNode node = linkImage.get(i)
+                                        .get("image_versions2")
+                                        .get("candidates").get(0);
+                                urlImage.add(node.get("url").textValue());
+                            }
+                            result.put("link_image", urlImage);
+                        }
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
                     }

@@ -244,7 +244,7 @@ public class BotFragment extends Fragment {
 
     private void botIG(View v){
         setLog("=>>>> START <<<<=");
-        setLog("+ [App] [Bot] [Instagram] [v7.0]");
+        setLog("+ [App] [Bot] [Instagram] [v8.0]");
         setLog("=> Total acc login:" + arrAccLogin.size());
         // Check total account run and account login
         if(arrAccLogin.size() > 0 && isRunning){
@@ -355,11 +355,11 @@ public class BotFragment extends Fragment {
                                                     String[] codeVideo = urlLink.split(Pattern.quote("/"));
                                                     String textCodeVideo = codeVideo[codeVideo.length-1];
                                                     setLog("=> Result Code video:" + textCodeVideo);
-                                                    HashMap<String, Object> jsonData = botIG.getDataByCodeVideo(textCodeVideo);
+                                                    HashMap<String, Object> jsonData = botIG.getDataByCode(textCodeVideo);
                                                     String linkDownload  = (String) jsonData.get("link_video");
                                                     if(linkDownload != null){
                                                         setLog("=> Result Size video:" + linkDownload.length());
-                                                        File fileVideo = botIG.download_video(v.getContext(),linkDownload,textCodeVideo);
+                                                        File fileVideo = botIG.download_media(true, v.getContext(),linkDownload,textCodeVideo);
                                                         if(fileVideo.exists()){
                                                             setLog("=> Download video " + fileVideo.getName() + " to folder uploads Ok");
                                                             captionVideoOfUser = String.valueOf(jsonData.get("caption"));
