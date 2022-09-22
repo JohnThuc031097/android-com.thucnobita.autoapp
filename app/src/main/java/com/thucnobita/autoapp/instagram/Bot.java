@@ -426,43 +426,43 @@ public class Bot {
                 .thenAccept(mediaInfoResponse -> {
                     try {
                         JsonNode jsonMedia = Utils.string2Json(Utils.object2String(mediaInfoResponse));
-                        JsonNode usernameOfVideo = jsonMedia
-                                .get("items").get(0)
+                        JsonNode items =  jsonMedia.get("items").get(0);
+                        JsonNode usernameOfVideo = items
                                 .get("user")
                                 .get("username");
                         result.put("username_of_media", usernameOfVideo.textValue());
 
-                        JsonNode captionText = jsonMedia
-                                .get("items").get(0)
-                                .get("caption");
+                        JsonNode captionText = items.get("caption");
                         result.put("caption", captionText.isEmpty() ? "" : captionText.get("text").textValue());
 
                         result.put("link_video", null);
-                        JsonNode linkVideo = jsonMedia
-                                .get("items").get(0)
-                                .findPath("video_versions");
+                        JsonNode linkVideo = items.findPath("video_versions");
                         if(!linkVideo.isMissingNode()){
                             String link = linkVideo.get(0).get("url").textValue();
                             result.put("link_video", link);
                         }
 
                         result.put("link_image", null);
-                        JsonNode countImage = jsonMedia
-                                .get("items").get(0)
-                                .findPath("carousel_media_count");
-                        if(!countImage.isMissingNode()){
-                            ArrayList<String> urlImage = new ArrayList<>();
-                            int totalImage = countImage.intValue();
-                            JsonNode linkImage = jsonMedia
-                                    .get("items").get(0)
-                                    .get("carousel_media");
-                            for (int i = 0; i < totalImage; i++) {
-                                JsonNode node = linkImage.get(i)
-                                        .get("image_versions2")
-                                        .get("candidates").get(0);
-                                urlImage.add(node.get("url").textValue());
-                            }
+                        ArrayList<String> urlImage = new ArrayList<>();
+                        if(!items.findPath("image_versions2").isMissingNode()){
+                            JsonNode node = items
+                                    .get("image_versions2")
+                                    .get("candidates").get(0);
+                            urlImage.add(node.get("url").textValue());
                             result.put("link_image", urlImage);
+                        }else{
+                            JsonNode countImage = items.findPath("carousel_media_count");
+                            if(!countImage.isMissingNode()){
+                                int totalImage = countImage.intValue();
+                                JsonNode linkImage = items.get("carousel_media");
+                                for (int i = 0; i < totalImage; i++) {
+                                    JsonNode node = linkImage.get(i)
+                                            .get("image_versions2")
+                                            .get("candidates").get(0);
+                                    urlImage.add(node.get("url").textValue());
+                                }
+                                result.put("link_image", urlImage);
+                            }
                         }
                     } catch (JsonProcessingException e) {
                         e.printStackTrace();
